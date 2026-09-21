@@ -1,10 +1,11 @@
-﻿/**
+/**
  * RIDO Copilot - Direct Azure OpenAI Chat (Chat Completions endpoint)
  * Uses gpt-6-astra via standard chat/completions with full RIDO system prompt
  */
 
 const ENDPOINT = "https://kunwar2954beai24-5740-resource.services.ai.azure.com/openai/deployments/gpt-6-astra/chat/completions?api-version=2024-12-01-preview";
-const API_KEY  = atob("RDVHbktVOEwzSWRreTc1QmluejBjWnlENFc1VXJRWHNQVm5FTzhvS1JqcFEzQWZJb0tESEpRUUpJOUNDSUFDTm5zN1JYSjN3M0FBQUFBQ09HTEVGNA==");
+const API_KEY  = atob("RDVHbktVOEwzSWRreTc1QmluejBjWnlENFc1VXJRWHNQVm5FTzhvS1JqcFEzQWZJb0tESEpRUUo5OUNJQUNObnM3UlhKM3czQUFBQUFDT0dMRUY0");
+
 
 const SYSTEM_PROMPT = `You are RIDO Copilot, an intelligent Fleet Intelligence and Logistics Dispatch Assistant powered by Azure AI Foundry.
 
