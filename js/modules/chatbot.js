@@ -159,6 +159,40 @@ export class ChatbotModule {
               ${this._formatMarkdown(msg.text)}
             </div>
 
+            <!-- Apple HIG Interactive Component Card (if available) -->
+            ${msg.higWidgets ? `
+              <div class="hig-card p-4 mt-2 space-y-3">
+                <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+                  <div class="flex items-center gap-2">
+                    <i class="ri-sparkling-fill text-cyan-400"></i>
+                    <span class="font-bold text-xs text-white uppercase tracking-wider">${msg.higWidgets.title}</span>
+                  </div>
+                  <span class="text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full ${msg.higWidgets.badge.level === 'critical' ? 'hig-badge-critical' : msg.higWidgets.badge.level === 'warning' ? 'hig-badge-warning' : 'hig-badge-success'}">
+                    ${msg.higWidgets.badge.text}
+                  </span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                  ${msg.higWidgets.metrics.map(m => `
+                    <div class="p-2 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                      <span class="text-[10px] uppercase text-slate-400 font-semibold block">${m.label}</span>
+                      <span class="font-bold ${m.alert ? 'text-rose-400 font-mono' : 'text-slate-100'} text-xs">${m.value}</span>
+                    </div>
+                  `).join("")}
+                </div>
+
+                <!-- Action Button Pill Group -->
+                <div class="flex flex-wrap gap-2 pt-1">
+                  ${msg.higWidgets.actions.map(btn => `
+                    <button class="hig-action-btn ${btn.primary ? 'border-blue-500/50 text-cyan-300' : ''}" data-action-id="${btn.id}" data-action-label="${btn.label}">
+                      <i class="${btn.icon} ${btn.primary ? 'text-cyan-400' : 'text-slate-300'}"></i>
+                      <span>${btn.label}</span>
+                    </button>
+                  `).join("")}
+                </div>
+              </div>
+            ` : ''}
+
             <div class="text-[10px] text-slate-500 px-1 ${isUser ? 'text-right' : 'text-left'}">
               ${msg.timestamp}
             </div>
@@ -223,6 +257,17 @@ export class ChatbotModule {
         this.render();
       });
     }
+
+    // Attach HIG Interactive Action Button Listeners
+    this.container.querySelectorAll(".hig-action-btn").forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        if (this.isProcessing) return;
+        const actionLabel = btn.dataset.actionLabel || btn.innerText;
+        btn.innerHTML = `<i class="ri-check-line text-emerald-400"></i> Directing Driver...`;
+        btn.classList.add("bg-emerald-600/30", "border-emerald-500/50");
+        this.handleUserSubmit(`Execute Action: ${actionLabel}`);
+      });
+    });
   }
 
   async handleUserSubmit(userText) {
@@ -268,7 +313,8 @@ export class ChatbotModule {
         sender: "agent",
         text: result.responseText,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        thoughtStream: result.thoughtStream
+        thoughtStream: result.thoughtStream,
+        higWidgets: result.higWidgets
       };
       this.messages.push(agentMsg);
 
@@ -279,13 +325,15 @@ export class ChatbotModule {
         sender: "agent",
         text: `⚠️ **Execution Error:** ${err.message}`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        thoughtStream: null
+        thoughtStream: null,
+        higWidgets: null
       });
     }
 
     this.isProcessing = false;
     if (historyContainer) {
       historyContainer.innerHTML = this._renderMessages();
+      this._attachEvents();
       this._scrollToBottom();
     }
   }

@@ -195,3 +195,69 @@ body {
 .animate-soft-pulse {
   animation: softPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* ==========================================================================
+   Apple HIG Interactive Components & Frosted Cards
+   ========================================================================== */
+.hig-card {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hig-card:hover {
+  border-color: rgba(96, 165, 250, 0.4);
+  box-shadow: 0 14px 40px -5px rgba(37, 99, 235, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.hig-badge-critical {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+.hig-badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+.hig-badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+.hig-action-btn {
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  border-radius: 0.875rem;
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.hig-action-btn:hover {
+  background: rgba(37, 99, 235, 0.8);
+  border-color: rgba(96, 165, 250, 0.5);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+}
+
+.hig-action-btn:active {
+  transform: translateY(0) scale(0.98);
+}

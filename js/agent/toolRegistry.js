@@ -153,5 +153,38 @@ export const AI_TOOLS = [
         records: results
       };
     }
+  },
+
+  {
+    name: "driver_tablet_dispatcher",
+    displayName: "Driver In-Cab Tablet Dispatch API",
+    description: "Sends real-time high-priority operational directives, rest break mandates, and re-routing orders directly to in-cab driver tablets.",
+    parameters: {
+      driver_id: "Driver ID (e.g. 'D-11', 'D-14', 'D-22')",
+      action_code: "Directive code (e.g. 'MANDATORY_REST_45MIN', 'DYNAMIC_REROUTE_COLD_STORAGE', 'DEPOT_HANDOVER')",
+      directive_message: "Text message to display on the in-cab heads-up display"
+    },
+    execute: (args = {}) => {
+      return {
+        dispatchStatus: "SUCCESS_DELIVERED_TO_CAB",
+        driverId: args.driver_id || "D-11",
+        actionCode: args.action_code || "MANDATORY_REST_45MIN",
+        tabletDeviceAck: "ACK_200_DISPLAYED_ON_HUD",
+        timestamp: new Date().toISOString(),
+        deliveredMessage: args.directive_message || "Mandatory 45-minute rest break enforced per Driver_Safety SOP § 1."
+      };
+    }
   }
 ];
+
+export const MCP_TOOL_SCHEMAS = AI_TOOLS.map(t => ({
+  name: t.name,
+  description: t.description,
+  inputSchema: {
+    type: "object",
+    properties: Object.keys(t.parameters).reduce((acc, key) => {
+      acc[key] = { type: "string", description: t.parameters[key] };
+      return acc;
+    }, {})
+  }
+}));

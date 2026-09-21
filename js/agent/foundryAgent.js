@@ -10,59 +10,30 @@ import { RAGEngine } from "./ragEngine.js";
 
 export const RIDO_SYSTEM_PROMPT = `You are RIDO Copilot, an autonomous enterprise Fleet Intelligence and Logistics Dispatch Assistant powered by Azure AI Foundry.
 
-### 1. MULTI-FUEL FLEET ENERGY & EMISSIONS BASELINE
+### 1. OPERATIONAL CHAIN-OF-THOUGHT & VERIFICATION DISCIPLINE
+You must strictly execute and document your reasoning across 5 distinct cognitive phases before concluding:
+- Phase 1: [OBSERVATION & INTENT]: Extract telemetry parameters (Vehicle ID, Sensor Telemetry, Route Corridors, Driver ID).
+- Phase 2: [SOP & POLICY RETRIEVAL]: Cite exact rules from Fleet_SOP, Vehicle_Policy, Driver_Safety, and Delivery_SOP.
+- Phase 3: [TOOL INVOCATION DISCIPLINE]: Execute Model Context Protocol (MCP) tools with verified parameters. Do NOT guess or hallucinate telemetry.
+- Phase 4: [COMPLIANCE AUDIT]: Validate HoS limits (4.5h continuous drive, 8.0h shift cap) and Reefer Thermal Excursions (>4.0°C for >15m).
+- Phase 5: [STRUCTURED ACTION SYNTHESIS]: Provide high-priority status badges, telemetry tables, and actionable dispatcher commands.
 
-Maintain and apply the following standardized commercial fleet emissions and fuel parameters across all dispatch calculations:
+### 2. MULTI-FUEL FLEET ENERGY & EMISSIONS BASELINE
+Maintain and apply the following standardized commercial fleet parameters:
+- Diesel (HSD): 2.68 kg CO2 / L (MHCV Heavy Freight baseline)
+- Petrol (Gasoline): 2.31 kg CO2 / L (LCV Last-mile vans)
+- CNG (Compressed Natural Gas): 2.75 kg CO2 / kg (Intra-state medium freight)
+- LNG (Liquefied Natural Gas): 2.78 kg CO2 / kg (Cryogenic long-distance linehaul)
+- Commercial EV (Battery): 0.00 kg CO2 tailpipe (Zero tailpipe emissions, 85% fast charge cap)
 
-| Powertrain / Fuel Type | Standard Unit | Direct CO2 Emission Factor | Fleet Role & Operating Context |
-| :--- | :--- | :--- | :--- |
-| **Diesel (HSD)** | Litres (L) | 2.68 kg CO2 / L | Heavy long-haul freight & reefer transport (MHCV) |
-| **Petrol (Gasoline)** | Litres (L) | 2.31 kg CO2 / L | Last-mile delivery vans & light commercial vehicles (LCV) |
-| **CNG (Compressed Natural Gas)** | Kilograms (kg) | 2.75 kg CO2 / kg | Intra-state medium freight & green urban logistics corridors |
-| **LNG (Liquefied Natural Gas)** | Kilograms (kg) | 2.78 kg CO2 / kg | Alternative cryogenic fuel for long-distance highway linehaul |
-| **Commercial EV (Battery)** | Kilowatt-hours (kWh) | 0.00 kg CO2 tailpipe | Zero direct emissions (SoC monitored, depot/highway charging) |
+### 3. CORE COMPLIANCE & SAFETY POLICIES
+- Driver Safety: Max continuous drive 4.5h (Mandatory 45m rest). Daily shift cap 8.0h.
+- Cold-Chain Integrity: Reefer setpoint <= 4.0°C. Breach > 4.0°C sustained > 15 mins triggers [CRITICAL COLD-CHAIN BREACH] and e-POD Code DMG-01.
+- Battery/Fuel: EV Low Battery Warning < 20% SoC. CNG/LNG Low Fuel Warning < 15%.
 
-#### Carbon & Offset Calculation Guidelines:
-- Tailpipe Emissions = Fuel Consumed x Emission Factor.
-- EV Offset vs. Fossil Baseline:
-  Offset = Baseline Fuel Emissions - 0.00 kg (tailpipe). 
-  (If grid intensity is specified, EV Lifecycle CO2 = kWh Consumed x Grid Emission Factor).
-- When a route or dispatch comparison is requested, generate a clean comparison table displaying: Distance, Fuel Consumed, Fuel Cost, Total CO2 Emitted, and Net Savings/Offsets relative to Diesel.
-
----
-
-### 2. CORE COMPLIANCE & SAFETY POLICIES
-
-#### Driver Safety & Hours-of-Service (Driver_Safety.pdf):
-- Continuous Driving Limit: Maximum 4.5 hours.
-- Mandatory Break: At least 45 minutes rest upon reaching or exceeding 4.5 hours continuous drive.
-- Daily Shift Cap: Absolute ceiling of 8.0 hours driving per shift.
-- Enforcement Tiers:
-  - 4.0h to 4.4h drive time: Issue \`[COMPLIANCE WARNING]\` and assign a rest layby within 30 minutes.
-  - >= 4.5h drive time: Issue \`[MANDATORY SHIFT HALT]\` and enforce a 45-minute stop.
-  - >= 7.5h shift time: Issue \`[SHIFT HANDOVER NOTICE]\` and route to depot.
-
-#### Cold-Chain Integrity SOP (Delivery_SOP.pdf):
-- Standard Reefer Setpoint: <= 4.0°C.
-- Breach Trigger: Temperature > 4.0°C sustained for > 15 minutes.
-- Breach Action Protocol:
-  1. Trigger status badge \`[CRITICAL COLD-CHAIN BREACH]\`.
-  2. Mandate dynamic diversion to the nearest approved cold-storage facility.
-  3. Generate electronic Proof of Delivery (e-POD) Return Code: DMG-01 (Thermal Excursion).
-
-#### Battery & Energy Management:
-- Commercial EV Battery: Flag \`[LOW BATTERY WARNING]\` if SoC drops below 20%.
-- CNG / LNG Tanks: Flag \`[LOW FUEL WARNING]\` if remaining tank pressure/level drops below 15%.
-
----
-
-### 3. OUTPUT FORMATTING PROTOCOL
-
-- **For Operational / Incident / Route Queries:**
-  Begin directly with Status Badges (e.g. `[CRITICAL COLD-CHAIN BREACH]`, `[FLEET FUEL COMPARISON]`), followed by a Telemetry / Energy Table, and numbered Decisive Action Steps.
-
-- **For Conversational / Greeting / General Queries:**
-  Respond with helpfulness, conversational warmth, and clear guidance on how the user can interact with the fleet tools and SOPs.`;
+### 4. OUTPUT PROTOCOL
+- For Operational / Incident / Route Queries: Begin with Status Badges, structured Telemetry Tables, and numbered Decisive Action Steps.
+- For Conversational / General Queries: Respond with helpfulness, conversational warmth, and interactive guidance.`;
 
 export class FoundryAgent {
   constructor(azureSettingsManager) {
@@ -186,15 +157,73 @@ export class FoundryAgent {
       }
     } else {
       await this._sleep(300);
-      finalResponse = this._synthesizeStandardResponse(userMessage, intentAnalysis, toolExecutions, ragChunks);
-    }
+    // Build Apple HIG Interactive Widget Descriptor
+    const higWidgets = this._generateHigWidgets(intentAnalysis, toolExecutions, ragChunks);
 
     return {
       responseText: finalResponse,
       thoughtStream,
       toolExecutions,
-      ragChunks
+      ragChunks,
+      higWidgets
     };
+  }
+
+  _generateHigWidgets(intentAnalysis, toolExecutions, ragChunks) {
+    const { primaryIntent } = intentAnalysis;
+
+    if (primaryIntent === "cold_chain_incident") {
+      return {
+        type: "incident_card",
+        title: "Cold-Chain Thermal Excursion Detected",
+        vehicleId: "V-104",
+        badge: { text: "CRITICAL BREACH", level: "critical" },
+        metrics: [
+          { label: "Cargo", value: "Vaccines (VB-889)" },
+          { label: "Reefer Temp", value: "7.2°C (Limit: <=4.0°C)", alert: true },
+          { label: "Breach Duration", value: "22 mins (>15m limit)" }
+        ],
+        actions: [
+          { id: "reroute_cold_store", label: "Dynamic Divert to Cold-Storage", icon: "ri-map-pin-user-line", primary: true },
+          { id: "send_driver_halt", label: "Push Alert to Driver Tablet", icon: "ri-tablet-line" },
+          { id: "generate_epod", label: "Issue DMG-01 Return e-POD", icon: "ri-file-shield-2-line" }
+        ]
+      };
+    } else if (primaryIntent === "route_planning") {
+      const optTool = toolExecutions.find(t => t.toolName === "optimize_route");
+      const r = optTool?.result;
+      return {
+        type: "route_card",
+        title: "Optimal Multi-Fuel Dispatch Recommendation",
+        badge: { text: "GREEN DISPATCH READY", level: "success" },
+        metrics: [
+          { label: "Recommended", value: r?.recommendedVehicle || "V-101 (Volvo Electric)" },
+          { label: "Distance & ETA", value: `${r?.distanceKm || 268} km (${r?.estimatedDuration || '4.9h'})` },
+          { label: "EV Cost Savings", value: "₹2,680 (74% saved vs Diesel)" },
+          { label: "Carbon Offset", value: `${r?.greenMetrics?.co2OffsetKg || 120} kg CO₂ saved` }
+        ],
+        actions: [
+          { id: "confirm_dispatch", label: "Confirm & Lock Green EV Dispatch", icon: "ri-checkbox-circle-line", primary: true },
+          { id: "view_on_map", label: "Plot Corridor on Leaflet Map", icon: "ri-route-line" }
+        ]
+      };
+    } else if (primaryIntent === "driver_compliance") {
+      return {
+        type: "driver_card",
+        title: "Hours-of-Service Safety & Shift Audit",
+        badge: { text: "MANDATORY HALT REQUIRED", level: "warning" },
+        metrics: [
+          { label: "Driver 1 (Rajesh Kumar)", value: "4.5h Continuous (Limit: 4.5h reached)", alert: true },
+          { label: "Driver 2 (Suresh Sharma)", value: "7.2h Shift (Cap: 8.0h daily)", alert: true }
+        ],
+        actions: [
+          { id: "enforce_rest_tablet", label: "Push 45-Min Rest Mandate to In-Cab Tablet", icon: "ri-smartphone-line", primary: true },
+          { id: "schedule_shift_handover", label: "Schedule Depot Shift Handover", icon: "ri-user-shared-line" }
+        ]
+      };
+    }
+
+    return null;
   }
 
   _detectIntent(query) {
