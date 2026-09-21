@@ -7,6 +7,8 @@
 
 import { AI_TOOLS } from "./toolRegistry.js";
 import { RAGEngine } from "./ragEngine.js";
+import { CITIES_DATABASE } from "../data/fleetData.js";
+
 
 export const RIDO_SYSTEM_PROMPT = `You are RIDO Copilot, an autonomous enterprise Fleet Intelligence and Logistics Dispatch Assistant powered by Azure AI Foundry.
 
@@ -230,38 +232,60 @@ export class FoundryAgent {
   }
 
   _detectIntent(query) {
-    const q = query.toLowerCase();
+    const q = query.toLowerCase().trim();
     const entities = {};
 
-    const vMatch = q.match(/v-\d{3}/i) || q.match(/v\s*\d{3}/i);
-    if (vMatch) entities.vehicleId = vMatch[0].toUpperCase().replace(/\s+/, "-");
+    // Vehicle ID extraction
+    const vMatch = q.match(/v-?\s*(\d{3})/i);
+    if (vMatch) entities.vehicleId = `V-${vMatch[1]}`;
 
-    const cities = ["new delhi", "delhi", "gurugram", "noida", "jaipur", "agra", "chandigarh", "bengaluru", "chennai", "mumbai", "karnal"];
-    const foundCities = cities.filter(c => q.includes(c));
-    if (foundCities.length >= 2) {
-      entities.origin = this._capitalize(foundCities[0]);
-      entities.destination = this._capitalize(foundCities[1]);
-    } else if (foundCities.length === 1) {
-      entities.city = this._capitalize(foundCities[0]);
+    // ── City/Route extraction ──
+    // Pattern 1: "from X to Y" or "X to Y" (handles any city names, not just hardcoded list)
+    const fromToMatch = q.match(/(?:from\s+)([\w\s]+?)\s+to\s+([\w\s]+?)(?:\s+(?:for|with|via|using|by|on)|$)/i)
+                      || q.match(/\b([\w\s]+?)\s+to\s+([\w\s]+?)(?:\s+(?:for|with|via|using|by|on)|$)/i);
+
+    if (fromToMatch) {
+      const rawOrigin = fromToMatch[1].trim();
+      const rawDest   = fromToMatch[2].trim();
+      entities.origin      = this._canonicalizeCity(rawOrigin);
+      entities.destination = this._canonicalizeCity(rawDest);
+    } else {
+      // Pattern 2: single-city mention
+      const KNOWN_CITIES = Object.keys(CITIES_DATABASE || {});
+      const found = KNOWN_CITIES.filter(c => q.includes(c.toLowerCase()));
+      if (found.length >= 2) {
+        entities.origin      = found[0];
+        entities.destination = found[1];
+      } else if (found.length === 1) {
+        entities.city = found[0];
+      }
     }
 
     let primaryIntent = "general_query";
     let ragQuery = query;
 
-    // Conversational, Greeting, & Emotion/Personality Detection
-    const greetings = ["hi", "hello", "hey", "good morning", "good evening", "how are you", "who are you", "what can you do", "help", "thanks", "thank you", "bye", "emotion", "feeling", "feelings", "emotions", "judge", "judging", "human", "friend"];
-    const isConversational = greetings.some(g => q === g || q.startsWith(g + " ") || q.includes("emotion") || q.includes("judg") || q.includes("feeling") || q.includes("how are you"));
+    // Conversational detection
+    const greetings = ["hi", "hello", "hey", "good morning", "good evening", "how are you",
+      "who are you", "what can you do", "help", "thanks", "thank you", "bye",
+      "emotion", "feeling", "feelings", "emotions", "judge", "judging", "human", "friend"];
+    const isConversational = greetings.some(g =>
+      q === g || q.startsWith(g + " ") || q.includes("emotion") || q.includes("judg") ||
+      q.includes("feeling") || q.includes("how are you"));
 
-    if (isConversational && !vMatch && !foundCities.length) {
+    if (isConversational && !entities.vehicleId && !entities.origin) {
       primaryIntent = "conversational";
       ragQuery = "RIDO Copilot assistant introduction capabilities";
-    } else if (q.includes("temperature") || q.includes("cold chain") || q.includes("reefer") || q.includes("spoiled") || q.includes("excursion") || entities.vehicleId === "V-104") {
+    } else if (q.includes("temperature") || q.includes("cold chain") || q.includes("reefer") ||
+               q.includes("spoiled") || q.includes("excursion") || entities.vehicleId === "V-104") {
       primaryIntent = "cold_chain_incident";
       ragQuery = "cold chain temperature excursion threshold reefer DMG-01";
-    } else if (q.includes("route") || q.includes("optimize") || q.includes("trip") || q.includes("fuel") || q.includes("emission") || entities.destination) {
+    } else if (q.includes("route") || q.includes("optimize") || q.includes("trip") ||
+               q.includes("fuel") || q.includes("emission") || q.includes(" to ") ||
+               entities.origin || entities.destination) {
       primaryIntent = "route_planning";
       ragQuery = "fueling EV charging emission factor diesel CNG LNG comparison";
-    } else if (q.includes("driver") || q.includes("shift") || q.includes("hours") || q.includes("safety") || q.includes("break")) {
+    } else if (q.includes("driver") || q.includes("shift") || q.includes("hours") ||
+               q.includes("safety") || q.includes("break")) {
       primaryIntent = "driver_compliance";
       ragQuery = "maximum driving hours 4.5 mandatory 45-minute rest breaks 8.0 shift limit";
     } else if (q.includes("status") || q.includes("battery") || q.includes("fleet") || entities.vehicleId) {
@@ -271,6 +295,19 @@ export class FoundryAgent {
 
     return { primaryIntent, entities, ragQuery };
   }
+
+  _canonicalizeCity(raw) {
+    const aliases = {
+      "delhi": "New Delhi", "new delhi": "New Delhi",
+      "bombay": "Mumbai", "bangalore": "Bengaluru", "gurgaon": "Gurugram",
+      "calcutta": "Kolkata", "madras": "Chennai"
+    };
+    const lower = raw.toLowerCase().trim();
+    if (aliases[lower]) return aliases[lower];
+    // Title-case the raw string
+    return raw.replace(/\b\w/g, c => c.toUpperCase()).trim();
+  }
+
 
   _buildPlan(intentAnalysis) {
     const { primaryIntent, entities } = intentAnalysis;
@@ -473,29 +510,39 @@ How can I assist your fleet operations today?`;
       }
     }
 
-    const contextPayload = {
-      userQuery: userPrompt,
-      detectedIntent: intentAnalysis,
-      toolResults: toolExecutions,
-      ragSOPContext: ragChunks
-    };
+    const toolSummary = toolExecutions.map(t =>
+      `[${t.displayName}] → ${JSON.stringify(t.result)}`
+    ).join("\n");
+
+    const ragSummary = ragChunks.map(c =>
+      `[${c.documentId} § ${c.section}]: ${c.content}`
+    ).join("\n");
+
+    // Build a clean, readable prompt that puts the user query FIRST
+    const promptText = [
+      `USER QUERY: ${userPrompt}`,
+      "",
+      intentAnalysis.entities.origin
+        ? `DETECTED ROUTE: ${intentAnalysis.entities.origin} → ${intentAnalysis.entities.destination}`
+        : "",
+      "",
+      toolSummary ? `LIVE TOOL DATA:\n${toolSummary}` : "",
+      ragSummary  ? `SOP CONTEXT:\n${ragSummary}` : "",
+    ].filter(Boolean).join("\n");
 
     let payload;
     if (isAgentResponsesApi) {
-      // Azure AI Foundry Agent Responses API uses `input`
-      payload = {
-        input: `Execute the RIDO Fleet Intelligence Protocol for the following live operational telemetry and query context:\n\n${JSON.stringify(contextPayload, null, 2)}`
-      };
+      payload = { input: promptText };
     } else {
-      // Standard Chat Completions API (gpt-6-astra uses default temperature 1.0 and does not accept max_tokens)
       payload = {
         model: account.deployment,
         messages: [
           { role: "system", content: RIDO_SYSTEM_PROMPT },
-          { role: "user", content: `Execute the RIDO Fleet Intelligence Protocol for the following live operational telemetry and query context:\n\n${JSON.stringify(contextPayload, null, 2)}` }
+          { role: "user",   content: promptText }
         ]
       };
     }
+
 
     const headers = {
       "Content-Type": "application/json",
