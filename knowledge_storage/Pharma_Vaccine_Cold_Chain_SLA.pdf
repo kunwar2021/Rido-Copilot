@@ -1,0 +1,34 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+4 0 obj << /Length 1195 >>
+stream
+BT /F1 14 Tf 50 740 Td (RIDO Pharmaceutical and Vaccine Cold-Chain SLA) Tj ET
+BT /F1 10 Tf 50 700 Td (1. Deep Frozen and Bio-Pharma Temperature Tiers: Tier A vaccines require) Tj ET
+BT /F1 10 Tf 50 686 Td (continuous deep frozen integrity -25C to -15C. Tier B pharmaceutical) Tj ET
+BT /F1 10 Tf 50 672 Td (biologicals require standard cold-chain +2C to +8C. IoT dual-probe) Tj ET
+BT /F1 10 Tf 50 658 Td (temperature logging is mandatory with 60-second telemetry polling) Tj ET
+BT /F1 10 Tf 50 644 Td (intervals.) Tj ET
+BT /F1 10 Tf 50 622 Td (2. Thermal Deviation and Escalation Matrix: Any continuous thermal) Tj ET
+BT /F1 10 Tf 50 608 Td (deviation exceeding 1.5C from setpoint for more than 10 minutes triggers) Tj ET
+BT /F1 10 Tf 50 594 Td (automated Level-2 Escalation to Chief Logistics Officer, with automatic) Tj ET
+BT /F1 10 Tf 50 580 Td (reroute to the nearest cold-chain certified standby depot.) Tj ET
+BT /F1 10 Tf 50 558 Td (3. Consignee Rights of Refusal: If temperature breach code DMG-01 is) Tj ET
+BT /F1 10 Tf 50 544 Td (logged, consignee has mandatory legal entitlement to reject delivery under) Tj ET
+BT /F1 10 Tf 50 530 Td (SLA Clause 9.2 with zero freight liability.) Tj ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000115 00000 n 
+0000000280 00000 n 
+0000000210 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+450
+%%EOF

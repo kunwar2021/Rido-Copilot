@@ -1,0 +1,35 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+4 0 obj << /Length 1323 >>
+stream
+BT /F1 14 Tf 50 740 Td (RIDO Green Corridor and EV Battery Thermal Protocol) Tj ET
+BT /F1 10 Tf 50 700 Td (1. Extreme Ambient Temperature Protocol: When ambient temperature exceeds) Tj ET
+BT /F1 10 Tf 50 686 Td (40C in summer corridors, EV battery thermal management system BTMS must) Tj ET
+BT /F1 10 Tf 50 672 Td (maintain internal cell temperature between 25C and 35C. If battery) Tj ET
+BT /F1 10 Tf 50 658 Td (temperature exceeds 48C, trigger mandatory thermal throttling with speed) Tj ET
+BT /F1 10 Tf 50 644 Td (capped to 50 km/h.) Tj ET
+BT /F1 10 Tf 50 622 Td (2. Dynamic Charging Corridor Selection: Long-haul EV trips >300 km must) Tj ET
+BT /F1 10 Tf 50 608 Td (schedule high-power 120kW DC charging stops only when State-of-Charge) Tj ET
+BT /F1 10 Tf 50 594 Td (reaches 15% to 25% window to maximize charging curve efficiency. Never) Tj ET
+BT /F1 10 Tf 50 580 Td (fast-charge past 85% at public commercial hubs.) Tj ET
+BT /F1 10 Tf 50 558 Td (3. Regenerative Braking and Payload Compensation: For heavy commercial EVs) Tj ET
+BT /F1 10 Tf 50 544 Td (descending ghat / hilly terrain gradient > 4%, drivers must engage Stage-3) Tj ET
+BT /F1 10 Tf 50 530 Td (Regenerative Braking to recover up to 18% kinetic energy into the traction) Tj ET
+BT /F1 10 Tf 50 516 Td (battery while avoiding mechanical brake fade.) Tj ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000115 00000 n 
+0000000280 00000 n 
+0000000210 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+450
+%%EOF
