@@ -1,0 +1,13 @@
+# Driver Health, Safety & Working Hours Standards (Driver_Safety)
+Category: Safety | Version: v4.1 | Date: 2026-02-20
+
+---
+
+## 1. Maximum Driving Hours & Mandatory Rest Breaks
+To combat driver fatigue: Maximum continuous driving duration is 4.5 hours, followed by a mandatory minimum 45-minute rest break. Maximum total daily driving limit is 8.0 hours within a 24-hour cycle. When a driver reaches 7.0 hours of active driving, the RIDO system issues a warning alert and restricts the dispatch of any subsequent delivery legs.
+
+## 2. Speed Governance and Telematics Violations
+Fleet speed is electronically governed: 80 km/h maximum on 4-lane highways/expressways, 50 km/h on state highways, and 40 km/h in city boundaries. Telematics alerts trigger automatically if: (1) Speed exceeds 85 km/h for >30 seconds, (2) Harsh braking (>0.4g deceleration), or (3) Sudden swerving. Accumulation of 3 violations in a single shift deducts 0.2 points from Driver Safety Rating.
+
+## 3. Adverse Weather & Low Visibility SOP
+During heavy fog (visibility < 50 meters), torrential rain, or severe smog: Hazard lights must be activated, speed reduced to maximum 30 km/h, and minimum following distance increased to 50 meters. If visibility drops below 20 meters, drivers are mandated to park at the nearest certified toll plaza or petrol station and notify dispatch.

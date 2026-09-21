@@ -1,0 +1,13 @@
+# Standard Operating Procedure: Fleet Management & Maintenance (Fleet_SOP)
+Category: Operations | Version: v3.2 | Date: 2026-03-15
+
+---
+
+## 1. Pre-Trip Inspection Protocol
+All drivers must complete the digital pre-trip inspection via the RIDO Driver App before starting any trip. Mandatory checklist items: (1) Tire pressure must be within ±5 PSI of rated pressure (110 PSI for heavy trucks, 32-35 PSI for light EVs). (2) Brake pad clearance inspection. (3) Fluid levels (coolant, DEF, brake fluid). (4) Battery state-of-charge must be minimum 80% for EV departures. Any vehicle failing critical items must be tagged 'Maintenance' and cannot be dispatched.
+
+## 2. Preventative Maintenance Schedule
+Heavy diesel vehicles require A-Service every 15,000 km (oil filter, lubrication) and B-Service every 45,000 km (transmission, differential, full brake overhaul). Electric commercial vehicles require high-voltage battery diagnostic checks every 20,000 km, regenerative braking calibration, and coolant loop flush at 50,000 km. Vehicles flagged with Health Score below 75 must be routed to the nearest regional depot within 24 hours.
+
+## 3. Reefer & Cold Chain Unit Operations
+Refrigerated transport units (Reefer) must be pre-cooled for 45 minutes prior to loading cargo. Temperature setpoints must be locked by the depot supervisor. If internal telemetry logs a temperature deviation exceeding 2.0°C above target setpoint for more than 15 consecutive minutes, the driver and central dispatch must receive a Tier-1 Critical Alert and execute immediate diversion to cold-storage standby.
