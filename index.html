@@ -1,225 +1,154 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RIDO AI — Fleet Intelligence & Foundry Agent Copilot</title>
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              50: '#eff6ff',
-              500: '#3b82f6',
-              600: '#2563eb',
-              700: '#1d4ed8',
-            }
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- RemixIcon Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
-
-  <!-- Leaflet Map CSS & JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <!-- Marked.js Markdown Parser -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RIDO Copilot</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#070b14;--surface:#0d1424;--panel:#111827;--border:#1e2d45;--accent:#3b82f6;--accent2:#06b6d4;--text:#f1f5f9;--muted:#64748b;--success:#10b981}
+    html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden}
+    #app{display:flex;flex-direction:column;height:100vh}
+    header{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem}
+    .logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#3b82f6,#06b6d4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
+    .logo-sub{color:var(--muted);font-size:0.7rem;font-weight:400;margin-top:1px}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .status-dot{width:8px;height:8px;background:var(--success);border-radius:50%;box-shadow:0 0 6px var(--success);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+    .status-label{font-size:0.72rem;color:var(--success);font-weight:500}
+    .header-btn{background:var(--panel);border:1px solid var(--border);border-radius:8px;color:var(--muted);padding:5px 12px;font-size:0.75rem;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.15s;font-family:inherit}
+    .header-btn:hover{border-color:var(--accent);color:var(--text)}
+    main{flex:1;display:flex;overflow:hidden}
+    #sidebar{width:272px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:width 0.2s;overflow:hidden}
+    #sidebar.collapsed{width:0;border-right:none}
+    .sidebar-header{padding:14px 16px;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);flex-shrink:0}
+    #thoughtLog{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px}
+    #thoughtLog::-webkit-scrollbar{width:4px}
+    #thoughtLog::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    .thought-step{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:8px 10px;font-size:0.7rem;animation:fadeIn 0.3s ease}
+    .thought-phase{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent2);font-weight:600;margin-bottom:2px}
+    .thought-title{color:var(--text);font-weight:600;margin-bottom:2px}
+    .thought-detail{color:var(--muted);line-height:1.4}
+    .empty-thoughts{text-align:center;color:var(--muted);font-size:0.75rem;padding:24px 12px}
+    #chatArea{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    #messages{flex:1;overflow-y:auto;padding:24px 40px;display:flex;flex-direction:column;gap:20px}
+    #messages::-webkit-scrollbar{width:4px}
+    #messages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+    #welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px;padding:40px}
+    .welcome-icon{width:72px;height:72px;background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(6,182,212,0.15));border:1px solid rgba(59,130,246,0.3);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:32px}
+    .welcome-title{font-size:1.75rem;font-weight:700;background:linear-gradient(135deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .welcome-sub{color:var(--muted);font-size:0.9rem;max-width:420px;line-height:1.6}
+    .suggested-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;max-width:560px}
+    .suggested-btn{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px 14px;text-align:left;cursor:pointer;transition:all 0.15s;color:var(--text);font-family:inherit}
+    .suggested-btn:hover{border-color:var(--accent);background:rgba(59,130,246,0.06)}
+    .suggested-btn .s-icon{font-size:1.1rem;margin-bottom:4px}
+    .suggested-btn .s-title{font-size:0.78rem;font-weight:600;display:block}
+    .suggested-btn .s-sub{font-size:0.7rem;color:var(--muted);margin-top:2px;display:block}
+    .msg{display:flex;gap:12px;animation:fadeIn 0.25s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .msg.user{flex-direction:row-reverse}
+    .msg-avatar{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px}
+    .msg.user .msg-avatar{background:linear-gradient(135deg,#3b82f6,#06b6d4)}
+    .msg.ai .msg-avatar{background:var(--panel);border:1px solid var(--border);font-size:16px}
+    .msg-bubble{max-width:72%;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:12px 16px;font-size:0.875rem;line-height:1.65}
+    .msg.user .msg-bubble{background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.25)}
+    .msg-bubble h1,.msg-bubble h2,.msg-bubble h3{font-size:0.9rem;font-weight:700;color:var(--text);margin:10px 0 6px}
+    .msg-bubble h1:first-child,.msg-bubble h2:first-child,.msg-bubble h3:first-child{margin-top:0}
+    .msg-bubble p{margin:4px 0}
+    .msg-bubble ul,.msg-bubble ol{padding-left:18px;margin:4px 0}
+    .msg-bubble li{margin:2px 0}
+    .msg-bubble code{background:rgba(255,255,255,0.07);border-radius:4px;padding:1px 6px;font-size:0.82em;font-family:'Menlo','Consolas',monospace;color:var(--accent2)}
+    .msg-bubble pre{background:#070b14;border:1px solid var(--border);border-radius:8px;padding:10px 14px;overflow-x:auto;margin:8px 0}
+    .msg-bubble pre code{background:none;padding:0;color:var(--text)}
+    .msg-bubble table{border-collapse:collapse;width:100%;margin:8px 0;font-size:0.8rem}
+    .msg-bubble th,.msg-bubble td{border:1px solid var(--border);padding:5px 10px;text-align:left}
+    .msg-bubble th{background:rgba(255,255,255,0.05);font-weight:600}
+    .msg-bubble strong{color:var(--text);font-weight:600}
+    .msg-bubble a{color:var(--accent);text-decoration:none}
+    .msg-bubble hr{border-color:var(--border);margin:8px 0}
+    .typing-indicator{display:flex;gap:4px;padding:4px 2px;align-items:center}
+    .typing-dot{width:7px;height:7px;background:var(--muted);border-radius:50%;animation:bounce 1.2s infinite}
+    .typing-dot:nth-child(2){animation-delay:0.2s}
+    .typing-dot:nth-child(3){animation-delay:0.4s}
+    @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+    #inputBar{padding:16px 40px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0}
+    .input-row{display:flex;gap:10px;align-items:flex-end;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:8px 12px;transition:border-color 0.15s}
+    .input-row:focus-within{border-color:var(--accent)}
+    #userInput{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:0.9rem;resize:none;max-height:120px;min-height:24px;line-height:1.5}
+    #userInput::placeholder{color:var(--muted)}
+    #sendBtn{width:36px;height:36px;background:var(--accent);border:none;border-radius:10px;color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:background 0.15s,opacity 0.15s}
+    #sendBtn:hover{background:#2563eb}
+    #sendBtn:disabled{opacity:0.4;cursor:not-allowed}
+    .input-hint{text-align:center;color:var(--muted);font-size:0.68rem;margin-top:8px}
+  </style>
 </head>
-<body class="bg-slate-950 text-slate-100 flex flex-col min-h-screen">
-
-  <!-- Top Navigation Bar -->
-  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 bg-slate-950/80">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <!-- Logo & Brand -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/25">
-          <i class="ri-truck-line"></i>
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <span class="font-extrabold text-lg tracking-tight text-white">RIDO <span class="text-cyan-400">AI</span></span>
-            <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
-              Foundry
-            </span>
-          </div>
-          <p class="text-[11px] text-slate-400">Autonomous Fleet & Logistics Platform</p>
-        </div>
+<body>
+<div id="app">
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🚛</div>
+      <div>
+        <div>RIDO Copilot</div>
+        <div class="logo-sub">Azure AI Foundry &middot; gpt-6-astra</div>
       </div>
-
-      <!-- Navigation Tabs -->
-      <nav class="hidden md:flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
-        <button class="nav-tab-btn active text-xs px-3.5 py-2 flex items-center gap-1.5" data-tab="dashboard">
-          <i class="ri-dashboard-3-line"></i> Fleet Dashboard
-        </button>
-        <button class="nav-tab-btn text-xs px-3.5 py-2 flex items-center gap-1.5" data-tab="routeOptimizer">
-          <i class="ri-route-line"></i> Route Optimizer
-        </button>
-        <button class="nav-tab-btn text-xs px-3.5 py-2 flex items-center gap-1.5" data-tab="chatbot">
-          <i class="ri-robot-2-line text-cyan-400"></i> AI Copilot
-        </button>
-        <button class="nav-tab-btn text-xs px-3.5 py-2 flex items-center gap-1.5" data-tab="knowledgeBase">
-          <i class="ri-book-read-line"></i> SOP Documents
-        </button>
-      </nav>
-
-      <!-- Right Controls: Budget & Settings -->
-      <div class="flex items-center gap-3">
-        <!-- Live Mode Badge -->
-        <div id="headerModeDisplay" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Zero-Cost ($0.00)
-        </div>
-
-        <!-- Budget Pool Tracker -->
-        <div id="headerBudgetDisplay" class="hidden sm:flex text-xs font-mono px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 items-center gap-1.5 text-slate-300">
-          <i class="ri-wallet-3-line text-emerald-400"></i>
-          <span>Pool: <strong>$200.00</strong></span>
-        </div>
-
-        <!-- Azure Settings Gear -->
-        <button id="openSettingsBtn" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition" title="Azure Settings & Dual-ID Pool">
-          <i class="ri-settings-4-line text-lg"></i>
-        </button>
-      </div>
+    </div>
+    <div class="header-right">
+      <div class="status-dot"></div>
+      <span class="status-label">Live</span>
+      <button class="header-btn" id="toggleThoughtsBtn"><i class="ri-brain-line"></i> Thoughts</button>
+      <button class="header-btn" id="clearBtn"><i class="ri-delete-bin-line"></i> Clear</button>
     </div>
   </header>
-
-  <!-- Main Workspace Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <!-- Tab: Fleet Dashboard -->
-    <section id="tabDashboard" class="tab-pane">
-      <!-- Mounted by js/modules/dashboard.js -->
-    </section>
-
-    <!-- Tab: Route Optimizer -->
-    <section id="tabRouteOptimizer" class="tab-pane hidden">
-      <!-- Mounted by js/modules/routeOptimizer.js -->
-    </section>
-
-    <!-- Tab: AI Copilot Chatbot -->
-    <section id="tabChatbot" class="tab-pane hidden">
-      <!-- Mounted by js/modules/chatbot.js -->
-    </section>
-
-    <!-- Tab: SOP Knowledge Base -->
-    <section id="tabKnowledgeBase" class="tab-pane hidden">
-      <!-- Mounted by js/modules/knowledgeBase.js -->
-    </section>
-  </main>
-
-  <!-- Azure Dual-Account Configuration Modal -->
-  <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-    <div class="glass-panel w-full max-w-2xl rounded-2xl border border-slate-700 p-6 space-y-5 bg-slate-900">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <div class="flex items-center gap-2">
-          <i class="ri-settings-4-line text-blue-400 text-xl"></i>
-          <h3 class="text-lg font-bold text-white">Azure AI Foundry & Dual-Account Pool</h3>
+  <main>
+    <div id="sidebar">
+      <div class="sidebar-header">&#129504; Agent Reasoning</div>
+      <div id="thoughtLog"><div class="empty-thoughts">Agent reasoning steps appear here as RIDO processes your query.</div></div>
+    </div>
+    <div id="chatArea">
+      <div id="welcome">
+        <div class="welcome-icon">&#129302;</div>
+        <div>
+          <div class="welcome-title">RIDO Copilot</div>
+          <div class="welcome-sub">Your Azure-powered fleet intelligence assistant. Ask me anything about routes, vehicles, driver compliance, or logistics.</div>
         </div>
-        <button id="closeSettingsBtn" class="text-slate-400 hover:text-white text-lg">
-          <i class="ri-close-line"></i>
-        </button>
-      </div>
-
-      <!-- Execution Mode Radio -->
-      <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2">
-        <label class="block text-xs uppercase font-bold text-slate-400">Agent Execution Mode</label>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-          <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-800 bg-slate-900 cursor-pointer hover:border-slate-700">
-            <input type="radio" name="agentModeRadio" id="modeLocalRadio" value="local" checked class="text-blue-500">
-            <div>
-              <p class="text-xs font-bold text-white">Zero-Cost Offline Simulator</p>
-              <p class="text-[11px] text-slate-400">$0.00 cost, heuristic tool calls & RAG</p>
-            </div>
-          </label>
-
-          <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-800 bg-slate-900 cursor-pointer hover:border-slate-700">
-            <input type="radio" name="agentModeRadio" id="modeAzureRadio" value="azure_dual" class="text-blue-500">
-            <div>
-              <p class="text-xs font-bold text-white">Live Azure Dual Pool ($200 Pool)</p>
-              <p class="text-[11px] text-slate-400">Round-Robin across both Azure Keys</p>
-            </div>
-          </label>
+        <div class="suggested-grid">
+          <button class="suggested-btn" data-prompt="What is the status of vehicle V-104 and is there a cold-chain breach?">
+            <div class="s-icon">&#128680;</div>
+            <span class="s-title">Cold-Chain Alert</span>
+            <span class="s-sub">Check V-104 reefer status</span>
+          </button>
+          <button class="suggested-btn" data-prompt="Optimize the route from New Delhi to Jaipur for an EV truck with 8000 kg cargo">
+            <div class="s-icon">&#128508;</div>
+            <span class="s-title">Route Optimization</span>
+            <span class="s-sub">Delhi &#8594; Jaipur EV dispatch</span>
+          </button>
+          <button class="suggested-btn" data-prompt="Show me the driver hours-of-service compliance audit for all drivers today">
+            <div class="s-icon">&#128737;</div>
+            <span class="s-title">Driver Compliance</span>
+            <span class="s-sub">HoS audit across all drivers</span>
+          </button>
+          <button class="suggested-btn" data-prompt="Compare EV vs Diesel vs CNG emissions for a 300 km delivery route">
+            <div class="s-icon">&#127807;</div>
+            <span class="s-title">Emissions Comparison</span>
+            <span class="s-sub">Multi-fuel CO&#8322; analysis</span>
+          </button>
         </div>
       </div>
-
-      <!-- Dual Accounts Inputs -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <!-- Account 1 (Yours) -->
-        <div class="p-4 rounded-xl bg-slate-950/40 border border-slate-800 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-blue-400 uppercase">Account 1 (Primary - Kunwar)</h4>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono">$100 Limit</span>
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-0.5">Azure OpenAI Endpoint</label>
-            <input type="text" id="acc1EndpointInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-0.5">API Key</label>
-            <input type="password" id="acc1KeyInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-0.5">Model Deployment</label>
-            <input type="text" id="acc1DeploymentInput" value="gpt-4o-mini" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
-          </div>
+      <div id="messages" style="display:none;"></div>
+      <div id="inputBar">
+        <div class="input-row">
+          <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot anything about your fleet&#8230;"></textarea>
+          <button id="sendBtn"><i class="ri-send-plane-fill"></i></button>
         </div>
-
-        <!-- Account 2 (Friend) -->
-        <div class="p-4 rounded-xl bg-slate-950/40 border border-slate-800 space-y-2.5">
-          <div class="flex items-center justify-between">
-            <h4 class="text-xs font-bold text-emerald-400 uppercase">Account 2 (Secondary - Friend)</h4>
-            <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">$100 Limit</span>
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-0.5">Friend's Endpoint URL</label>
-            <input type="text" id="acc2EndpointInput" placeholder="https://friend-resource.openai.azure.com/" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-0.5">Friend's API Key</label>
-            <input type="password" id="acc2KeyInput" placeholder="Paste friend's API key..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-0.5">Model Deployment</label>
-            <input type="text" id="acc2DeploymentInput" value="gpt-4o-mini" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
-          </div>
-        </div>
-      </div>
-
-      <!-- Budget Stats Display -->
-      <div class="flex justify-between items-center px-3 py-2 rounded-lg bg-slate-950 text-xs font-mono text-slate-300 border border-slate-800">
-        <span>Combined Pool Spent: <strong id="modalSpentUSD" class="text-rose-400">$0.0000</strong></span>
-        <span>Remaining Budget: <strong id="modalRemainingUSD" class="text-emerald-400">$200.00</strong></span>
-      </div>
-
-      <div class="flex justify-end gap-3 pt-2">
-        <button id="saveSettingsBtn" class="btn-primary px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-1.5">
-          <i class="ri-check-line"></i> Save & Apply Configuration
-        </button>
+        <div class="input-hint">Powered by Azure AI Foundry &nbsp;&middot;&nbsp; Enter to send &nbsp;&middot;&nbsp; Shift+Enter for new line</div>
       </div>
     </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="border-t border-slate-800/80 bg-slate-950 py-4 text-center text-xs text-slate-500">
-    <p>RIDO AI Platform • Microsoft Azure AI Foundry & Model Context Protocol (MCP) • 2026</p>
-  </footer>
-
-  <!-- App Entry Point (ES6 Module) -->
-  <script type="module" src="js/app.js"></script>
+  </main>
+</div>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>

@@ -1,170 +1,163 @@
-/**
- * RIDO AI — Main Application Entry Point & Controller
+﻿/**
+ * RIDO Copilot - Chat-only app entry point
+ * Connects directly to Azure AI Foundry Agent (RIDO-Copilot / gpt-6-astra)
  */
-
 import { AzureSettingsManager } from "./modules/azureSettings.js";
-import { DashboardModule } from "./modules/dashboard.js";
-import { RouteOptimizerModule } from "./modules/routeOptimizer.js";
-import { ChatbotModule } from "./modules/chatbot.js";
-import { KnowledgeBaseModule } from "./modules/knowledgeBase.js";
+import { FoundryAgent } from "./agent/foundryAgent.js";
 
-class App {
-  constructor() {
-    this.azureSettings = new AzureSettingsManager();
-    this.currentTab = "dashboard";
+const azureSettings = new AzureSettingsManager();
+const agent = new FoundryAgent(azureSettings);
 
-    this.dashboardModule = new DashboardModule("tabDashboard");
-    this.routeOptimizerModule = new RouteOptimizerModule("tabRouteOptimizer");
-    this.chatbotModule = new ChatbotModule("tabChatbot", this.azureSettings);
-    this.knowledgeBaseModule = new KnowledgeBaseModule("tabKnowledgeBase");
+const welcome   = document.getElementById("welcome");
+const messages  = document.getElementById("messages");
+const userInput = document.getElementById("userInput");
+const sendBtn   = document.getElementById("sendBtn");
+const thoughtLog = document.getElementById("thoughtLog");
+const sidebar   = document.getElementById("sidebar");
+const toggleBtn = document.getElementById("toggleThoughtsBtn");
+const clearBtn  = document.getElementById("clearBtn");
+
+let hasStarted = false;
+
+/* ── Sidebar toggle ── */
+toggleBtn.addEventListener("click", () => sidebar.classList.toggle("collapsed"));
+
+/* ── Clear chat ── */
+clearBtn.addEventListener("click", () => {
+  messages.innerHTML = "";
+  thoughtLog.innerHTML = `<div class="empty-thoughts">Agent reasoning steps appear here as RIDO processes your query.</div>`;
+  hasStarted = false;
+  welcome.style.display = "flex";
+  messages.style.display = "none";
+});
+
+/* ── Auto-resize textarea ── */
+userInput.addEventListener("input", () => {
+  userInput.style.height = "auto";
+  userInput.style.height = Math.min(userInput.scrollHeight, 120) + "px";
+});
+
+/* ── Enter to send ── */
+userInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    handleSend();
+  }
+});
+
+sendBtn.addEventListener("click", handleSend);
+
+/* ── Suggested prompts ── */
+document.getElementById("welcome").addEventListener("click", (e) => {
+  const btn = e.target.closest(".suggested-btn");
+  if (!btn) return;
+  const prompt = btn.dataset.prompt;
+  if (prompt) {
+    userInput.value = prompt;
+    handleSend();
+  }
+});
+
+/* ── Main send handler ── */
+async function handleSend() {
+  const text = userInput.value.trim();
+  if (!text) return;
+
+  userInput.value = "";
+  userInput.style.height = "auto";
+  sendBtn.disabled = true;
+
+  /* Show chat area, hide welcome */
+  if (!hasStarted) {
+    hasStarted = true;
+    welcome.style.display = "none";
+    messages.style.display = "flex";
   }
 
-  init() {
-    this._attachNavigation();
-    this._attachSettingsModal();
-    this._updateBudgetHeader();
+  /* Clear thoughts for new turn */
+  thoughtLog.innerHTML = "";
 
-    // Initial render
-    this.dashboardModule.render();
-  }
+  /* User bubble */
+  appendMessage("user", text);
 
-  _attachNavigation() {
-    const navButtons = document.querySelectorAll(".nav-tab-btn");
-    navButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const tab = btn.dataset.tab;
-        if (tab === this.currentTab) return;
+  /* Typing indicator */
+  const typingId = "typing_" + Date.now();
+  appendTyping(typingId);
 
-        navButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.add("hidden"));
-        const targetPane = document.getElementById(`tab${this._capitalize(tab)}`);
-        if (targetPane) {
-          targetPane.classList.remove("hidden");
-        }
-
-        this.currentTab = tab;
-
-        // Render tab content on switch
-        if (tab === "dashboard") this.dashboardModule.render();
-        else if (tab === "routeOptimizer") this.routeOptimizerModule.render();
-        else if (tab === "chatbot") this.chatbotModule.render();
-        else if (tab === "knowledgeBase") this.knowledgeBaseModule.render();
-      });
+  try {
+    const result = await agent.processMessage(text, (step) => {
+      appendThought(step);
     });
+
+    removeTyping(typingId);
+    appendMessage("ai", result.responseText);
+  } catch (err) {
+    removeTyping(typingId);
+    appendMessage("ai", `**Error:** ${err.message}\n\nPlease check your Azure connection and try again.`);
+    console.error(err);
   }
 
-  _attachSettingsModal() {
-    const openBtn = document.getElementById("openSettingsBtn");
-    const closeBtn = document.getElementById("closeSettingsBtn");
-    const modal = document.getElementById("settingsModal");
-    const saveBtn = document.getElementById("saveSettingsBtn");
-
-    if (openBtn && modal) {
-      openBtn.addEventListener("click", () => {
-        this._populateSettingsForm();
-        modal.classList.remove("hidden");
-      });
-    }
-
-    if (closeBtn && modal) {
-      closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
-    }
-
-    if (saveBtn) {
-      saveBtn.addEventListener("click", () => {
-        const mode = document.querySelector('input[name="agentModeRadio"]:checked')?.value || "local";
-        const ep1 = document.getElementById("acc1EndpointInput")?.value?.trim() || "";
-        const key1 = document.getElementById("acc1KeyInput")?.value?.trim() || "";
-        const dep1 = document.getElementById("acc1DeploymentInput")?.value?.trim() || "gpt-4o-mini";
-
-        const ep2 = document.getElementById("acc2EndpointInput")?.value?.trim() || "";
-        const key2 = document.getElementById("acc2KeyInput")?.value?.trim() || "";
-        const dep2 = document.getElementById("acc2DeploymentInput")?.value?.trim() || "gpt-4o-mini";
-
-        this.azureSettings.setMode(mode);
-        this.azureSettings.updateAccount1(ep1, key1, dep1);
-        this.azureSettings.updateAccount2(ep2, key2, dep2);
-
-        this._updateBudgetHeader();
-        modal?.classList.add("hidden");
-
-        // Re-render active tab
-        if (this.currentTab === "chatbot") this.chatbotModule.render();
-      });
-    }
-  }
-
-  _populateSettingsForm() {
-    const stats = this.azureSettings.getBudgetStats();
-    const mode = stats.mode;
-
-    const localRadio = document.getElementById("modeLocalRadio");
-    const azureRadio = document.getElementById("modeAzureRadio");
-    if (mode === "azure_dual" && azureRadio) azureRadio.checked = true;
-    else if (localRadio) localRadio.checked = true;
-
-    // Account 1
-    const ep1 = document.getElementById("acc1EndpointInput");
-    const key1 = document.getElementById("acc1KeyInput");
-    const dep1 = document.getElementById("acc1DeploymentInput");
-    if (ep1) ep1.value = stats.account1.endpoint;
-    if (key1) key1.value = stats.account1.apiKey;
-    if (dep1) dep1.value = stats.account1.deployment;
-
-    // Account 2
-    const ep2 = document.getElementById("acc2EndpointInput");
-    const key2 = document.getElementById("acc2KeyInput");
-    const dep2 = document.getElementById("acc2DeploymentInput");
-    if (ep2) ep2.value = stats.account2.endpoint;
-    if (key2) key2.value = stats.account2.apiKey;
-    if (dep2) dep2.value = stats.account2.deployment;
-
-    // Update modal stats
-    const spentText = document.getElementById("modalSpentUSD");
-    const remainingText = document.getElementById("modalRemainingUSD");
-    if (spentText) spentText.innerText = `$${stats.totalSpentUSD.toFixed(4)}`;
-    if (remainingText) remainingText.innerText = `$${stats.remainingBudgetUSD.toFixed(2)}`;
-  }
-
-  _updateBudgetHeader() {
-    const stats = this.azureSettings.getBudgetStats();
-    const budgetBadge = document.getElementById("headerBudgetDisplay");
-    const modeBadge = document.getElementById("headerModeDisplay");
-
-    if (budgetBadge) {
-      budgetBadge.innerHTML = `
-        <i class="ri-wallet-3-line text-emerald-400"></i>
-        <span>Pool: <strong>$${stats.remainingBudgetUSD.toFixed(2)}</strong> / $200</span>
-      `;
-    }
-
-    if (modeBadge) {
-      if (stats.mode === "azure_dual") {
-        modeBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/30 flex items-center gap-1.5";
-        modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Azure Dual-Pool`;
-      } else {
-        modeBadge.className = "text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5";
-        modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Zero-Cost ($0.00)`;
-      }
-    }
-  }
-
-  _capitalize(s) {
-    return s.charAt(0).toUpperCase() + s.slice(1);
-  }
+  sendBtn.disabled = false;
+  userInput.focus();
 }
 
-// Auto-initialize when ready
-const startApp = () => {
-  const app = new App();
-  app.init();
-  window._ridoApp = app;
-};
+/* ── DOM helpers ── */
+function appendMessage(role, text) {
+  const div = document.createElement("div");
+  div.className = `msg ${role}`;
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", startApp);
-} else {
-  startApp();
+  const avatar = document.createElement("div");
+  avatar.className = "msg-avatar";
+  avatar.textContent = role === "user" ? "K" : "🤖";
+
+  const bubble = document.createElement("div");
+  bubble.className = "msg-bubble";
+
+  if (role === "ai" && typeof marked !== "undefined") {
+    bubble.innerHTML = marked.parse(text || "");
+  } else {
+    bubble.textContent = text;
+  }
+
+  div.appendChild(avatar);
+  div.appendChild(bubble);
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function appendTyping(id) {
+  const div = document.createElement("div");
+  div.className = "msg ai";
+  div.id = id;
+  div.innerHTML = `
+    <div class="msg-avatar">🤖</div>
+    <div class="msg-bubble">
+      <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    </div>`;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function removeTyping(id) {
+  const el = document.getElementById(id);
+  if (el) el.remove();
+}
+
+function appendThought(step) {
+  /* Remove placeholder */
+  const empty = thoughtLog.querySelector(".empty-thoughts");
+  if (empty) empty.remove();
+
+  const div = document.createElement("div");
+  div.className = "thought-step";
+  div.innerHTML = `
+    <div class="thought-phase">${step.phase}</div>
+    <div class="thought-title">${step.title}</div>
+    <div class="thought-detail">${step.detail || ""}</div>`;
+  thoughtLog.appendChild(div);
+  thoughtLog.scrollTop = thoughtLog.scrollHeight;
 }
