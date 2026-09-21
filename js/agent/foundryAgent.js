@@ -58,10 +58,11 @@ Maintain and apply the following standardized commercial fleet emissions and fue
 
 ### 3. OUTPUT FORMATTING PROTOCOL
 
-Begin every response directly on line 1 without filler or pleasantries:
-1. Status Badges: Insert high-priority status badges (e.g., \`[CRITICAL COLD-CHAIN BREACH]\`, \`[COMPLIANCE WARNING]\`, \`[FLEET FUEL COMPARISON]\`, \`[NORMAL]\`).
-2. Telemetry & Energy Table: Present incoming telemetry and fuel/energy metrics in a structured Markdown table.
-3. Decisive Action Steps: Provide numbered, chronological operational instructions for dispatchers and drivers.`;
+- **For Operational / Incident / Route Queries:**
+  Begin directly with Status Badges (e.g. `[CRITICAL COLD-CHAIN BREACH]`, `[FLEET FUEL COMPARISON]`), followed by a Telemetry / Energy Table, and numbered Decisive Action Steps.
+
+- **For Conversational / Greeting / General Queries:**
+  Respond with helpfulness, conversational warmth, and clear guidance on how the user can interact with the fleet tools and SOPs.`;
 
 export class FoundryAgent {
   constructor(azureSettingsManager) {
@@ -215,7 +216,14 @@ export class FoundryAgent {
     let primaryIntent = "general_query";
     let ragQuery = query;
 
-    if (q.includes("temperature") || q.includes("cold chain") || q.includes("reefer") || q.includes("spoiled") || q.includes("excursion") || entities.vehicleId === "V-104") {
+    // Conversational, Greeting, & Emotion/Personality Detection
+    const greetings = ["hi", "hello", "hey", "good morning", "good evening", "how are you", "who are you", "what can you do", "help", "thanks", "thank you", "bye", "emotion", "feeling", "feelings", "emotions", "judge", "judging", "human", "friend"];
+    const isConversational = greetings.some(g => q === g || q.startsWith(g + " ") || q.includes("emotion") || q.includes("judg") || q.includes("feeling") || q.includes("how are you"));
+
+    if (isConversational && !vMatch && !foundCities.length) {
+      primaryIntent = "conversational";
+      ragQuery = "RIDO Copilot assistant introduction capabilities";
+    } else if (q.includes("temperature") || q.includes("cold chain") || q.includes("reefer") || q.includes("spoiled") || q.includes("excursion") || entities.vehicleId === "V-104") {
       primaryIntent = "cold_chain_incident";
       ragQuery = "cold chain temperature excursion threshold reefer DMG-01";
     } else if (q.includes("route") || q.includes("optimize") || q.includes("trip") || q.includes("fuel") || q.includes("emission") || entities.destination) {
@@ -377,6 +385,21 @@ export class FoundryAgent {
 1. **Enforce 45-Min Mandatory Break:** Direct driver **Rajesh Kumar (D-11)** to halt at the nearest authorized rest bay immediately (4.5h continuous driving limit reached).
 2. **Shift Handover Alert:** Place driver **Suresh Sharma (D-14)** on restricted duty (7.2h / 8.0h cap reached) and route to regional depot for shift handover.
 3. **Speed Governance Monitoring:** Maintain electronic speed governors at **80 km/h** on 4-lane highways and **40 km/h** within municipal limits.`;
+
+    } else if (intentAnalysis.primaryIntent === "conversational") {
+      response = `\`[NORMAL]\` \`[OPERATIONAL ASSISTANT READY]\`
+
+### 👋 Hello! I am RIDO Copilot
+
+I am an AI assistant focused on fleet intelligence and logistics, but I am also here to communicate clearly, supportively, and helpfully with you! I don't judge emotions, but I'm always ready to help you solve operational challenges, reduce stress during shift dispatches, and optimize fleet routes.
+
+#### 💡 Here is what I can help you with:
+- 🚨 **Incident & Cold-Chain Management**: Monitor reefer units (e.g. *V-104*) for thermal excursions (> 4.0°C).
+- 🗺️ **Multi-Fuel Route Optimization**: Compare EV vs Diesel vs CNG for routes like *Delhi to Jaipur*.
+- 🛡️ **Driver Hours-of-Service Audit**: Track daily driving hours against the 8.0h shift limit and 4.5h continuous break rule.
+- 📚 **SOP Knowledge Retrieval**: Instant answers from your official logistics SOP documents.
+
+How can I assist your fleet operations today?`;
 
     } else {
       response = `\`[FLEET INTELLIGENCE REPORT]\` \`[NORMAL]\`
