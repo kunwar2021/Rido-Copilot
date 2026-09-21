@@ -1,6 +1,7 @@
 /**
  * RIDO Fleet Dashboard Module
  * Handles telemetry KPIs, real-time vehicle cards, health alerts, and Chart.js graphs.
+ * Features live "Reset to 0" and "Load Sample Fleet Data" for demonstration.
  */
 
 import { INITIAL_FLEET_DATA } from "../data/fleetData.js";
@@ -11,30 +12,41 @@ export class DashboardModule {
     this.fleet = [...INITIAL_FLEET_DATA];
     this.currentFilter = "All";
     this.chartInstance = null;
+    this.isZeroState = false;
   }
 
   render() {
     if (!this.container) return;
 
-    const totalVehicles = this.fleet.length;
-    const inTransit = this.fleet.filter(v => v.status === "In Transit" || v.status === "Active Delivery").length;
-    const criticalAlerts = this.fleet.filter(v => v.status === "Critical Alert" || v.alerts.length > 0).length;
-    const evCount = this.fleet.filter(v => v.fuelType === "Electric").length;
-    const avgHealth = Math.round(this.fleet.reduce((acc, v) => acc + v.healthScore, 0) / totalVehicles);
+    const totalVehicles = this.isZeroState ? 0 : this.fleet.length;
+    const inTransit = this.isZeroState ? 0 : this.fleet.filter(v => v.status === "In Transit" || v.status === "Active Delivery").length;
+    const criticalAlerts = this.isZeroState ? 0 : this.fleet.filter(v => v.status === "Critical Alert" || v.alerts.length > 0).length;
+    const evCount = this.isZeroState ? 0 : this.fleet.filter(v => v.fuelType === "Electric").length;
+    const avgHealth = this.isZeroState ? 0 : (totalVehicles > 0 ? Math.round(this.fleet.reduce((acc, v) => acc + v.healthScore, 0) / totalVehicles) : 0);
+    const co2Offset = this.isZeroState ? "0 kg" : "1,240 kg";
 
     this.container.innerHTML = `
       <div class="dashboard-header mb-6 flex flex-wrap justify-between items-center gap-4">
         <div>
           <h2 class="text-2xl font-bold text-white flex items-center gap-2">
-            <span class="inline-block w-3 h-3 bg-emerald-400 rounded-full animate-ping"></span>
+            <span class="inline-block w-3 h-3 ${this.isZeroState ? 'bg-slate-500' : 'bg-emerald-400 animate-ping'} rounded-full"></span>
             Real-Time Fleet Operations
           </h2>
           <p class="text-slate-400 text-sm">Live IoT Telematics, Battery Health, and Active Dispatches</p>
         </div>
-        <div class="flex items-center gap-3">
-          <button id="refreshTelemetryBtn" class="btn-secondary text-sm">
-            <i class="ri-refresh-line"></i> Refresh Telemetry
-          </button>
+        <div class="flex items-center gap-2">
+          ${this.isZeroState ? `
+            <button id="loadSampleDataBtn" class="btn-primary text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-lg shadow-blue-500/20">
+              <i class="ri-database-2-line"></i> Load Sample Fleet Data
+            </button>
+          ` : `
+            <button id="resetDataZeroBtn" class="btn-secondary text-xs px-3 py-2 rounded-xl flex items-center gap-1.5 text-rose-300 hover:text-rose-200 border-rose-800/40 hover:bg-rose-950/40">
+              <i class="ri-delete-bin-7-line"></i> Clear Data (Make 0)
+            </button>
+            <button id="refreshTelemetryBtn" class="btn-secondary text-xs px-3 py-2 rounded-xl flex items-center gap-1.5">
+              <i class="ri-refresh-line"></i> Refresh Telemetry
+            </button>
+          `}
         </div>
       </div>
 
@@ -46,7 +58,7 @@ export class DashboardModule {
             <span class="p-2 rounded-lg bg-blue-500/10 text-blue-400 text-lg"><i class="ri-truck-line"></i></span>
           </div>
           <div class="text-2xl font-bold text-white mt-2">${totalVehicles}</div>
-          <div class="text-xs text-slate-400 mt-1">${evCount} Commercial EVs | ${totalVehicles - evCount} Diesel</div>
+          <div class="text-xs text-slate-400 mt-1">${evCount} Commercial EVs | ${Math.max(0, totalVehicles - evCount)} Diesel</div>
         </div>
 
         <div class="kpi-card glass-panel p-4 rounded-xl border border-slate-700/50">
@@ -81,7 +93,7 @@ export class DashboardModule {
             <span class="text-xs uppercase text-slate-400 font-semibold">Green Energy</span>
             <span class="p-2 rounded-lg bg-teal-500/10 text-teal-400 text-lg"><i class="ri-leaf-line"></i></span>
           </div>
-          <div class="text-2xl font-bold text-teal-400 mt-2">1,240 kg</div>
+          <div class="text-2xl font-bold text-teal-400 mt-2">${co2Offset}</div>
           <div class="text-xs text-slate-400 mt-1">CO₂ Offset This Week</div>
         </div>
       </div>
@@ -140,6 +152,28 @@ export class DashboardModule {
   _renderVehicles() {
     const grid = document.getElementById("vehicleCardsGrid");
     if (!grid) return;
+
+    if (this.isZeroState || this.fleet.length === 0) {
+      grid.className = "col-span-2 text-center py-16 border border-dashed border-slate-800 rounded-xl";
+      grid.innerHTML = `
+        <div class="flex flex-col items-center justify-center space-y-3">
+          <i class="ri-truck-line text-4xl text-slate-600"></i>
+          <p class="text-sm font-semibold text-slate-300">No Active Vehicles in Registry (0 Total)</p>
+          <p class="text-xs text-slate-500 max-w-sm">All vehicles are parked at depot or unassigned. Click "Load Sample Fleet Data" to seed active IoT telemetry.</p>
+          <button id="seedDataInnerBtn" class="btn-primary text-xs px-4 py-2 rounded-xl mt-2 flex items-center gap-1.5">
+            <i class="ri-add-line"></i> Seed Sample Fleet (6 Vehicles)
+          </button>
+        </div>
+      `;
+      document.getElementById("seedDataInnerBtn")?.addEventListener("click", () => {
+        this.isZeroState = false;
+        this.fleet = [...INITIAL_FLEET_DATA];
+        this.render();
+      });
+      return;
+    }
+
+    grid.className = "grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[560px] overflow-y-auto pr-1";
 
     let filtered = [...this.fleet];
     if (this.currentFilter === "In Transit") {
@@ -215,6 +249,10 @@ export class DashboardModule {
   }
 
   _renderAlertsFeed() {
+    if (this.isZeroState) {
+      return `<p class="text-xs text-slate-500 text-center py-4">No active incident alerts (0 Total).</p>`;
+    }
+
     const alerts = [];
     this.fleet.forEach(v => {
       v.alerts.forEach(a => {
@@ -248,10 +286,26 @@ export class DashboardModule {
       });
     });
 
+    const resetBtn = document.getElementById("resetDataZeroBtn");
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        this.isZeroState = true;
+        this.render();
+      });
+    }
+
+    const loadSampleBtn = document.getElementById("loadSampleDataBtn");
+    if (loadSampleBtn) {
+      loadSampleBtn.addEventListener("click", () => {
+        this.isZeroState = false;
+        this.fleet = [...INITIAL_FLEET_DATA];
+        this.render();
+      });
+    }
+
     const refreshBtn = document.getElementById("refreshTelemetryBtn");
     if (refreshBtn) {
       refreshBtn.addEventListener("click", () => {
-        // Random slight telemetry drift
         this.fleet.forEach(v => {
           if (v.status === "In Transit") {
             v.batteryOrFuel = Math.max(10, v.batteryOrFuel - Math.floor(Math.random() * 2));
@@ -271,21 +325,25 @@ export class DashboardModule {
       this.chartInstance.destroy();
     }
 
+    const labels = this.isZeroState ? [] : ["V-101 (EV)", "V-102 (Diesel)", "V-103 (EV)", "V-104 (Reefer)", "V-105 (Diesel)"];
+    const healthData = this.isZeroState ? [] : [96, 84, 99, 72, 98];
+    const fuelData = this.isZeroState ? [] : [82, 38, 64, 48, 95];
+
     const ctx = canvas.getContext("2d");
     this.chartInstance = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: ["V-101 (EV)", "V-102 (Diesel)", "V-103 (EV)", "V-104 (Reefer)", "V-105 (Diesel)"],
+        labels,
         datasets: [
           {
             label: "Health Score (%)",
-            data: [96, 84, 99, 72, 98],
+            data: healthData,
             backgroundColor: "rgba(56, 189, 248, 0.7)",
             borderRadius: 6
           },
           {
             label: "Battery / Fuel (%)",
-            data: [82, 38, 64, 48, 95],
+            data: fuelData,
             backgroundColor: "rgba(16, 185, 129, 0.7)",
             borderRadius: 6
           }
