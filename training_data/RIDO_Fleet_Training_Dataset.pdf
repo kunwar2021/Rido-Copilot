@@ -1,0 +1,39 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+4 0 obj << /Length 1618 >>
+stream
+BT /F1 14 Tf 50 740 Td (RIDO Fleet Training Dataset - Multi-Fuel and SOPs) Tj ET
+BT /F1 10 Tf 50 700 Td (Scenario 1: Cold-Chain Thermal Excursion on Vehicle V-104 8.9C vs target) Tj ET
+BT /F1 10 Tf 50 686 Td (3.5C. Status: CRITICAL COLD-CHAIN BREACH. Action: Immediate dynamic) Tj ET
+BT /F1 10 Tf 50 672 Td (diversion to nearest cold-storage standby in Karnal. Generate e-POD) Tj ET
+BT /F1 10 Tf 50 658 Td (non-compliance return code DMG-01.) Tj ET
+BT /F1 10 Tf 50 636 Td (Scenario 2: Multi-Fuel Route Optimization from Delhi to Jaipur 280 km for) Tj ET
+BT /F1 10 Tf 50 622 Td (8,000 kg cargo. Commercial EV consumes 266 kWh Cost: INR 2,261, 0.00 kg) Tj ET
+BT /F1 10 Tf 50 608 Td (tailpipe CO2, Net savings vs Diesel: INR 4,951 and 210.1 kg CO2 offset.) Tj ET
+BT /F1 10 Tf 50 594 Td (Diesel baseline consumes 78.4L Cost: INR 7,212, CO2: 210.1 kg at 2.68 kg) Tj ET
+BT /F1 10 Tf 50 580 Td (CO2/L.) Tj ET
+BT /F1 10 Tf 50 558 Td (Scenario 3: Driver Shift Hours Compliance for Rajesh Kumar D-11. Reached) Tj ET
+BT /F1 10 Tf 50 544 Td (4.5 hours continuous driving limit. Status: MANDATORY SHIFT HALT. Action:) Tj ET
+BT /F1 10 Tf 50 530 Td (Enforce 45-minute mandatory rest layby immediately. Daily shift ceiling) Tj ET
+BT /F1 10 Tf 50 516 Td (capped at 8.0 hours.) Tj ET
+BT /F1 10 Tf 50 494 Td (Scenario 4: Commercial EV Battery Management for Vehicle V-103 SoC 18%.) Tj ET
+BT /F1 10 Tf 50 480 Td (Status: LOW BATTERY WARNING. Action: Reroute to Indiranagar 60kW DC Fast) Tj ET
+BT /F1 10 Tf 50 466 Td (Charger. Limit DC fast-charge depth to maximum 85% to preserve battery life) Tj ET
+BT /F1 10 Tf 50 452 Td (cycle.) Tj ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000115 00000 n 
+0000000280 00000 n 
+0000000210 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+450
+%%EOF
