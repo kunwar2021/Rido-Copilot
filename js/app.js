@@ -156,7 +156,15 @@ class App {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+// Auto-initialize when ready
+const startApp = () => {
   const app = new App();
   app.init();
-});
+  window._ridoApp = app;
+};
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", startApp);
+} else {
+  startApp();
+}
