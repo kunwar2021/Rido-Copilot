@@ -1,0 +1,37 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+4 0 obj << /Length 1594 >>
+stream
+BT /F1 14 Tf 50 740 Td (RIDO SOP: Fleet Management and Maintenance) Tj ET
+BT /F1 10 Tf 50 700 Td (1. Pre-Trip Inspection Protocol: All drivers must complete the digital) Tj ET
+BT /F1 10 Tf 50 686 Td (pre-trip inspection via the RIDO Driver App before starting any trip.) Tj ET
+BT /F1 10 Tf 50 664 Td (Mandatory checklist items: 1. Tire pressure must be within +/- 5 PSI of) Tj ET
+BT /F1 10 Tf 50 650 Td (rated pressure 110 PSI for heavy trucks, 32-35 PSI for light EVs. 2. Brake) Tj ET
+BT /F1 10 Tf 50 636 Td (pad clearance inspection. 3. Fluid levels. 4. Battery State-of-Charge must) Tj ET
+BT /F1 10 Tf 50 622 Td (be minimum 80% for EV departures. Any vehicle failing critical items must) Tj ET
+BT /F1 10 Tf 50 608 Td (be tagged Maintenance and cannot be dispatched.) Tj ET
+BT /F1 10 Tf 50 586 Td (2. Preventative Maintenance Schedule: Heavy diesel vehicles require) Tj ET
+BT /F1 10 Tf 50 572 Td (A-Service every 15,000 km and B-Service every 45,000 km. Commercial EVs) Tj ET
+BT /F1 10 Tf 50 558 Td (require high-voltage diagnostic checks every 20,000 km. Vehicles with) Tj ET
+BT /F1 10 Tf 50 544 Td (Health Score below 75 must be routed to depot within 24 hours.) Tj ET
+BT /F1 10 Tf 50 522 Td (3. Reefer Cold Chain Unit Operations: Refrigerated transport units must be) Tj ET
+BT /F1 10 Tf 50 508 Td (pre-cooled for 45 minutes prior to loading cargo. If internal telemetry) Tj ET
+BT /F1 10 Tf 50 494 Td (logs a temperature deviation exceeding 2.0C above setpoint for more than 15) Tj ET
+BT /F1 10 Tf 50 480 Td (consecutive minutes, execute immediate diversion to cold-storage standby.) Tj ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000115 00000 n 
+0000000280 00000 n 
+0000000210 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+450
+%%EOF

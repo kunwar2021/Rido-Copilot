@@ -1,0 +1,35 @@
+%PDF-1.4
+1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj
+2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj
+3 0 obj << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >> endobj
+5 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj
+4 0 obj << /Length 1310 >>
+stream
+BT /F1 14 Tf 50 740 Td (RIDO Driver Health, Safety and Hours Standards) Tj ET
+BT /F1 10 Tf 50 700 Td (1. Maximum Driving Hours and Rest Breaks: Maximum continuous driving) Tj ET
+BT /F1 10 Tf 50 686 Td (duration is 4.5 hours, followed by mandatory minimum 45-minute rest break.) Tj ET
+BT /F1 10 Tf 50 672 Td (Maximum total daily driving limit is 8.0 hours within a 24-hour cycle. When) Tj ET
+BT /F1 10 Tf 50 658 Td (driver reaches 7.0 hours, system issues warning alert and restricts) Tj ET
+BT /F1 10 Tf 50 644 Td (subsequent dispatches.) Tj ET
+BT /F1 10 Tf 50 622 Td (2. Speed Governance: Fleet speed is electronically governed to 80 km/h on) Tj ET
+BT /F1 10 Tf 50 608 Td (expressways, 50 km/h on state highways, and 40 km/h in city boundaries.) Tj ET
+BT /F1 10 Tf 50 594 Td (Telematics alerts trigger on speeds > 85 km/h or harsh braking > 0.4g.) Tj ET
+BT /F1 10 Tf 50 572 Td (3. Adverse Weather and Low Visibility SOP: During heavy fog visibility <) Tj ET
+BT /F1 10 Tf 50 558 Td (50 meters, hazard lights must be activated, speed reduced to max 30 km/h,) Tj ET
+BT /F1 10 Tf 50 544 Td (and following distance increased to 50 meters. If visibility drops below 20) Tj ET
+BT /F1 10 Tf 50 530 Td (meters, drivers are mandated to park at nearest toll plaza or petrol) Tj ET
+BT /F1 10 Tf 50 516 Td (station.) Tj ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+0000000115 00000 n 
+0000000280 00000 n 
+0000000210 00000 n 
+trailer << /Size 6 /Root 1 0 R >>
+startxref
+450
+%%EOF
