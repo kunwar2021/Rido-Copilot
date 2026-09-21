@@ -1,12 +1,34 @@
-/**
- * RIDO Copilot - Direct Azure AI Foundry Chat
- * Pure pass-through: user message → Azure Foundry Agent → response
- * No local intent detection, no tool registry, no RAG preprocessing
+﻿/**
+ * RIDO Copilot - Direct Azure OpenAI Chat (Chat Completions endpoint)
+ * Uses gpt-6-astra via standard chat/completions with full RIDO system prompt
  */
 
-const ENDPOINT = "https://kunwar2954beai24-5740-resource.services.ai.azure.com/api/projects/kunwar2954beai24-5740/agents/RIDO-Copilot/endpoint/protocols/openai/responses";
-const API_KEY  = atob("MzU4OTZkNzUtMjFlMS00ZTA1LWJkZjQtMDYyNDI3Njg1MTUx");
+const ENDPOINT = "https://kunwar2954beai24-5740-resource.services.ai.azure.com/openai/deployments/gpt-6-astra/chat/completions?api-version=2024-12-01-preview";
+const API_KEY  = atob("RDVHbktVOEwzSWRreTc1QmluejBjWnlENFc1VXJRWHNQVm5FTzhvS1JqcFEzQWZJb0tESEpRUUpJOUNDSUFDTm5zN1JYSjN3M0FBQUFBQ09HTEVGNA==");
 
+const SYSTEM_PROMPT = `You are RIDO Copilot, an intelligent Fleet Intelligence and Logistics Dispatch Assistant powered by Azure AI Foundry.
+
+You help fleet managers and dispatchers with:
+- Route optimization (EV vs Diesel vs CNG emissions, distance, cost)
+- Cold-chain temperature monitoring and breach alerts
+- Driver hours-of-service compliance (4.5h continuous limit, 8.0h daily cap)
+- Vehicle fleet status, battery/fuel levels, payload tracking
+- Carbon offset and sustainability reporting
+
+Fleet fuel emission constants:
+- Diesel HSD: 2.68 kg CO2/L
+- CNG: 2.75 kg CO2/kg
+- LNG: 2.78 kg CO2/kg
+- Commercial EV: 0.00 kg CO2 tailpipe
+
+Key policies:
+- Driver: Max 4.5h continuous drive (45min rest), 8.0h daily cap
+- Cold-chain: Reefer setpoint <= 4.0°C, breach > 4.0°C for > 15min = DMG-01 e-POD
+- EV low battery warning: < 20% SoC
+
+For operational queries: Give structured tables, status badges, and numbered action steps.
+For conversational queries: Be warm, helpful, and concise.
+Always answer based on what the user actually asked — use the cities, vehicles, and routes they mention.`;
 
 const welcome    = document.getElementById("welcome");
 const messages   = document.getElementById("messages");
@@ -18,7 +40,7 @@ const sidebar    = document.getElementById("sidebar");
 const toggleBtn  = document.getElementById("toggleThoughtsBtn");
 
 let hasStarted = false;
-let previousResponseId = null; // for multi-turn conversation
+let conversationHistory = [];
 
 /* ── Sidebar toggle ── */
 toggleBtn.addEventListener("click", () => sidebar.classList.toggle("collapsed"));
@@ -26,9 +48,9 @@ toggleBtn.addEventListener("click", () => sidebar.classList.toggle("collapsed"))
 /* ── Clear ── */
 clearBtn.addEventListener("click", () => {
   messages.innerHTML = "";
-  thoughtLog.innerHTML = `<div class="empty-thoughts">Foundry call logs will appear here.</div>`;
+  thoughtLog.innerHTML = `<div class="empty-thoughts">API call logs appear here.</div>`;
   hasStarted = false;
-  previousResponseId = null;
+  conversationHistory = [];
   welcome.style.display = "flex";
   messages.style.display = "none";
 });
@@ -68,19 +90,24 @@ async function handleSend() {
 
   thoughtLog.innerHTML = "";
   appendMessage("user", text);
+  conversationHistory.push({ role: "user", content: text });
+
   const typingId = "typing_" + Date.now();
   appendTyping(typingId);
 
   try {
-    logThought("Foundry API", "Sending to Azure AI Foundry", `POST → RIDO-Copilot agent`);
+    logThought("Azure OpenAI", "Sending request", `Model: gpt-6-astra · Messages: ${conversationHistory.length}`);
     const t0 = Date.now();
 
-    const body = { input: text };
+    const body = {
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...conversationHistory
+      ],
+      max_completion_tokens: 1200
+    };
 
-    // Multi-turn: pass previous_response_id if available
-    if (previousResponseId) body.previous_response_id = previousResponseId;
-
-    const res = await fetch(ENDPOINT + "?api-version=v1", {
+    const res = await fetch(ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -97,35 +124,22 @@ async function handleSend() {
     }
 
     const data = await res.json();
-    logThought("Foundry API", `Response received (${elapsed}ms)`, `Status: ${res.status} · Tokens: ${(data.usage?.input_tokens || 0) + (data.usage?.output_tokens || 0)}`);
+    const responseText = data.choices?.[0]?.message?.content || "_(No response)_";
+    const tokens = (data.usage?.prompt_tokens || 0) + (data.usage?.completion_tokens || 0);
 
-    // Store response ID for multi-turn
-    if (data.id) previousResponseId = data.id;
+    logThought("Azure OpenAI", `✅ Response (${elapsed}ms)`, `Tokens: ${tokens} · Finish: ${data.choices?.[0]?.finish_reason}`);
 
-    // Extract text from response
-    let responseText = "";
-    if (Array.isArray(data.output)) {
-      for (const item of data.output) {
-        if (Array.isArray(item.content)) {
-          for (const block of item.content) {
-            if (block.type === "output_text" || block.text) {
-              responseText += block.text || "";
-            }
-          }
-        }
-      }
-    }
-    if (!responseText && data.choices?.[0]?.message?.content) {
-      responseText = data.choices[0].message.content;
-    }
+    // Keep conversation memory (last 10 turns to stay within token limits)
+    conversationHistory.push({ role: "assistant", content: responseText });
+    if (conversationHistory.length > 20) conversationHistory = conversationHistory.slice(-20);
 
     removeTyping(typingId);
-    appendMessage("ai", responseText || "_(No response from agent)_");
+    appendMessage("ai", responseText);
 
   } catch (err) {
     removeTyping(typingId);
-    logThought("Error", err.message, "Check network or API key");
-    appendMessage("ai", `**Connection error:** ${err.message}`);
+    logThought("Error", err.message, "Check console for details");
+    appendMessage("ai", `**Error:** ${err.message}`);
     console.error(err);
   }
 
@@ -161,9 +175,7 @@ function appendTyping(id) {
   messages.scrollTop = messages.scrollHeight;
 }
 
-function removeTyping(id) {
-  document.getElementById(id)?.remove();
-}
+function removeTyping(id) { document.getElementById(id)?.remove(); }
 
 function logThought(phase, title, detail) {
   const empty = thoughtLog.querySelector(".empty-thoughts");
