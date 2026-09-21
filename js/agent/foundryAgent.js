@@ -157,6 +157,9 @@ export class FoundryAgent {
       }
     } else {
       await this._sleep(300);
+      finalResponse = this._synthesizeStandardResponse(userMessage, intentAnalysis, toolExecutions, ragChunks);
+    }
+
     // Build Apple HIG Interactive Widget Descriptor
     const higWidgets = this._generateHigWidgets(intentAnalysis, toolExecutions, ragChunks);
 
