@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RIDO AI — Fleet Intelligence & Foundry Agent Copilot</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- RemixIcon Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Leaflet Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Marked.js Markdown Parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-slate-950 text-slate-100 flex flex-col min-h-screen">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 bg-slate-950/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <!-- Logo & Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-400 flex items-center justify-center text-white text-xl shadow-lg shadow-blue-500/25">
+          <i class="ri-truck-line"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-lg tracking-tight text-white">RIDO <span class="text-cyan-400">AI</span></span>
+            <span class="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
+              Foundry
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400">Autonomous Fleet & Logistics Platform</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden md:flex items-center gap-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
+        <button class="nav-tab-btn active text-xs px-3.5 py-2 flex items-center gap-1.5" data-tab="dashboard">
+          <i class="ri-dashboard-3-line"></i> Fleet Dashboard
+        </button>
+        <button class="nav-tab-btn text-xs px-3.5 py-2 flex items-center gap-1.5" data-tab="routeOptimizer">
+          <i class="ri-route-line"></i> Route Optimizer
+        </button>
+        <button class="nav-tab-btn text-xs px-3.5 py-2 flex items-center gap-1.5" data-tab="chatbot">
+          <i class="ri-robot-2-line text-cyan-400"></i> AI Copilot
+        </button>
+        <button class="nav-tab-btn text-xs px-3.5 py-2 flex items-center gap-1.5" data-tab="knowledgeBase">
+          <i class="ri-book-read-line"></i> SOP Documents
+        </button>
+      </nav>
+
+      <!-- Right Controls: Budget & Settings -->
+      <div class="flex items-center gap-3">
+        <!-- Live Mode Badge -->
+        <div id="headerModeDisplay" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Zero-Cost ($0.00)
+        </div>
+
+        <!-- Budget Pool Tracker -->
+        <div id="headerBudgetDisplay" class="hidden sm:flex text-xs font-mono px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 items-center gap-1.5 text-slate-300">
+          <i class="ri-wallet-3-line text-emerald-400"></i>
+          <span>Pool: <strong>$200.00</strong></span>
+        </div>
+
+        <!-- Azure Settings Gear -->
+        <button id="openSettingsBtn" class="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition" title="Azure Settings & Dual-ID Pool">
+          <i class="ri-settings-4-line text-lg"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Tab: Fleet Dashboard -->
+    <section id="tabDashboard" class="tab-pane">
+      <!-- Mounted by js/modules/dashboard.js -->
+    </section>
+
+    <!-- Tab: Route Optimizer -->
+    <section id="tabRouteOptimizer" class="tab-pane hidden">
+      <!-- Mounted by js/modules/routeOptimizer.js -->
+    </section>
+
+    <!-- Tab: AI Copilot Chatbot -->
+    <section id="tabChatbot" class="tab-pane hidden">
+      <!-- Mounted by js/modules/chatbot.js -->
+    </section>
+
+    <!-- Tab: SOP Knowledge Base -->
+    <section id="tabKnowledgeBase" class="tab-pane hidden">
+      <!-- Mounted by js/modules/knowledgeBase.js -->
+    </section>
+  </main>
+
+  <!-- Azure Dual-Account Configuration Modal -->
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
+    <div class="glass-panel w-full max-w-2xl rounded-2xl border border-slate-700 p-6 space-y-5 bg-slate-900">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i class="ri-settings-4-line text-blue-400 text-xl"></i>
+          <h3 class="text-lg font-bold text-white">Azure AI Foundry & Dual-Account Pool</h3>
+        </div>
+        <button id="closeSettingsBtn" class="text-slate-400 hover:text-white text-lg">
+          <i class="ri-close-line"></i>
+        </button>
+      </div>
+
+      <!-- Execution Mode Radio -->
+      <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800 space-y-2">
+        <label class="block text-xs uppercase font-bold text-slate-400">Agent Execution Mode</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-800 bg-slate-900 cursor-pointer hover:border-slate-700">
+            <input type="radio" name="agentModeRadio" id="modeLocalRadio" value="local" checked class="text-blue-500">
+            <div>
+              <p class="text-xs font-bold text-white">Zero-Cost Offline Simulator</p>
+              <p class="text-[11px] text-slate-400">$0.00 cost, heuristic tool calls & RAG</p>
+            </div>
+          </label>
+
+          <label class="flex items-center gap-2 p-2.5 rounded-lg border border-slate-800 bg-slate-900 cursor-pointer hover:border-slate-700">
+            <input type="radio" name="agentModeRadio" id="modeAzureRadio" value="azure_dual" class="text-blue-500">
+            <div>
+              <p class="text-xs font-bold text-white">Live Azure Dual Pool ($200 Pool)</p>
+              <p class="text-[11px] text-slate-400">Round-Robin across both Azure Keys</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Dual Accounts Inputs -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Account 1 (Yours) -->
+        <div class="p-4 rounded-xl bg-slate-950/40 border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-blue-400 uppercase">Account 1 (Primary - Kunwar)</h4>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono">$100 Limit</span>
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-0.5">Azure OpenAI Endpoint</label>
+            <input type="text" id="acc1EndpointInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-0.5">API Key</label>
+            <input type="password" id="acc1KeyInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-0.5">Model Deployment</label>
+            <input type="text" id="acc1DeploymentInput" value="gpt-4o-mini" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
+          </div>
+        </div>
+
+        <!-- Account 2 (Friend) -->
+        <div class="p-4 rounded-xl bg-slate-950/40 border border-slate-800 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-xs font-bold text-emerald-400 uppercase">Account 2 (Secondary - Friend)</h4>
+            <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono">$100 Limit</span>
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-0.5">Friend's Endpoint URL</label>
+            <input type="text" id="acc2EndpointInput" placeholder="https://friend-resource.openai.azure.com/" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-0.5">Friend's API Key</label>
+            <input type="password" id="acc2KeyInput" placeholder="Paste friend's API key..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-400 mb-0.5">Model Deployment</label>
+            <input type="text" id="acc2DeploymentInput" value="gpt-4o-mini" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white outline-none focus:border-blue-500 font-mono">
+          </div>
+        </div>
+      </div>
+
+      <!-- Budget Stats Display -->
+      <div class="flex justify-between items-center px-3 py-2 rounded-lg bg-slate-950 text-xs font-mono text-slate-300 border border-slate-800">
+        <span>Combined Pool Spent: <strong id="modalSpentUSD" class="text-rose-400">$0.0000</strong></span>
+        <span>Remaining Budget: <strong id="modalRemainingUSD" class="text-emerald-400">$200.00</strong></span>
+      </div>
+
+      <div class="flex justify-end gap-3 pt-2">
+        <button id="saveSettingsBtn" class="btn-primary px-5 py-2.5 rounded-xl font-semibold text-xs flex items-center gap-1.5">
+          <i class="ri-check-line"></i> Save & Apply Configuration
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 bg-slate-950 py-4 text-center text-xs text-slate-500">
+    <p>RIDO AI Platform • Microsoft Azure AI Foundry & Model Context Protocol (MCP) • 2026</p>
+  </footer>
+
+  <!-- App Entry Point (ES6 Module) -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

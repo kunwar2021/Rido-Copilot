@@ -1,0 +1,15 @@
+{
+  "name": "rido-mcp-server",
+  "version": "1.0.0",
+  "description": "Model Context Protocol (MCP) Server for RIDO AI Fleet Intelligence with Dual-Azure Load Balancing",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "server": "node server.js --port 3000"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.0"
+  },
+  "keywords": ["mcp", "azure-ai-foundry", "fleet", "logistics", "copilot"]
+}

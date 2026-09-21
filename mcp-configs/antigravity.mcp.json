@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "rido-copilot": {
+      "command": "node",
+      "args": ["C:/Users/kunwar bansal/Desktop/rido azure ai/mcp-server/server.js"],
+      "env": {
+        "AZURE_OPENAI_KEY_1": "${env:AZURE_OPENAI_KEY_1}",
+        "AZURE_OPENAI_ENDPOINT_1": "https://kunwar2954beai24-9211-resource.openai.azure.com/",
+        "AZURE_OPENAI_KEY_2": "${env:AZURE_OPENAI_KEY_2}",
+        "AZURE_OPENAI_ENDPOINT_2": "${env:AZURE_OPENAI_ENDPOINT_2}"
+      }
+    }
+  }
+}
