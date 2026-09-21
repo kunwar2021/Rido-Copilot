@@ -1,4 +1,4 @@
-﻿/**
+/**
  * RIDO Copilot — Autonomous Fleet Intelligence
  * Azure AI Foundry Agent (RIDO-Copilot v2) Engine & Cyber HUD Controller
  */
@@ -94,38 +94,152 @@ class SoundFX {
 }
 const sfx = new SoundFX();
 
+// Demo Authentication Credentials
+const DEMO_AUTH = {
+  loginId: "demo@rido.ai",
+  password: "RIDO2026"
+};
+
+// Application State
+const state = {
+  sessionToken: null,
+  persona: "Dispatcher Gate",
+  isAuthenticated: false
+};
+
+const loginIdInput     = document.getElementById("loginId");
+const loginPassword    = document.getElementById("loginPassword");
+const togglePasswordBtn= document.getElementById("togglePasswordBtn");
+const togglePasswordIcon=document.getElementById("togglePasswordIcon");
+const loginSubmitBtn   = document.getElementById("loginSubmitBtn");
+const loginError       = document.getElementById("loginError");
+const headerSessionToken=document.getElementById("headerSessionToken");
+const headerPersonaBadge=document.getElementById("headerPersonaBadge");
+const personaButtons   = document.querySelectorAll(".persona-toggle-btn");
+
+/* ── Password Visibility Toggle ── */
+if (togglePasswordBtn && loginPassword) {
+  togglePasswordBtn.addEventListener("click", () => {
+    const isPassword = loginPassword.type === "password";
+    loginPassword.type = isPassword ? "text" : "password";
+    togglePasswordIcon.className = isPassword ? "ri-eye-off-line" : "ri-eye-line";
+  });
+}
+
+/* ── Persona Selection Toggle ── */
+personaButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    personaButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.persona = btn.dataset.persona || "Dispatcher Gate";
+  });
+});
+
 /* ══════════════════════════════════════════════
-   2. LOGIN GATE CONTROLLER
+   2. AUTHENTICATION & SECURITY GATE CONTROLLER
    ══════════════════════════════════════════════ */
+function generateDemoSessionToken(prefix = "RIDO-") {
+  const rand = (window.crypto && crypto.randomUUID)
+    ? crypto.randomUUID().substring(0, 6).toUpperCase()
+    : Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `${prefix}${rand}`;
+}
+
 function checkAuth() {
-  const savedUser = sessionStorage.getItem("rido_authenticated_user");
-  if (savedUser) {
-    unlockApp(savedUser);
+  const savedToken = sessionStorage.getItem("rido_session_token");
+  const savedPersona = sessionStorage.getItem("rido_persona");
+  if (savedToken) {
+    state.sessionToken = savedToken;
+    state.persona = savedPersona || "Dispatcher Gate";
+    state.isAuthenticated = true;
+    unlockApp(false);
   } else {
     loginScreen.classList.remove("hidden");
   }
 }
 
-function unlockApp(username = "Kunwar Bansal") {
-  sfx.playGrant();
-  sessionStorage.setItem("rido_authenticated_user", username);
-  dispatcherBadge.innerHTML = `Commander: <strong>${username}</strong>`;
+function unlockApp(playChime = true) {
+  if (playChime) sfx.playGrant();
+  
+  // Update Header Telemetry HUD
+  if (headerSessionToken) headerSessionToken.innerText = state.sessionToken;
+  if (headerPersonaBadge) headerPersonaBadge.innerText = `[${state.persona.toUpperCase()}]`;
+  if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${state.persona}</strong>`;
+
+  // Hide Login Gate
   loginScreen.classList.add("hidden");
   setTimeout(() => userInput.focus(), 300);
 }
 
 loginForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  const uname = document.getElementById("loginUsername").value.trim() || "Commander";
-  unlockApp(uname);
+  const enteredId = loginIdInput.value.trim();
+  const enteredPw = loginPassword.value;
+
+  // Validation: non-empty and matches demo credentials
+  if (!enteredId || !enteredPw || enteredId.toLowerCase() !== DEMO_AUTH.loginId.toLowerCase() || enteredPw !== DEMO_AUTH.password) {
+    loginError.style.display = "flex";
+    return;
+  }
+
+  // Hide error banner if previously visible
+  loginError.style.display = "none";
+
+  // Subtle Loading State
+  loginSubmitBtn.disabled = true;
+  loginSubmitBtn.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Authenticating&hellip;`;
+
+  setTimeout(() => {
+    // Generate simulated frontend demo token
+    state.sessionToken = generateDemoSessionToken("RIDO-");
+    state.isAuthenticated = true;
+
+    // Persist demo session
+    sessionStorage.setItem("rido_session_token", state.sessionToken);
+    sessionStorage.setItem("rido_persona", state.persona);
+
+    // Reset button state
+    loginSubmitBtn.disabled = false;
+    loginSubmitBtn.innerHTML = `<i class="ri-login-box-line"></i> Sign In to RIDO-Copilot`;
+
+    unlockApp(true);
+  }, 400);
 });
 
+/* ── Evaluator Demo Bypass ── */
 evaluatorDemoBtn.addEventListener("click", () => {
-  unlockApp("Capstone Evaluator (VIP Demo)");
+  loginError.style.display = "none";
+  state.sessionToken = generateDemoSessionToken("RIDO-EVAL-");
+  state.isAuthenticated = true;
+
+  sessionStorage.setItem("rido_session_token", state.sessionToken);
+  sessionStorage.setItem("rido_persona", state.persona);
+
+  unlockApp(true);
 });
 
+/* ── Sign Out Handler ── */
 logoutBtn.addEventListener("click", () => {
-  sessionStorage.removeItem("rido_authenticated_user");
+  // 1. Clear simulated session token
+  state.sessionToken = null;
+  state.isAuthenticated = false;
+  sessionStorage.removeItem("rido_session_token");
+  sessionStorage.removeItem("rido_persona");
+
+  // 2. Stop speech recognition if active
+  if (isListening && speechRecognizer) {
+    speechRecognizer.stop();
+    stopListening();
+  }
+
+  // 3. Stop speech synthesis
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+
+  // 4. Return to Login ID + Password screen and clear sensitive inputs
+  loginPassword.value = "";
+  loginError.style.display = "none";
   loginScreen.classList.remove("hidden");
 });
 
