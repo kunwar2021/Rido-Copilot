@@ -128,25 +128,55 @@ export class RouteOptimizerModule {
 
     if (this.map) {
       this.map.remove();
+      this.map = null;
     }
 
     // Centered around Northern India / Delhi-Jaipur corridor initially
     this.map = L.map("leafletMapContainer", {
-      zoomControl: true
+      zoomControl: true,
+      preferCanvas: false
     }).setView([28.0, 77.0], 7);
 
-    // 100% Free OpenStreetMap standard tiles (Zero API key, Zero watermark)
+    // 100% Free OpenStreetMap tiles — no API key, no watermark
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19
+      maxZoom: 19,
+      crossOrigin: true
     }).addTo(this.map);
+
+    // Fix map rendering after tab switch (container size may be 0 initially)
+    setTimeout(() => {
+      if (this.map) this.map.invalidateSize();
+    }, 200);
   }
 
   _attachEvents() {
-    const computeBtn = document.getElementById("computeRouteBtn");
-    if (computeBtn) {
-      computeBtn.addEventListener("click", () => this._triggerCalculation());
+    // Use event delegation on the stable container — survives innerHTML re-renders
+    if (!this.container) return;
+
+    // Remove old listener if any
+    if (this._delegateHandler) {
+      this.container.removeEventListener("click", this._delegateHandler);
     }
+
+    this._delegateHandler = (e) => {
+      const btn = e.target.closest("#computeRouteBtn");
+      if (!btn) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Loading state
+      btn.disabled = true;
+      btn.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Computing...`;
+
+      setTimeout(() => {
+        this._triggerCalculation();
+        btn.disabled = false;
+        btn.innerHTML = `<i class="ri-calculator-line"></i> Calculate Optimal Route & Dispatch`;
+      }, 400);
+    };
+
+    this.container.addEventListener("click", this._delegateHandler);
   }
 
   _triggerCalculation() {
@@ -157,6 +187,8 @@ export class RouteOptimizerModule {
     const coldChain = document.getElementById("coldChainCheck")?.checked || false;
 
     const routeTool = AI_TOOLS.find(t => t.name === "optimize_route");
+    if (!routeTool) { console.error("optimize_route tool not found"); return; }
+
     const result = routeTool.execute({
       origin,
       destination,
