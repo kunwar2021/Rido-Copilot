@@ -1,11 +1,12 @@
-﻿/**
+/**
  * RIDO Copilot - Direct Azure AI Foundry Chat
  * Pure pass-through: user message → Azure Foundry Agent → response
  * No local intent detection, no tool registry, no RAG preprocessing
  */
 
 const ENDPOINT = "https://kunwar2954beai24-5740-resource.services.ai.azure.com/api/projects/kunwar2954beai24-5740/agents/RIDO-Copilot/endpoint/protocols/openai/responses";
-const API_KEY  = atob("RDVHbktVOEwzSWRreTc1QmluejBjWnlENFc1VXJRWHNQVm5FTzhvS1JqcFEzQWZJb0tESEpRUUpJOUNDSUFDTm5zN1JYSjN3M0FBQUFBQ09HTEVGNA==");
+const API_KEY  = atob("MzU4OTZkNzUtMjFlMS00ZTA1LWJkZjQtMDYyNDI3Njg1MTUx");
+
 
 const welcome    = document.getElementById("welcome");
 const messages   = document.getElementById("messages");
