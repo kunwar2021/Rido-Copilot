@@ -427,54 +427,134 @@ const PERSONA_PROFILES = {
 };
 
 /* ══════════════════════════════════════════════
-   ROLE-BASED ACCESS CONTROL (RBAC) POLICY
-   Strict isolation: one role's features cannot be seen or accessed by another
+   ROLE-BASED ACCESS CONTROL (RBAC) POLICY & MATRIX
+   Strict isolation: one role's features and tabs cannot be seen or accessed by another
    ══════════════════════════════════════════════ */
-const ALL_APP_NAVS = ["navHome", "navFleet", "navRoutes", "navAnalytics", "navReports"];
-const ALL_APP_VIEWS = ["viewHome", "viewFleet", "viewRoutes", "viewAnalytics", "viewReports"];
-
-const ROLE_PERMISSIONS = {
+const ROLE_CONFIG = {
   "Driver In-Cab": {
     badge: "[DRIVER IN-CAB]",
-    defaultTab: "routes",
-    allowedNavs: ALL_APP_NAVS,
-    allowedViews: ALL_APP_VIEWS,
-    allowedPages: ["index.html", "routes.html", "fleet.html"],
+    defaultTab: "home",
+    allowedTabs: ["home", "routes"],
+    allowedViews: ["viewHome", "viewRoutes"],
+    tabLabels: { home: "In-Cab Cockpit", routes: "My Active Route" },
+    tabIcons: { home: "ri-dashboard-3-line", routes: "ri-route-line" },
+    title: "In-Cab Instrument Cluster & Telematics",
+    subtitle: "Live Unit TRK-A (Scania 45R) In-Cab Telemetry, HOS Rest Countdown & Active Route",
+    icon: "ri-truck-line",
+    iconBg: "#16a34a",
     showProcessStrip: false
   },
   "Compliance Officer": {
     badge: "[COMPLIANCE OFFICER]",
-    defaultTab: "reports",
-    allowedNavs: ALL_APP_NAVS,
-    allowedViews: ALL_APP_VIEWS,
-    allowedPages: ["index.html", "reports.html", "analytics.html"],
+    defaultTab: "home",
+    allowedTabs: ["home", "reports"],
+    allowedViews: ["viewHome", "viewReports"],
+    tabLabels: { home: "Safety & Audit Hub", reports: "Regulatory Dockets" },
+    tabIcons: { home: "ri-shield-check-line", reports: "ri-file-shield-2-line" },
+    title: "Regulatory Compliance & Safety Surveillance Deck",
+    subtitle: "Cold-Chain Integrity SLA (99.1%), HOS Shift Logs & ESG Certified Audit Dockets",
+    icon: "ri-shield-check-line",
+    iconBg: "#4f46e5",
     showProcessStrip: false
   },
   "Dispatcher Gate": {
     badge: "[DISPATCHER GATE]",
-    defaultTab: "fleet",
-    allowedNavs: ALL_APP_NAVS,
-    allowedViews: ALL_APP_VIEWS,
-    allowedPages: ["index.html", "fleet.html", "routes.html"],
+    defaultTab: "home",
+    allowedTabs: ["home", "fleet", "routes"],
+    allowedViews: ["viewHome", "viewFleet", "viewRoutes"],
+    tabLabels: { home: "Gate Operations", fleet: "Fleet Tracking", routes: "Corridor Dispatch" },
+    tabIcons: { home: "ri-building-2-line", fleet: "ri-truck-line", routes: "ri-road-map-line" },
+    title: "Dispatcher Gate & Yard Management Deck",
+    subtitle: "Active Inbound Gate Queue, Loading Bay Capacity & Corridor Departure Manifests",
+    icon: "ri-shield-user-line",
+    iconBg: "#0f172a",
     showProcessStrip: true
   },
   "ESG Analyst": {
     badge: "[ESG ANALYST]",
-    defaultTab: "analytics",
-    allowedNavs: ALL_APP_NAVS,
-    allowedViews: ALL_APP_VIEWS,
-    allowedPages: ["index.html", "analytics.html", "reports.html"],
+    defaultTab: "home",
+    allowedTabs: ["home", "analytics", "reports"],
+    allowedViews: ["viewHome", "viewAnalytics", "viewReports"],
+    tabLabels: { home: "Financial Overview", analytics: "ESG Analytics", reports: "Sustainability Dockets" },
+    tabIcons: { home: "ri-line-chart-line", analytics: "ri-pie-chart-line", reports: "ri-file-list-3-line" },
+    title: "Corporate ESG & Financial Overview Deck",
+    subtitle: "Scope 1 Emissions Abatement, Fleet Fuel Parity & TCO Dollar Cost Modeling",
+    icon: "ri-pie-chart-line",
+    iconBg: "#10b981",
     showProcessStrip: false
   },
   "Fleet Manager": {
     badge: "[FLEET MANAGER]",
     defaultTab: "fleet",
-    allowedNavs: ALL_APP_NAVS,
-    allowedViews: ALL_APP_VIEWS,
-    allowedPages: ["index.html", "fleet.html", "routes.html", "analytics.html", "reports.html"],
+    allowedTabs: ["home", "fleet", "routes", "analytics", "reports"],
+    allowedViews: ["viewHome", "viewFleet", "viewRoutes", "viewAnalytics", "viewReports"],
+    tabLabels: { home: "Mission Control", fleet: "Fleet IQ", routes: "Corridor Routes", analytics: "Analytics", reports: "Reports" },
+    tabIcons: { home: "ri-home-4-line", fleet: "ri-truck-line", routes: "ri-road-map-line", analytics: "ri-line-chart-line", reports: "ri-file-shield-2-line" },
+    title: "Enterprise Fleet IQ Executive Deck",
+    subtitle: "242/250 Active Commercial Assets • Western & Northern Freight Corridors",
+    icon: "ri-dashboard-line",
+    iconBg: "#0284c7",
     showProcessStrip: true
   }
 };
+const ROLE_PERMISSIONS = ROLE_CONFIG;
+window.ROLE_CONFIG = ROLE_CONFIG;
+window.ROLE_PERMISSIONS = ROLE_PERMISSIONS;
+
+function renderNavForRole(personaName = null) {
+  const navContainer = document.querySelector(".site-header nav ul.nav-links");
+  if (!navContainer) return;
+
+  const currentHash = (window.location.hash || "#home").replace("#", "").toLowerCase() || "home";
+  const activeTabKey = normalizeTabKey(currentHash);
+
+  if (!personaName || !isAuthenticated()) {
+    // Guest Mode: all 5 tabs rendered, with protected ones locked
+    const guestTabs = [
+      { key: "home", label: "Mission Control", locked: false },
+      { key: "fleet", label: "Fleet IQ", locked: true },
+      { key: "routes", label: "Corridor Routes", locked: true },
+      { key: "analytics", label: "Analytics", locked: true },
+      { key: "reports", label: "Reports", locked: true }
+    ];
+
+    navContainer.innerHTML = guestTabs.map(t => {
+      const isActive = activeTabKey === t.key;
+      const activeClass = isActive ? "bg-white text-zinc-900 font-semibold shadow-sm" : "text-zinc-600 hover:text-zinc-900";
+      return `
+        <li>
+          <a href="#${t.key}" class="nav-link ${isActive ? 'active' : ''} ${t.locked ? 'locked' : ''} inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium ${activeClass} transition-all" id="nav${t.key.charAt(0).toUpperCase() + t.key.slice(1)}" data-view="${VIEW_MAP[t.key]}" data-tab="${t.key}" title="${t.label}" onclick="switchView('${VIEW_MAP[t.key]}'); return false;">
+            <span class="nav-label">${t.label}</span>
+            ${t.locked ? '<i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>' : ''}
+          </a>
+        </li>
+      `;
+    }).join("");
+    return;
+  }
+
+  // Authenticated Role: dynamically rebuild navigation strictly for allowedTabs
+  const config = ROLE_CONFIG[personaName] || ROLE_CONFIG["Driver In-Cab"];
+  const allowed = config.allowedTabs || ["home"];
+
+  navContainer.innerHTML = allowed.map(tabKey => {
+    const label = (config.tabLabels && config.tabLabels[tabKey]) || tabKey;
+    const icon = (config.tabIcons && config.tabIcons[tabKey]) || "ri-circle-line";
+    const isActive = activeTabKey === tabKey;
+    const activeClass = isActive ? "bg-white text-zinc-900 font-semibold shadow-sm" : "text-zinc-600 hover:text-zinc-900";
+    const targetView = VIEW_MAP[tabKey] || `view${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}`;
+
+    return `
+      <li>
+        <a href="#${tabKey}" class="nav-link ${isActive ? 'active' : ''} inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium ${activeClass} transition-all" id="nav${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}" data-view="${targetView}" data-tab="${tabKey}" title="${label}" onclick="switchView('${targetView}'); return false;">
+          <i class="${icon} text-[13px] text-zinc-500"></i>
+          <span class="nav-label font-semibold">${label}</span>
+        </a>
+      </li>
+    `;
+  }).join("");
+}
+window.renderNavForRole = renderNavForRole;
 
 function detectPersonaFromEmail(email) {
   const em = (email || "").toLowerCase().trim();
@@ -612,7 +692,7 @@ function renderRoleOperationalDeck(personaName) {
         <span style="font-size: 0.76rem; font-weight: 700; color: #475569; margin-right: 6px;">Yard Controls:</span>
         <button type="button" class="role-action-pill primary" onclick="alert('Loading Bay Reallocated: Bay 4 assigned to Unit TRK-A for rapid cold-chain unloading.')"><i class="ri-exchange-line"></i> Reallocate Loading Bay</button>
         <button type="button" class="role-action-pill" onclick="openCopilotWithPrompt('Schedule departure docket and driver assignment for Interstate-07 departing Ahmedabad for Mumbai in $ USD.')"><i class="ri-calendar-check-line"></i> Schedule Departure</button>
-        <a href="fleet.html" class="role-action-pill"><i class="ri-dashboard-line"></i> Open Live Fleet Tracking</a>
+        <button type="button" class="role-action-pill" onclick="switchTab('fleet')"><i class="ri-dashboard-line"></i> Open Live Fleet Tracking</button>
       </div>
     `;
   } else if (personaName === "ESG Analyst") {
@@ -651,7 +731,7 @@ function renderRoleOperationalDeck(personaName) {
         <span style="font-size: 0.76rem; font-weight: 700; color: #475569; margin-right: 6px;">Financial &amp; ESG Actions:</span>
         <button type="button" class="role-action-pill primary" onclick="openCopilotWithPrompt('Provide ESG multi-fuel emissions comparison for EV vs Diesel vs CNG for 450 km freight leg with all fuel and toll expenses in US Dollars ($ USD).')"><i class="ri-funds-line"></i> Recalculate Fuel Parity ($ USD)</button>
         <button type="button" class="role-action-pill" onclick="openCopilotWithPrompt('Analyze monthly fleet emissions trajectory from Jan through Dec and project Q4 ESG targets.')"><i class="ri-line-chart-line"></i> Forecast Q4 Carbon Trajectory</button>
-        <a href="analytics.html" class="role-action-pill"><i class="ri-bar-chart-2-line"></i> Open Analytics Dashboard</a>
+        <button type="button" class="role-action-pill" onclick="switchTab('analytics')"><i class="ri-bar-chart-2-line"></i> Open Analytics Dashboard</button>
       </div>
     `;
   } else {
@@ -690,37 +770,42 @@ function renderRoleOperationalDeck(personaName) {
       <div class="role-deck-actions-strip">
         <span style="font-size: 0.76rem; font-weight: 700; color: #475569; margin-right: 6px;">Fleet Operations:</span>
         <button type="button" class="role-action-pill primary" onclick="openCopilotWithPrompt('Perform telematics asset health audit across 250 commercial vehicles in $ USD.')"><i class="ri-stethoscope-line"></i> Run Fleet Diagnostic</button>
-        <a href="fleet.html" class="role-action-pill"><i class="ri-truck-line"></i> Fleet IQ Dashboard</a>
-        <a href="routes.html" class="role-action-pill"><i class="ri-route-line"></i> Corridor Optimization</a>
-        <a href="analytics.html" class="role-action-pill"><i class="ri-line-chart-line"></i> Analytics</a>
+        <button type="button" class="role-action-pill" onclick="switchTab('fleet')"><i class="ri-truck-line"></i> Fleet IQ Dashboard</button>
+        <button type="button" class="role-action-pill" onclick="switchTab('routes')"><i class="ri-route-line"></i> Corridor Optimization</button>
+        <button type="button" class="role-action-pill" onclick="switchTab('analytics')"><i class="ri-line-chart-line"></i> Analytics</button>
       </div>
     `;
   }
 }
 
+const mountRoleDeck = renderRoleOperationalDeck;
+window.mountRoleDeck = mountRoleDeck;
+
 function renderPersonaExperience(personaName) {
   const profile = PERSONA_PROFILES[personaName] || PERSONA_PROFILES["Driver In-Cab"];
-  const perms = ROLE_PERMISSIONS[personaName] || ROLE_PERMISSIONS["Driver In-Cab"];
+  const config = ROLE_CONFIG[personaName] || ROLE_CONFIG["Driver In-Cab"];
 
-  // 1. Update Header Badges
-  if (headerPersonaBadge) headerPersonaBadge.innerText = profile.badge;
+  // 1. Update Header Badges & Dynamic Workspace Banner Elements
+  const headerPersonaBadge = document.getElementById("headerPersonaBadge");
+  if (headerPersonaBadge) headerPersonaBadge.innerText = config.badge || profile.badge;
   if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${personaName}</strong>`;
 
-  // 2. Navigation Bar: Render all 5 tabs visible and unlocked for authenticated users
-  const navItems = document.querySelectorAll(".nav-links li");
-  navItems.forEach(li => {
-    li.style.display = "";
-    const a = li.querySelector("a.nav-link");
-    if (!a) return;
-    a.classList.remove("locked");
-    const lockIcon = a.querySelector(".nav-lock-icon");
-    if (lockIcon) lockIcon.style.display = "none";
-  });
+  const roleTitle = document.getElementById("roleWorkspaceTitle");
+  const roleBadge = document.getElementById("roleWorkspaceBadge");
+  const roleSubtitle = document.getElementById("roleWorkspaceSubtitle");
+  const roleIcon = document.getElementById("roleWorkspaceIcon");
+  if (roleTitle) roleTitle.textContent = config.title;
+  if (roleBadge) roleBadge.textContent = config.badge;
+  if (roleSubtitle) roleSubtitle.textContent = config.subtitle;
+  if (roleIcon && config.icon) roleIcon.innerHTML = `<i class="${config.icon}"></i>`;
+
+  // 2. Navigation Bar: Render dynamically for authenticated role
+  renderNavForRole(personaName);
 
   // 3. Process Strip Visibility (Fleet Manager / Dispatcher only)
   const processStrip = document.getElementById("processStrip");
   if (processStrip) {
-    processStrip.style.display = perms.showProcessStrip ? "flex" : "none";
+    processStrip.style.display = config.showProcessStrip ? "flex" : "none";
   }
 
   // 4. Render Live Operational HUD
@@ -750,9 +835,9 @@ function renderPersonaExperience(personaName) {
         <div class="hud-metrics-row">
           ${metricsHtml}
         </div>
-        <a href="${profile.actionBtn.href}" class="hud-action-btn">
+        <button type="button" class="hud-action-btn" onclick="switchTab('${config.allowedTabs && config.allowedTabs.includes('routes') ? 'routes' : config.defaultTab}')">
           <i class="${profile.actionBtn.icon}"></i> ${profile.actionBtn.text} &rarr;
-        </a>
+        </button>
       </div>
     `;
   }
@@ -814,27 +899,8 @@ function renderGuestExperience() {
   const roleDeck = document.getElementById("roleOperationalDeck");
   if (roleDeck) roleDeck.innerHTML = "";
 
-  // 3. Mark Protected Tabs as Locked (Fleet, Routes, Analytics, Reports)
-  const navItems = document.querySelectorAll(".nav-links li");
-  navItems.forEach(li => {
-    const a = li.querySelector("a.nav-link");
-    if (!a) return;
-    li.style.display = ""; // Render all 5 tabs visible
-    if (a.id === "navHome") {
-      a.classList.remove("locked");
-      const lockIcon = a.querySelector(".nav-lock-icon");
-      if (lockIcon) lockIcon.style.display = "none";
-    } else {
-      a.classList.add("locked");
-      let lockIcon = a.querySelector(".nav-lock-icon");
-      if (!lockIcon) {
-        lockIcon = document.createElement("i");
-        lockIcon.className = "ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400";
-        a.appendChild(lockIcon);
-      }
-      lockIcon.style.display = "inline-block";
-    }
-  });
+  // 3. Mark Protected Tabs as Locked & Re-render Guest Navbar
+  renderNavForRole(null);
 
   // 4. Copilot Restrictions for Guests
   const inputDock = document.getElementById("copilotInputDock");
@@ -891,6 +957,8 @@ function login(userData = {}, token = null) {
   state.isAuthenticated = true;
   state.persona = persona;
 
+  const roleConfig = ROLE_CONFIG[persona] || ROLE_CONFIG["Driver In-Cab"];
+
   updateUIAuthState(true);
   renderPersonaExperience(persona);
   sfx.playGrant();
@@ -898,17 +966,21 @@ function login(userData = {}, token = null) {
   // Dismiss the Sign-In modal
   closeSignInModal();
 
-  // If user was attempting to reach a locked section, navigate there; else auto-switch to Fleet
+  // If user was attempting to reach a locked section and role permits it, navigate there
   if (window.pendingRedirectView) {
     const dest = window.pendingRedirectView;
     window.pendingRedirectView = null;
-    switchView(dest);
-    const hashName = dest.replace("view", "").toLowerCase();
-    history.pushState(null, "", `#${hashName}`);
-  } else {
-    // Post-Sign-In Automatic Navigation: do not leave user idle on viewHome
-    switchTab("fleet");
+    const destTab = normalizeTabKey(dest);
+    if (roleConfig.allowedTabs.includes(destTab)) {
+      switchView(dest);
+      const hashName = dest.replace("view", "").toLowerCase();
+      history.pushState(null, "", `#${hashName}`);
+      return;
+    }
   }
+
+  // Navigate strictly to role's default tab (e.g. "home" for Driver In-Cab, Dispatcher Gate, Compliance Officer, ESG Analyst; "fleet" for Fleet Manager)
+  switchTab(roleConfig.defaultTab);
 }
 
 const executeLogin = login;
@@ -937,6 +1009,7 @@ function logout() {
 
   updateUIAuthState(false);
   renderGuestExperience();
+  renderNavForRole(null);
   switchView("viewHome");
   history.pushState(null, "", "#home");
 }
@@ -952,6 +1025,7 @@ function checkAuth() {
     state.isAuthenticated = true;
     updateUIAuthState(true);
     renderPersonaExperience(state.persona);
+    renderNavForRole(state.persona);
   } else {
     // Default: Unauthenticated Guest Mode (Only Home accessible)
     state.sessionToken = null;
@@ -959,6 +1033,7 @@ function checkAuth() {
     state.isAuthenticated = false;
     updateUIAuthState(false);
     renderGuestExperience();
+    renderNavForRole(null);
     if (wantsLogin) {
       setTimeout(() => openLoginModal(), 200);
     }
@@ -1059,8 +1134,12 @@ if (personaDropdownBtn && personaDropdownMenu) {
       const chosen = item.dataset.persona;
       if (chosen) {
         state.persona = chosen;
+        localStorage.setItem("rido_persona", chosen);
         sessionStorage.setItem("rido_persona", chosen);
         renderPersonaExperience(chosen);
+        renderNavForRole(chosen);
+        const config = ROLE_CONFIG[chosen] || ROLE_CONFIG["Driver In-Cab"];
+        switchTab(config.defaultTab);
         personaMenuItems.forEach(m => m.classList.remove("active"));
         item.classList.add("active");
         personaDropdownMenu.classList.remove("show");
@@ -1625,11 +1704,12 @@ function switchView(viewId) {
   // 2. Role-Based Access Control (RBAC) for authenticated users
   if (isAuthenticated()) {
     const currentPersona = state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
-    const perms = ROLE_PERMISSIONS[currentPersona] || ROLE_PERMISSIONS["Driver In-Cab"];
+    const config = ROLE_CONFIG[currentPersona] || ROLE_CONFIG["Driver In-Cab"];
 
-    if (perms && perms.allowedViews && !perms.allowedViews.includes(targetViewId)) {
-      alert(`Access Restricted: Your active role [${currentPersona}] is not authorized to view this section.`);
-      return false;
+    if (config && config.allowedTabs && !config.allowedTabs.includes(tabKey)) {
+      console.warn(`Access Restricted: Active role [${currentPersona}] is not authorized for tab '${tabKey}'. Redirecting to default '${config.defaultTab}'.`);
+      const fallbackView = VIEW_MAP[config.defaultTab] || "viewHome";
+      return switchView(fallbackView);
     }
   }
 
@@ -1645,7 +1725,43 @@ function switchView(viewId) {
     targetView.style.display = "flex";
   }
 
-  // 4. Update Navigation link styling & active state
+  // 4. Handle Home view workspace switching (Marketing vs Role Workspace)
+  const homePublic = document.getElementById("homePublicMarketing");
+  const homeRole = document.getElementById("homeRoleWorkspace");
+
+  if (targetViewId === "viewHome") {
+    if (isAuthenticated()) {
+      const currentPersona = state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
+      if (homePublic) {
+        homePublic.style.display = "none";
+        homePublic.classList.add("hidden");
+      }
+      if (homeRole) {
+        homeRole.style.display = "flex";
+        homeRole.classList.remove("hidden");
+      }
+      renderPersonaExperience(currentPersona);
+    } else {
+      if (homePublic) {
+        homePublic.style.display = "block";
+        homePublic.classList.remove("hidden");
+      }
+      if (homeRole) {
+        homeRole.style.display = "none";
+        homeRole.classList.add("hidden");
+      }
+    }
+  } else {
+    if (homeRole) {
+      homeRole.style.display = "none";
+      homeRole.classList.add("hidden");
+    }
+  }
+
+  // 5. Dynamic Header Navigation Re-render for the active role & active tab state
+  const currentPersona = isAuthenticated() ? (state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab") : null;
+  renderNavForRole(currentPersona);
+
   document.querySelectorAll(".site-header nav a, .site-header .nav-link, .nav-links .nav-link").forEach(link => {
     const linkKey = normalizeTabKey(link.dataset.tab || link.dataset.view || link.getAttribute("href") || link.textContent);
     const isActive = (linkKey === tabKey);
@@ -1714,6 +1830,18 @@ function handleHashRoute() {
       return;
     }
     switchView("viewHome");
+    return;
+  }
+
+  // Authenticated
+  const currentPersona = state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
+  const config = ROLE_CONFIG[currentPersona] || ROLE_CONFIG["Driver In-Cab"];
+
+  if (config && config.allowedTabs && !config.allowedTabs.includes(cleanTab)) {
+    const fallbackTab = config.defaultTab;
+    const fallbackView = VIEW_MAP[fallbackTab] || "viewHome";
+    history.replaceState(null, "", window.location.pathname + `#${fallbackTab}`);
+    switchView(fallbackView);
     return;
   }
 

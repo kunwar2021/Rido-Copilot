@@ -3223,9 +3223,10 @@
        ══════════════════════════════════════════════ -->
   <div class="main-container">
     <div id="viewHome" class="app-page-view flex flex-col w-full">
-
-      <!-- HERO SECTION -->
-      <section class="max-w-7xl mx-auto px-6 pt-4 pb-16 lg:pt-6 lg:pb-20">
+      <!-- 1. PUBLIC MARKETING LANDING (Visible ONLY when NOT authenticated) -->
+      <div id="homePublicMarketing" class="w-full">
+        <!-- HERO SECTION -->
+        <section class="max-w-7xl mx-auto px-6 pt-4 pb-16 lg:pt-6 lg:pb-20">
 
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
@@ -3821,9 +3822,130 @@
 
 </section>
 
+      </div> <!-- /#homePublicMarketing -->
 
+      <!-- 2. AUTHENTICATED ROLE WORKSPACE & OPERATIONAL DECK (Visible ONLY when authenticated) -->
+      <div id="homeRoleWorkspace" class="hidden flex-col w-full max-w-7xl mx-auto px-6 py-6" style="display: none;">
+        <!-- Dynamic Role Title Banner -->
+        <div class="mb-6 flex flex-wrap justify-between items-center gap-3 border-b border-zinc-200 pb-4">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <span id="roleWorkspaceIcon" class="w-9 h-9 rounded-xl bg-zinc-900 text-white flex items-center justify-center text-lg shadow-sm"><i class="ri-dashboard-3-line"></i></span>
+              <h1 id="roleWorkspaceTitle" class="text-xl sm:text-2xl font-bold text-zinc-900 tracking-tight">Operational Console</h1>
+              <span id="roleWorkspaceBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800">[ROLE] VERIFIED</span>
+            </div>
+            <p id="roleWorkspaceSubtitle" class="text-xs text-zinc-500 mt-1">Live Telemetry &amp; Autonomous AI Dispatch Controller</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              Live Telemetry Stream Active
+            </span>
+          </div>
+        </div>
 
-      </div> <!-- /#viewHome -->
+        <!-- Role-Specific Operational Deck Container (Dynamically Mounted) -->
+        <div id="roleOperationalDeck" class="role-operational-deck mb-6"></div>
+
+        <!-- Copilot Interactive Console Section -->
+        <div id="copilotWorkspace" class="copilot-workspace-visible w-full">
+          <!-- PROCESS WORKFLOW STRIP (Fleet Manager & Dispatcher Gate only) -->
+          <section class="process-strip" id="processStrip">
+            <div class="process-left">
+              <span class="process-tag">REAL-TIME INTELLIGENCE</span>
+              <h3 class="process-headline">Complete control. End to end.</h3>
+            </div>
+            <div class="process-steps">
+              <div class="process-step">
+                <i class="ri-map-pin-line text-indigo-600"></i> Set Route
+              </div>
+              <i class="ri-arrow-right-s-line process-arrow"></i>
+              <div class="process-step">
+                <i class="ri-truck-line text-cyan-600"></i> Compare Fleets
+              </div>
+              <i class="ri-arrow-right-s-line process-arrow"></i>
+              <div class="process-step">
+                <i class="ri-settings-4-line text-amber-600"></i> Optimize
+              </div>
+              <i class="ri-arrow-right-s-line process-arrow"></i>
+              <div class="process-step">
+                <i class="ri-line-chart-line text-emerald-600"></i> Monitor
+              </div>
+            </div>
+            <div class="process-badge">
+              <i class="ri-flashlight-line"></i> Smarter decisions. Greater efficiency.
+            </div>
+          </section>
+
+          <!-- OPERATIONAL ROLE LIVE HUD & QUICK ACTIONS -->
+          <div id="personaLiveHUD" class="persona-live-hud"></div>
+          <div id="personaQuickChips" class="persona-quick-chips"></div>
+
+          <!-- AI COPILOT INTERACTIVE CONSOLE -->
+          <section id="copilotSection">
+            <div class="copilot-header">
+              <div class="copilot-brand">
+                <div class="copilot-icon">🚛</div>
+                <div class="copilot-title-group">
+                  <h3>RIDO AI Copilot Console</h3>
+                  <span>Responses Protocol &middot; gpt-6-astra &middot; Currency: US Dollars ($ USD)</span>
+                </div>
+              </div>
+
+              <div class="copilot-actions">
+                <div class="hud-chip">
+                  <i class="ri-timer-line"></i> PING: <strong id="hudPing">380ms</strong>
+                </div>
+                <div class="hud-chip">
+                  <i class="ri-money-dollar-circle-line"></i> SPENT: <strong id="hudSpent">$0.0024</strong>
+                </div>
+                <button class="nav-action-btn" id="clearBtn" title="Reset Chat Conversation">
+                  <i class="ri-refresh-line"></i> Reset Chat
+                </button>
+                <button class="nav-action-btn" onclick="window.location.reload()" title="Start New AI Session">
+                  <i class="ri-add-line"></i> New Session
+                </button>
+              </div>
+            </div>
+
+            <!-- Messages Stream -->
+            <div id="messages">
+              <div class="msg ai">
+                <div class="msg-avatar">🤖</div>
+                <div class="msg-bubble-wrap">
+                  <div class="msg-bubble">
+                    <p><strong>Welcome to RIDO Mission Control.</strong> I am your enterprise fleet intelligence assistant powered by <strong>Azure AI Foundry</strong> and <strong>gpt-6-astra</strong>.</p>
+                    <p>Click any feature card above or ask me to optimize green EV freight corridors, monitor cold-chain reefer breaches, or audit driver Hours-of-Service. All financial metrics are quoted in <strong>$ USD</strong>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Input Dock -->
+            <div class="input-dock" id="copilotInputDock">
+              <div class="input-row">
+                <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
+                
+                <!-- Mic Dictation -->
+                <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
+                  <i class="ri-mic-line"></i>
+                </button>
+
+                <!-- Send Button -->
+                <button type="button" id="sendBtn" title="Send to Azure Foundry">
+                  <i class="ri-send-plane-2-fill"></i>
+                </button>
+              </div>
+
+              <div class="input-meta-bar">
+                <span>Microsoft Azure AI Foundry &middot; <kbd>Enter</kbd> to Dispatch &middot; Shift+Enter for new line</span>
+                <span id="dispatcherNameBadge">Persona: <strong>Fleet Manager</strong></span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div> <!-- /#viewHome -->
 
     <div id="viewFleet" class="app-page-view" style="display: none;">
       <!-- Title Bar -->
@@ -4034,113 +4156,7 @@
           </tbody>
         </table>
       </div>
-    
-
-      <!-- RIDO COPILOT WORKSPACE (RELOCATED TO OPERATIONAL FLEET VIEW) -->
-<div id="copilotWorkspace" class="copilot-workspace-visible max-w-7xl mx-auto px-6 py-8 w-full">
-
-
-      <!-- PROCESS WORKFLOW STRIP (EXACT IMAGE 2 MATCH) -->
-      <section class="process-strip" id="processStrip">
-        <div class="process-left">
-          <span class="process-tag">REAL-TIME INTELLIGENCE</span>
-          <h3 class="process-headline">Complete control. End to end.</h3>
-        </div>
-        <div class="process-steps">
-          <div class="process-step">
-            <i class="ri-map-pin-line text-indigo-600"></i> Set Route
-          </div>
-          <i class="ri-arrow-right-s-line process-arrow"></i>
-          <div class="process-step">
-            <i class="ri-truck-line text-cyan-600"></i> Compare Fleets
-          </div>
-          <i class="ri-arrow-right-s-line process-arrow"></i>
-          <div class="process-step">
-            <i class="ri-settings-4-line text-amber-600"></i> Optimize
-          </div>
-          <i class="ri-arrow-right-s-line process-arrow"></i>
-          <div class="process-step">
-            <i class="ri-line-chart-line text-emerald-600"></i> Monitor
-          </div>
-        </div>
-        <div class="process-badge">
-          <i class="ri-flashlight-line"></i> Smarter decisions. Greater efficiency.
-        </div>
-      </section>
-
-      <!-- OPERATIONAL ROLE LIVE HUD & QUICK ACTIONS -->
-      <div id="personaLiveHUD" class="persona-live-hud"></div>
-      <div id="personaQuickChips" class="persona-quick-chips"></div>
-
-      <!-- ROLE-ISOLATED OPERATIONAL DECK (Visible ONLY to the authenticated role) -->
-      <div id="roleOperationalDeck" class="role-operational-deck"></div>
-
-      <!-- AI COPILOT INTERACTIVE CONSOLE (EXACT IMAGE 2 MATCH) -->
-      <section id="copilotSection">
-        <div class="copilot-header">
-          <div class="copilot-brand">
-            <div class="copilot-icon">🚛</div>
-            <div class="copilot-title-group">
-              <h3>RIDO AI Copilot Console</h3>
-              <span>Responses Protocol &middot; gpt-6-astra &middot; Currency: US Dollars ($ USD)</span>
-            </div>
-          </div>
-
-          <div class="copilot-actions">
-            <div class="hud-chip">
-              <i class="ri-timer-line"></i> PING: <strong id="hudPing">380ms</strong>
-            </div>
-            <div class="hud-chip">
-              <i class="ri-money-dollar-circle-line"></i> SPENT: <strong id="hudSpent">$0.0024</strong>
-            </div>
-            <button class="nav-action-btn" id="clearBtn" title="Reset Chat Conversation">
-              <i class="ri-refresh-line"></i> Reset Chat
-            </button>
-            <button class="nav-action-btn" onclick="window.location.reload()" title="Start New AI Session">
-              <i class="ri-add-line"></i> New Session
-            </button>
-          </div>
-        </div>
-
-        <!-- Messages Stream -->
-        <div id="messages">
-          <div class="msg ai">
-            <div class="msg-avatar">🤖</div>
-            <div class="msg-bubble-wrap">
-              <div class="msg-bubble">
-                <p><strong>Welcome to RIDO Mission Control.</strong> I am your enterprise fleet intelligence assistant powered by <strong>Azure AI Foundry</strong> and <strong>gpt-6-astra</strong>.</p>
-                <p>Click any feature card above or ask me to optimize green EV freight corridors, monitor cold-chain reefer breaches, or audit driver Hours-of-Service. All financial metrics are quoted in <strong>$ USD</strong>.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Input Dock -->
-        <div class="input-dock" id="copilotInputDock">
-          <div class="input-row">
-            <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
-            
-            <!-- Mic Dictation -->
-            <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
-              <i class="ri-mic-line"></i>
-            </button>
-
-            <!-- Send Button -->
-            <button type="button" id="sendBtn" title="Send to Azure Foundry">
-              <i class="ri-send-plane-2-fill"></i>
-            </button>
-          </div>
-
-          <div class="input-meta-bar">
-            <span>Microsoft Azure AI Foundry &middot; <kbd>Enter</kbd> to Dispatch &middot; Shift+Enter for new line</span>
-            <span id="dispatcherNameBadge">Persona: <strong>Fleet Manager</strong></span>
-          </div>
-        </div>
-      </section>
-
-    </div>
-      </div>
-    </div>
+    </div> <!-- /#viewFleet -->
 
     <!-- ══════════════════════════════════════════════
          PAGE VIEW: ROUTES (Image Top-Right)
