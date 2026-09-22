@@ -187,18 +187,34 @@ function openLoginModal(targetView = null) {
   if (targetView) {
     window.pendingRedirectView = targetView;
   }
-  if (loginScreen) {
-    loginScreen.classList.remove("hidden");
+  const screen = document.getElementById("loginScreen") || document.getElementById("signInModal");
+  if (screen) {
+    screen.classList.remove("hidden");
+    screen.style.display = "flex";
     if (loginPassword) loginPassword.value = "RIDO2026";
     if (loginIdInput) loginIdInput.focus();
   }
 }
 
 function closeLoginModal() {
-  if (loginScreen) {
-    loginScreen.classList.add("hidden");
+  const screen = document.getElementById("loginScreen") || document.getElementById("signInModal");
+  if (screen) {
+    screen.classList.add("hidden");
+    screen.style.display = "none";
   }
 }
+
+function closeSignInModal() {
+  return closeLoginModal();
+}
+
+window.openSignInModal = openSignInModal;
+window.closeSignInModal = closeSignInModal;
+window.openLoginModal = openLoginModal;
+window.closeLoginModal = closeLoginModal;
+window.switchTab = switchTab;
+window.switchView = switchView;
+
 
 function updateUIAuthState(isLoggedIn) {
   const guestBanner = document.getElementById("guestLockBanner");
@@ -770,8 +786,13 @@ function renderGuestExperience() {
       if (lockIcon) lockIcon.style.display = "none";
     } else {
       a.classList.add("locked");
-      const lockIcon = a.querySelector(".nav-lock-icon");
-      if (lockIcon) lockIcon.style.display = "inline-block";
+      let lockIcon = a.querySelector(".nav-lock-icon");
+      if (!lockIcon) {
+        lockIcon = document.createElement("i");
+        lockIcon.className = "ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400";
+        a.appendChild(lockIcon);
+      }
+      lockIcon.style.display = "inline-block";
     }
   });
 

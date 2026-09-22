@@ -2365,7 +2365,578 @@
       border-color: #cbd5e1;
       color: #0071e3;
     }
+  
+
+    /* User Redesign Keyframes & Styles */
+
+
+    .material-symbols-outlined {
+
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+
+      display: inline-block;
+
+      vertical-align: middle;
+
+      line-height: 1;
+
+    }
+
+    .material-symbols-outlined.fill-icon {
+
+      font-variation-settings: 'FILL' 1;
+
+    }
+
+
+
+    /* Refined Typography Animations */
+
+    @keyframes badgeDrift {
+
+      0% {
+
+        opacity: 0;
+
+        transform: translateY(8px);
+
+        letter-spacing: 0.18em;
+
+      }
+
+      100% {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+        letter-spacing: 0.08em;
+
+      }
+
+    }
+
+
+
+    @keyframes softFadeUp {
+
+      0% {
+
+        opacity: 0;
+
+        transform: translateY(16px);
+
+      }
+
+      100% {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+      }
+
+    }
+
+
+
+    @keyframes subtlePulseText {
+
+      0%, 100% {
+
+        text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+
+      }
+
+      50% {
+
+        text-shadow: 0 0 16px rgba(255, 255, 255, 0.25);
+
+      }
+
+    }
+
+
+
+    /* Typewriter Cursor Blink */
+
+    @keyframes typewriterCursorBlink {
+
+      0%, 45% {
+
+        opacity: 1;
+
+      }
+
+      50%, 95% {
+
+        opacity: 0;
+
+      }
+
+      100% {
+
+        opacity: 1;
+
+      }
+
+    }
+
+
+
+    .typewriter-cursor {
+
+      display: inline-block;
+
+      width: 4px;
+
+      margin-left: 2px;
+
+      background-color: #09090b;
+
+      vertical-align: baseline;
+
+      animation: typewriterCursorBlink 0.85s infinite;
+
+      border-radius: 1px;
+
+    }
+
+
+
+    /* Underline styling that stays pinned nicely */
+
+    .hero-underline-bar {
+
+      position: absolute;
+
+      left: 0;
+
+      bottom: -4px;
+
+      height: 4px;
+
+      width: 100%;
+
+      background: #18181b;
+
+      transform-origin: left center;
+
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+
+    }
+
+
+
+    /* Animation utility classes */
+
+    .animate-badge-entrance {
+
+      animation: badgeDrift 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+    }
+
+
+
+    .hero-subtitle-animate {
+
+      animation: softFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+
+    }
+
+
+
+    .hero-actions-animate {
+
+      animation: softFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+
+    }
+
+
+
+    .cta-heading-glow {
+
+      animation: subtlePulseText 4s ease-in-out infinite;
+
+      letter-spacing: -0.025em;
+
+      transition: letter-spacing 0.3s ease;
+
+    }
+
+    .cta-heading-glow:hover {
+
+      letter-spacing: -0.01em;
+
+    }
+
+
+
+    /* Scroll reveal utility */
+
+    .reveal-on-scroll {
+
+      opacity: 0;
+
+      transform: translateY(22px);
+
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+
+      will-change: opacity, transform;
+
+    }
+
+    .reveal-on-scroll.is-visible {
+
+      opacity: 1;
+
+      transform: translateY(0);
+
+    }
+
+
+
+    /* Stagger delays */
+
+    .delay-100 { transition-delay: 100ms; }
+
+    .delay-200 { transition-delay: 200ms; }
+
+    .delay-300 { transition-delay: 300ms; }
+
+    .delay-400 { transition-delay: 400ms; }
+
+
+
+    /* Interactive text transitions for cards */
+
+    .step-card-title {
+
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+
+    }
+
+    .group:hover .step-card-title {
+
+      transform: translateX(3px);
+
+    }
+
+    .step-card-tag {
+
+      transition: letter-spacing 0.25s ease, opacity 0.25s ease;
+
+    }
+
+    .group:hover .step-card-tag {
+
+      letter-spacing: 0.12em;
+
+    }
+
+
+
+    /* TRUCK MOTION & ROAD ANIMATIONS */
+
+    @keyframes truckSuspension {
+
+      0%, 100% {
+
+        transform: translateY(0px) rotate(0deg);
+
+      }
+
+      20% {
+
+        transform: translateY(-1.5px) rotate(-0.35deg);
+
+      }
+
+      40% {
+
+        transform: translateY(0.75px) rotate(0.2deg);
+
+      }
+
+      65% {
+
+        transform: translateY(-0.75px) rotate(-0.15deg);
+
+      }
+
+      85% {
+
+        transform: translateY(1.2px) rotate(0.3deg);
+
+      }
+
+    }
+
+
+
+    @keyframes cargoJitter {
+
+      0%, 100% {
+
+        transform: translateY(0px) rotate(0deg);
+
+      }
+
+      25% {
+
+        transform: translateY(-1.2px) rotate(0.25deg);
+
+      }
+
+      50% {
+
+        transform: translateY(0.6px) rotate(-0.15deg);
+
+      }
+
+      75% {
+
+        transform: translateY(-0.8px) rotate(-0.2deg);
+
+      }
+
+    }
+
+
+
+    @keyframes cabSuspension {
+
+      0%, 100% {
+
+        transform: translateY(0px) rotate(0deg);
+
+      }
+
+      30% {
+
+        transform: translateY(-1.8px) rotate(-0.4deg);
+
+      }
+
+      60% {
+
+        transform: translateY(1px) rotate(0.3deg);
+
+      }
+
+      80% {
+
+        transform: translateY(-0.5px) rotate(-0.1deg);
+
+      }
+
+    }
+
+
+
+    @keyframes wheelRotate {
+
+      from {
+
+        transform: rotate(0deg);
+
+      }
+
+      to {
+
+        transform: rotate(360deg);
+
+      }
+
+    }
+
+
+
+    @keyframes roadFlow {
+
+      0% {
+
+        stroke-dashoffset: 0;
+
+      }
+
+      100% {
+
+        stroke-dashoffset: 24;
+
+      }
+
+    }
+
+
+
+    .animate-truck-body {
+
+      animation: truckSuspension 0.85s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+
+      transform-origin: 100px 115px;
+
+    }
+
+
+
+    .animate-truck-cargo {
+
+      animation: cargoJitter 0.7s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+      transform-origin: 65px 90px;
+
+    }
+
+
+
+    .animate-truck-cab {
+
+      animation: cabSuspension 0.9s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+
+      transform-origin: 150px 105px;
+
+    }
+
+
+
+    .animate-wheel-spin-trailer1 {
+
+      animation: wheelRotate 0.5s linear infinite;
+
+      transform-origin: 48px 120px;
+
+    }
+
+
+
+    .animate-wheel-spin-trailer2 {
+
+      animation: wheelRotate 0.5s linear infinite;
+
+      transform-origin: 72px 120px;
+
+    }
+
+
+
+    .animate-wheel-spin-cab {
+
+      animation: wheelRotate 0.5s linear infinite;
+
+      transform-origin: 152px 120px;
+
+    }
+
+
+
+    .animate-road-markers {
+
+      animation: roadFlow 0.38s linear infinite;
+
+    }
+
+
+
+    /* Accessibility: Respect Reduced Motion */
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *, ::before, ::after {
+
+        animation-duration: 0.01ms !important;
+
+        animation-iteration-count: 1 !important;
+
+        transition-duration: 0.01ms !important;
+
+        scroll-behavior: auto !important;
+
+      }
+
+      .reveal-on-scroll {
+
+        opacity: 1 !important;
+
+        transform: none !important;
+
+      }
+
+      .typewriter-cursor {
+
+        display: none !important;
+
+      }
+
+      .animate-truck-body,
+
+      .animate-truck-cargo,
+
+      .animate-truck-cab,
+
+      .animate-wheel-spin-trailer1,
+
+      .animate-wheel-spin-trailer2,
+
+      .animate-wheel-spin-cab,
+
+      .animate-road-markers {
+
+        animation: none !important;
+
+      }
+
+    }
+
+  
   </style>
+
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <!-- Google Fonts: Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN & Theme Configuration -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#000000",
+            "primary-container": "#000000",
+            "on-primary": "#ffffff",
+            secondary: "#52525b",
+            "on-surface": "#09090b",
+            "surface-container-lowest": "#ffffff",
+            "surface-container": "#f4f4f5",
+            "surface-container-high": "#e4e4e7"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          fontFamily: {
+            display: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            "label-sm": ["JetBrains Mono", "monospace"],
+            "body-md": ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            "headline-lg": ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            "label-md": ["JetBrains Mono", "monospace"],
+            "headline-md": ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            "headline-sm": ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            "body-lg": ["Plus Jakarta Sans", "Inter", "sans-serif"],
+            "body-sm": ["Plus Jakarta Sans", "Inter", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+
 </head>
 <body>
 
@@ -2457,45 +3028,82 @@
   <!-- ══════════════════════════════════════════════
        2. TOP CLEAN NAVBAR (EXACT MATCH TO DESIGN)
        ══════════════════════════════════════════════ -->
-  <header class="site-header">
-    <div class="nav-left">
-      <a href="#" class="site-logo">
-        <img src="images/rido-logo.png" alt="RIDO" style="height: 34px; object-fit: contain; vertical-align: middle;" />
+    <!-- ══════════════════════════════════════════════
+       TOP CLEAN NAVBAR (REDESIGNED WITH TAILWIND & RBAC PRESERVED)
+       ══════════════════════════════════════════════ -->
+  <header class="site-header bg-white/90 backdrop-blur-md border-b border-zinc-200 shadow-sm top-0 sticky z-50 transition-all duration-200">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between w-full">
+      <!-- Brand Cluster -->
+      <a class="site-logo flex items-center gap-3 group active:scale-[0.98] transition-transform" href="#home" id="brandLogoLink">
+        <img alt="RÍDO Logistics & Delivery" class="h-9 w-auto object-contain" src="images/rido-logo.png" />
       </a>
-      <ul class="nav-links">
-        <li><a href="#home" class="nav-link active" id="navHome" data-view="viewHome" data-tab="home"><span class="nav-label">Home</span></a></li>
-        <li><a href="#fleet" class="nav-link locked" id="navFleet" data-view="viewFleet" data-tab="fleet"><span class="nav-label">Fleet</span> <i class="ri-lock-2-line nav-lock-icon"></i></a></li>
-        <li><a href="#routes" class="nav-link locked" id="navRoutes" data-view="viewRoutes" data-tab="routes"><span class="nav-label">Routes</span> <i class="ri-lock-2-line nav-lock-icon"></i></a></li>
-        <li><a href="#analytics" class="nav-link locked" id="navAnalytics" data-view="viewAnalytics" data-tab="analytics"><span class="nav-label">Analytics</span> <i class="ri-lock-2-line nav-lock-icon"></i></a></li>
-        <li><a href="#reports" class="nav-link locked" id="navReports" data-view="viewReports" data-tab="reports"><span class="nav-label">Reports</span> <i class="ri-lock-2-line nav-lock-icon"></i></a></li>
-      </ul>
-    </div>
 
-    <div class="nav-right">
-      <!-- Live Status Pill (Image 1) -->
-      <div class="system-online-pill">
-        <span class="dot"></span>
-        <span>System: Online</span>
-      </div>
+      <!-- Floating Segmented Navigation Bar -->
+      <nav class="hidden md:flex items-center bg-zinc-100/90 p-1.5 rounded-full border border-zinc-200/80 shadow-inner">
+        <ul class="nav-links flex items-center gap-1 list-none m-0 p-0">
+          <li>
+            <a href="#home" class="nav-link active inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-zinc-900 bg-white shadow-sm transition-all" id="navHome" data-view="viewHome" data-tab="home">
+              <span class="nav-label">Home</span>
+            </a>
+          </li>
+          <li>
+            <a href="#fleet" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navFleet" data-view="viewFleet" data-tab="fleet">
+              <span class="nav-label">Fleet</span>
+              <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#routes" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navRoutes" data-view="viewRoutes" data-tab="routes">
+              <span class="nav-label">Routes</span>
+              <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#analytics" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navAnalytics" data-view="viewAnalytics" data-tab="analytics">
+              <span class="nav-label">Analytics</span>
+              <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#reports" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navReports" data-view="viewReports" data-tab="reports">
+              <span class="nav-label">Reports</span>
+              <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
+            </a>
+          </li>
+        </ul>
+      </nav>
 
-      <!-- Authenticated Security Context (Role Isolated) -->
-      <div class="nav-persona-wrapper" id="personaWrapper" style="display: none;">
-        <div class="nav-persona-btn static-badge" id="personaDropdownBtn" title="Authenticated Operational Role (Enforced by RBAC)" style="cursor: default; display: inline-flex; align-items: center; gap: 6px;">
-          <i class="ri-shield-check-line" style="color: #16a34a;"></i>
-          <span id="headerPersonaBadge">[DRIVER IN-CAB]</span>
-          <span style="font-size: 0.66rem; background: #e2e8f0; color: #334155; padding: 2px 6px; border-radius: 4px; font-weight: 700;">VERIFIED</span>
+      <!-- Right Action Cluster -->
+      <div class="nav-right flex items-center gap-3">
+        <!-- Live Status Pill -->
+        <div class="system-online-pill inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span class="tracking-wide">System: Online</span>
         </div>
+
+        <!-- Authenticated Security Context (Role Isolated) -->
+        <div class="nav-persona-wrapper" id="personaWrapper" style="display: none;">
+          <div class="nav-persona-btn static-badge inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-800 text-xs font-semibold" id="personaDropdownBtn" title="Authenticated Operational Role (Enforced by RBAC)">
+            <i class="ri-shield-check-line text-emerald-600 text-sm"></i>
+            <span id="headerPersonaBadge">[DRIVER IN-CAB]</span>
+            <span class="text-[10px] bg-zinc-200 text-zinc-700 px-1.5 py-0.5 rounded font-bold uppercase">VERIFIED</span>
+          </div>
+        </div>
+
+        <!-- Sign Out Button -->
+        <button class="btn-signout inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs font-semibold shadow-sm transition-all" id="logoutBtn" title="Sign Out of Mission Control" style="display: none;">
+          <i class="ri-logout-box-r-line"></i> <span>Sign Out</span>
+        </button>
+
+        <!-- Get Started / Sign In Button (Shown when signed out) -->
+        <button class="btn-signin inline-flex items-center justify-center gap-2 bg-black hover:bg-zinc-800 text-white font-body-md text-body-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm active:scale-[0.98] transition-all" id="navSignInBtn" onclick="openSignInModal()">
+          <span>Get Started</span>
+          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+        </button>
       </div>
-
-      <!-- Sign Out Button (Image 1) -->
-      <button class="btn-signout" id="logoutBtn" title="Sign Out of Mission Control" style="display: none;">
-        <i class="ri-logout-box-r-line"></i> Sign Out
-      </button>
-
-      <!-- Sign In Button (Shown when signed out) -->
-      <button class="btn-signin" id="navSignInBtn" title="Sign In to RIDO">
-        <i class="ri-login-box-r-line"></i> Sign In
-      </button>
     </div>
   </header>
 
@@ -2503,23 +3111,631 @@
        3. MAIN WORKSPACE CONTENT
        ══════════════════════════════════════════════ -->
   <div class="main-container">
-    <div id="viewHome" class="app-page-view">
-
-    <!-- ══════════════════════════════════════════════
-         RIDO COPILOT: PROCESS STRIP & COPILOT CONSOLE
-         ══════════════════════════════════════════════ -->
-    <div id="copilotWorkspace" class="copilot-workspace-visible">
+    <div id="viewHome" class="app-page-view flex flex-col w-full">
 
       <!-- GUEST PREVIEW BANNER (Visible ONLY when unauthenticated) -->
-      <div id="guestLockBanner" class="guest-lock-banner">
-        <div class="guest-lock-banner-left">
-          <div class="guest-lock-badge"><i class="ri-lock-2-line"></i></div>
-          <div>
-            <div class="guest-lock-title">Guest Preview Mode &bull; Sign in to Unlock</div>
-            <div class="guest-lock-desc">Protected sectors (Fleet IQ, Corridor Routing, ESG Analytics, Audit Reports) and Copilot AI dispatch are locked.</div>
+      <div id="guestLockBanner" class="guest-lock-banner max-w-7xl mx-auto px-6 pt-4 pb-2 w-full">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-xl border border-zinc-200 bg-white shadow-sm">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-zinc-100 flex items-center justify-center text-zinc-900 border border-zinc-200">
+              <i class="ri-lock-2-line text-lg"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold uppercase tracking-wider text-zinc-900">Guest Preview Mode &bull; Sign in to Unlock</div>
+              <div class="text-xs text-zinc-500">Protected sectors (Fleet IQ, Corridor Routing, ESG Analytics, Audit Reports) and Copilot AI dispatch are locked.</div>
+            </div>
           </div>
+          <button type="button" class="inline-flex items-center gap-2 bg-black hover:bg-zinc-800 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm active:scale-[0.98] transition-all" id="guestBannerSignInBtn" onclick="openSignInModal()">
+            <i class="ri-login-box-r-line"></i> <span>Sign In to Unlock &rarr;</span>
+          </button>
         </div>
-        <button type="button" class="guest-signin-btn" id="guestBannerSignInBtn">
+      </div>
+
+
+
+
+<!-- HERO SECTION -->
+
+<section class="max-w-7xl mx-auto px-6 pt-16 pb-20 lg:pt-24 lg:pb-28">
+
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+<!-- Left Column: Copy & Actions (7 cols) -->
+
+<div class="lg:col-span-7 flex flex-col items-start space-y-7">
+
+<!-- Operational Status Pill (Animated Tag Badge) -->
+
+<div class="animate-badge-entrance inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-zinc-300 bg-zinc-100/90">
+
+<span class="relative flex h-2 w-2">
+
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-zinc-950 opacity-50"></span>
+
+<span class="relative inline-flex rounded-full h-2 w-2 bg-zinc-950"></span>
+
+</span>
+
+<span class="font-label-sm text-label-sm font-bold text-zinc-800 uppercase tracking-wider transition-all duration-300">
+
+              YOUR SMARTER LOGISTICS COMPANION
+
+            </span>
+
+</div>
+
+<!-- Main Value Headline with Dynamic Realistic Typewriter / Backspace & Re-type Animation -->
+
+<h1 aria-label="Every Route. Costs Lower." class="font-display text-display text-4xl sm:text-5xl lg:text-[3.25rem] lg:leading-[3.75rem] font-extrabold tracking-tight text-zinc-950 min-h-[5.5rem] sm:min-h-[7rem] lg:min-h-[7.75rem] flex flex-col justify-start">
+
+<span class="pb-1 block whitespace-nowrap">
+
+<span class="inline-block" id="typewriter-line1">Every Ro</span><span class="typewriter-cursor h-[0.9em]" id="cursor-line1"></span>
+
+</span>
+
+<span class="pb-2 block whitespace-nowrap">
+
+<span class="inline-block relative">
+
+<span class="font-black" id="typewriter-line2"></span>
+
+<span class="typewriter-cursor h-[0.9em] hidden" id="cursor-line2"></span>
+
+<span class="hero-underline-bar" id="hero-underline" style="transform: scaleX(0); opacity: 0;"></span>
+
+</span>
+
+</span>
+
+</h1>
+
+<!-- Descriptive Value Proposition (Staggered Soft Reveal) -->
+
+<p class="hero-subtitle-animate font-body-lg text-body-lg text-zinc-600 max-w-xl leading-relaxed">
+
+            RÍDO helps you plan better routes, choose the right vehicle, track your fleet, and reduce fuel and delivery costs — all from one simple platform.
+
+          </p>
+
+<!-- Horizontal Action Button Row -->
+
+<div class="hero-actions-animate flex flex-wrap items-center gap-3.5 pt-1 w-full sm:w-auto">
+
+<!-- Primary Solid Black Button -->
+
+<a class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-black hover:bg-zinc-800 text-white font-body-md font-semibold shadow-md active:scale-[0.98] transition-all group" href="#optimize">
+
+<span class="material-symbols-outlined text-[19px] fill-icon text-white transition-transform group-hover:scale-110" data-icon="bolt">bolt</span>
+
+<span class="">Optimize My Route</span>
+
+</a>
+
+<!-- Secondary Outline Button -->
+
+<a class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg bg-white border border-zinc-300 hover:border-zinc-900 text-zinc-900 font-body-md font-semibold shadow-sm hover:bg-zinc-50 active:scale-[0.98] transition-all group" href="#plan">
+
+<span class="material-symbols-outlined text-[19px] text-zinc-700 transition-transform group-hover:rotate-12" data-icon="alt_route">alt_route</span>
+
+<span class="">Plan a Route</span>
+
+</a>
+
+<!-- Tertiary Outline Button -->
+
+<a class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg bg-transparent border border-transparent hover:border-zinc-300 text-zinc-700 hover:text-zinc-950 font-body-md font-medium hover:bg-zinc-100 active:scale-[0.98] transition-all" href="#fleet">
+
+<span class="material-symbols-outlined text-[19px] text-zinc-600" data-icon="garage">garage</span>
+
+<span class="">View Fleet</span>
+
+</a>
+
+</div>
+
+<!-- Capabilities Strip -->
+
+<div class="hero-actions-animate pt-2 flex flex-wrap items-center gap-y-2 gap-x-3 text-zinc-600 font-label-md text-label-md">
+
+<span class="text-zinc-900 font-semibold transition-colors hover:text-black">Smart Routing</span>
+
+<span class="text-zinc-300">•</span>
+
+<span class="text-zinc-900 font-semibold transition-colors hover:text-black">Fleet Tracking</span>
+
+<span class="text-zinc-300">•</span>
+
+<span class="text-zinc-900 font-semibold transition-colors hover:text-black">Vehicle Optimization</span>
+
+<span class="text-zinc-300">•</span>
+
+<span class="text-zinc-900 font-semibold transition-colors hover:text-black">Live Insights</span>
+
+</div>
+
+<!-- Social Proof Bar -->
+
+<div class="hero-actions-animate pt-4 border-t border-zinc-200 w-full flex items-center gap-3">
+
+<div class="flex -space-x-2 overflow-hidden">
+
+<div class="inline-flex h-7 w-7 rounded-full bg-black text-white font-label-sm text-[10px] items-center justify-center font-bold ring-2 ring-white">TX</div>
+
+<div class="inline-flex h-7 w-7 rounded-full bg-zinc-700 text-white font-label-sm text-[10px] items-center justify-center font-bold ring-2 ring-white">NX</div>
+
+<div class="inline-flex h-7 w-7 rounded-full bg-zinc-400 text-black font-label-sm text-[10px] items-center justify-center font-bold ring-2 ring-white">RL</div>
+
+</div>
+
+<div class="font-body-sm text-body-sm text-zinc-600">
+
+<span class="font-semibold text-zinc-950">Trusted by 450+</span> freight lines &amp; dispatch networks
+
+            </div>
+
+</div>
+
+</div>
+
+<!-- Right Column: Line-Art Freight Truck Illustration Card with Dynamic Motion (5 cols) -->
+
+<div class="lg:col-span-5 relative flex justify-center">
+
+<!-- Ambient Monochrome Glow -->
+
+<div class="absolute -inset-4 bg-zinc-200/50 rounded-full blur-3xl -z-10"></div>
+
+<!-- Modern Technical Showcase Card -->
+
+<div class="relative w-full max-w-md bg-white border border-zinc-200 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col items-center">
+
+<!-- Concentric Circular Orbit Decoration -->
+
+<div class="relative w-full aspect-square max-w-[320px] flex items-center justify-center">
+
+<!-- Outer Ring -->
+
+<div class="absolute inset-0 rounded-full border border-dashed border-zinc-300 animate-spin" style="animation-duration: 40s;"></div>
+
+<!-- Inner Orbit Ring -->
+
+<div class="absolute inset-6 rounded-full border border-zinc-200"></div>
+
+<!-- Orbit Node Dots -->
+
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-black ring-4 ring-zinc-100"></div>
+
+<div class="absolute bottom-6 right-6 w-2 h-2 rounded-full bg-zinc-500"></div>
+
+<!-- Center Line-Art Commercial Freight Truck Illustration with Active Motion -->
+
+<div class="relative z-10 w-48 h-48 flex items-center justify-center overflow-visible">
+
+<svg class="w-full h-full text-zinc-900" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 200 160">
+
+<!-- Moving Ground / Highway Track Line Flowing Backward -->
+
+<g class="animate-road-markers">
+
+<line class="animate-road-markers" stroke="#CBD5E1" stroke-dasharray="6 6" stroke-width="1.75" x1="-20" x2="220" y1="125" y2="125"></line>
+
+</g>
+
+<!-- Animated Truck Chassis & Payload Group (Road Bounce & Float) -->
+
+<g class="animate-truck-body">
+
+<!-- Flatbed Chassis -->
+
+<rect fill="#F4F4F5" height="8" rx="2" stroke-width="2" width="150" x="25" y="105"></rect>
+
+<!-- Animated Cargo Stacks Group (Slight dynamic vibration & float) -->
+
+<g class="animate-truck-cargo">
+
+<!-- Box 1 (Bottom Left) -->
+
+<rect fill="#FFFFFF" height="30" rx="1.5" stroke-width="1.8" width="38" x="35" y="75"></rect>
+
+<line stroke="#E4E4E7" stroke-width="1" x1="35" x2="73" y1="90" y2="90"></line>
+
+<line stroke="#E4E4E7" stroke-width="1" x1="54" x2="54" y1="75" y2="105"></line>
+
+<!-- Box 2 (Bottom Mid) -->
+
+<rect fill="#FFFFFF" height="37" rx="1.5" stroke-width="1.8" width="45" x="76" y="68"></rect>
+
+<line stroke="#E4E4E7" stroke-width="1" x1="76" x2="121" y1="86" y2="86"></line>
+
+<circle cx="98.5" cy="80" r="3" stroke="#18181B" stroke-width="1.2"></circle>
+
+<!-- Box 3 (Top Stacked) -->
+
+<rect fill="#F4F4F5" height="30" rx="1.5" stroke-width="1.8" width="30" x="42" y="45"></rect>
+
+<line stroke="#E4E4E7" stroke-width="1" x1="42" x2="72" y1="60" y2="60"></line>
+
+<!-- Rig Straps / Fasteners -->
+
+<path d="M32 105 L57 45 L80 105" stroke="#27272A" stroke-dasharray="2 2" stroke-width="1.5"></path>
+
+</g>
+
+<!-- Animated Cab Unit (Highway suspension tilt & pitch) -->
+
+<g class="animate-truck-cab">
+
+<!-- Truck Cab Body -->
+
+<path d="M125 105 V65 H155 L175 88 V105 H125 Z" fill="#FFFFFF" stroke-width="2"></path>
+
+<path d="M150 69 L168 88 H132 V69 H150 Z" fill="#F4F4F5" stroke="#71717A" stroke-width="1.5"></path>
+
+<!-- Front Grille & Headlight -->
+
+<line stroke="#18181B" stroke-width="2.5" x1="175" x2="175" y1="95" y2="104"></line>
+
+<circle cx="170" cy="98" fill="#18181B" r="2" stroke="none"></circle>
+
+</g>
+
+</g>
+
+<!-- Animated Rolling Wheels (Smooth Continuous 360deg Rotation with Spokes) -->
+
+<!-- Trailer Wheel 1 (x=48, y=120) -->
+
+<g class="animate-wheel-spin-trailer1">
+
+<circle cx="48" cy="120" fill="#FFFFFF" r="11" stroke-width="2"></circle>
+
+<line stroke="#71717A" stroke-width="1.2" x1="48" x2="48" y1="109" y2="131"></line>
+
+<line stroke="#71717A" stroke-width="1.2" x1="37" x2="59" y1="120" y2="120"></line>
+
+<circle cx="48" cy="120" fill="#09090B" r="4"></circle>
+
+<circle cx="48" cy="120" fill="#FFFFFF" r="1.5"></circle>
+
+</g>
+
+<!-- Trailer Wheel 2 (x=72, y=120) -->
+
+<g class="animate-wheel-spin-trailer2">
+
+<circle cx="72" cy="120" fill="#FFFFFF" r="11" stroke-width="2"></circle>
+
+<line stroke="#71717A" stroke-width="1.2" x1="72" x2="72" y1="109" y2="131"></line>
+
+<line stroke="#71717A" stroke-width="1.2" x1="61" x2="83" y1="120" y2="120"></line>
+
+<circle cx="72" cy="120" fill="#09090B" r="4"></circle>
+
+<circle cx="72" cy="120" fill="#FFFFFF" r="1.5"></circle>
+
+</g>
+
+<!-- Cab Wheel (x=152, y=120) -->
+
+<g class="animate-wheel-spin-cab">
+
+<circle cx="152" cy="120" fill="#FFFFFF" r="11" stroke-width="2"></circle>
+
+<line stroke="#71717A" stroke-width="1.2" x1="152" x2="152" y1="109" y2="131"></line>
+
+<line stroke="#71717A" stroke-width="1.2" x1="141" x2="163" y1="120" y2="120"></line>
+
+<circle cx="152" cy="120" fill="#09090B" r="4"></circle>
+
+<circle cx="152" cy="120" fill="#FFFFFF" r="1.5"></circle>
+
+</g>
+
+</svg>
+
+</div>
+
+</div>
+
+<!-- Floating Corridor Pill Badge -->
+
+<div class="mt-4 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-zinc-200 shadow-sm">
+
+<span class="w-2 h-2 rounded-full bg-black animate-pulse"></span>
+
+<span class="font-label-sm text-label-sm font-semibold text-zinc-900 tracking-tight">64 km/h</span>
+
+<span class="text-zinc-300">•</span>
+
+<span class="font-body-sm text-body-sm font-medium text-zinc-600">NH-44 Freight Traversal</span>
+
+<span class="material-symbols-outlined text-[16px] text-zinc-800 font-bold" data-icon="verified">verified</span>
+
+</div>
+
+<!-- Micro Telemetry Footer in Card -->
+
+<div class="mt-6 w-full pt-4 border-t border-zinc-100 flex items-center justify-between text-zinc-600 font-label-sm text-label-sm">
+
+<div class="flex items-center gap-1.5">
+
+<span class="material-symbols-outlined text-[15px] text-zinc-800" data-icon="tune">tune</span>
+
+<span class="">Payload: 14.8t / 18.0t</span>
+
+</div>
+
+<div class="text-zinc-950 font-semibold">
+
+                98.4% On Schedule
+
+              </div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- SECTION: HOW RÍDO WORKS -->
+
+<section class="py-20 bg-white border-y border-zinc-200" id="overview">
+
+<div class="max-w-7xl mx-auto px-6">
+
+<!-- Section Header with Scroll Reveal -->
+
+<div class="reveal-on-scroll text-center max-w-2xl mx-auto mb-16 flex flex-col items-center is-visible">
+
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-zinc-100 border border-zinc-200 mb-3.5 transition-transform hover:scale-105">
+
+<span class="w-1.5 h-1.5 rounded-full bg-black animate-ping"></span>
+
+<span class="font-label-sm text-[11px] font-bold tracking-wider text-zinc-800 uppercase">
+
+              HOW RÍDO WORKS
+
+            </span>
+
+</div>
+
+<h2 class="font-headline-lg text-headline-lg font-bold text-zinc-950 tracking-tight mb-4 transition-colors hover:text-black">
+
+            Simple steps. Smarter deliveries.
+
+          </h2>
+
+<p class="font-body-md text-body-md text-zinc-600 leading-relaxed">
+
+            From dispatch configuration to final compliance sign-off, streamline your multi-stop supply chain.
+
+          </p>
+
+</div>
+
+<!-- 3-Column Horizontal Step Grid -->
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+<!-- Card 01 - PLAN -->
+
+<div class="reveal-on-scroll delay-100 group bg-[#FAFAFA] border border-zinc-200 rounded-xl p-8 flex flex-col justify-between hover:border-zinc-400 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 is-visible">
+
+<div>
+
+<div class="flex items-center justify-between mb-6">
+
+<div class="w-12 h-12 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-zinc-900 group-hover:border-zinc-400 group-hover:scale-105 transition-all">
+
+<span class="material-symbols-outlined text-2xl text-zinc-800 transition-transform group-hover:-translate-y-0.5" data-icon="pin_drop">pin_drop</span>
+
+</div>
+
+<span class="px-2.5 py-1 rounded bg-zinc-100 border border-zinc-200 font-label-sm text-[11px] font-bold text-zinc-800 tracking-wider transition-colors group-hover:bg-zinc-200">01 PLAN</span>
+
+</div>
+
+<div class="step-card-tag font-label-sm text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">
+
+      PLAN
+
+    </div>
+
+<h3 class="step-card-title font-headline-sm text-headline-sm font-bold text-zinc-950 mb-3 group-hover:text-black">
+
+      Set Locations &amp; Priorities
+
+    </h3>
+
+<p class="font-body-md text-body-sm text-zinc-600 leading-relaxed mb-6">
+
+      Add locations, set priorities and plan routes in minutes.
+
+    </p>
+
+</div>
+
+<div class="pt-4 border-t border-zinc-200 flex items-center text-zinc-800 font-label-sm text-label-sm group-hover:text-black transition-colors">
+
+<span class="material-symbols-outlined text-[16px] text-zinc-950 mr-1.5 transition-transform group-hover:scale-110" data-icon="check_circle">check_circle</span>
+
+<span class="font-medium">Intelligent geofence mapping</span>
+
+</div>
+
+</div>
+
+<!-- Card 02 - OPTIMIZE (High-contrast prominent card) -->
+
+<div class="reveal-on-scroll delay-200 group relative bg-[#FAFAFA] border-2 border-black rounded-xl p-8 flex flex-col justify-between shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 is-visible">
+
+<div>
+
+<div class="flex items-center justify-between mb-6">
+
+<div class="w-12 h-12 rounded-lg bg-black flex items-center justify-center text-white group-hover:scale-105 transition-transform">
+
+<span class="material-symbols-outlined text-2xl fill-icon text-white transition-transform group-hover:rotate-45" data-icon="filter_alt">filter_alt</span>
+
+</div>
+
+<span class="px-2.5 py-1 rounded bg-black text-white font-label-sm text-[11px] font-bold tracking-wider">02 OPTIMIZE</span>
+
+</div>
+
+<div class="step-card-tag font-label-sm text-[11px] font-bold text-zinc-950 uppercase tracking-wider mb-1">
+
+      OPTIMIZE
+
+    </div>
+
+<h3 class="step-card-title font-headline-sm text-headline-sm font-bold text-zinc-950 mb-3">
+
+      Automated Vehicle Matching
+
+    </h3>
+
+<p class="font-body-md text-body-sm text-zinc-600 leading-relaxed mb-6">
+
+      Our engine evaluates multiple possibilities and suggests the best route.
+
+    </p>
+
+</div>
+
+<div class="pt-4 border-t border-zinc-200 flex items-center text-zinc-900 font-label-sm text-label-sm">
+
+<span class="material-symbols-outlined text-[16px] text-black mr-1.5 transition-transform group-hover:scale-110" data-icon="check_circle">check_circle</span>
+
+<span class="font-semibold">Up to 28% reduced mileage</span>
+
+</div>
+
+</div>
+
+<!-- Card 03 - DELIVER -->
+
+<div class="reveal-on-scroll delay-300 group bg-[#FAFAFA] border border-zinc-200 rounded-xl p-8 flex flex-col justify-between hover:border-zinc-400 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 is-visible">
+
+<div>
+
+<div class="flex items-center justify-between mb-6">
+
+<div class="w-12 h-12 rounded-lg bg-white border border-zinc-200 flex items-center justify-center text-zinc-900 group-hover:border-zinc-400 group-hover:scale-105 transition-all">
+
+<span class="material-symbols-outlined text-2xl text-zinc-800 fill-icon transition-transform group-hover:scale-110" data-icon="verified_user">verified_user</span>
+
+</div>
+
+<span class="px-2.5 py-1 rounded bg-zinc-100 border border-zinc-200 font-label-sm text-[11px] font-bold text-zinc-800 tracking-wider transition-colors group-hover:bg-zinc-200">03 DELIVER</span>
+
+</div>
+
+<div class="step-card-tag font-label-sm text-[11px] font-semibold text-zinc-500 uppercase tracking-wider mb-1">
+
+      DELIVER
+
+    </div>
+
+<h3 class="step-card-title font-headline-sm text-headline-sm font-bold text-zinc-950 mb-3 group-hover:text-black">
+
+      Track &amp; Verify Compliance
+
+    </h3>
+
+<p class="font-body-md text-body-sm text-zinc-600 leading-relaxed mb-6">
+
+      Track in real-time, stay updated and deliver with confidence.
+
+    </p>
+
+</div>
+
+<div class="pt-4 border-t border-zinc-200 flex items-center text-zinc-800 font-label-sm text-label-sm group-hover:text-black transition-colors">
+
+<span class="material-symbols-outlined text-[16px] text-zinc-950 mr-1.5 transition-transform group-hover:scale-110" data-icon="check_circle">check_circle</span>
+
+<span class="font-medium">Zero-dispute electronic PODs</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- SECTION: CALL TO ACTION BANNER -->
+
+<section class="max-w-7xl mx-auto px-6 py-16 lg:py-20">
+
+<div class="reveal-on-scroll relative bg-zinc-950 text-white rounded-2xl p-8 sm:p-12 shadow-md overflow-hidden border border-zinc-800 is-visible">
+
+<!-- Subtle Background Accent Line Pattern -->
+
+<div class="absolute -right-12 -top-12 w-72 h-72 bg-zinc-800/40 rounded-full blur-2xl pointer-events-none"></div>
+
+<div class="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
+
+<div class="max-w-2xl text-center lg:text-left">
+
+<div class="font-label-sm text-xs font-bold text-zinc-400 tracking-wider uppercase mb-2">
+
+              DISPATCH ACCELERATION
+
+            </div>
+
+<h3 class="cta-heading-glow font-headline-md text-headline-md sm:text-2xl font-bold text-white mb-3">
+
+              Ready to reduce operational deadhead?
+
+            </h3>
+
+<p class="font-body-md text-body-md text-zinc-300 leading-relaxed">
+
+              Join 450+ freight lines orchestrating smarter dispatches every morning with real-time routing logic.
+
+            </p>
+
+</div>
+
+<div class="flex flex-col sm:flex-row items-center gap-4 flex-shrink-0">
+
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white hover:bg-zinc-100 text-black font-body-md font-semibold px-7 py-4 rounded-lg shadow-sm active:scale-[0.98] transition-all group" href="#home" onclick="openSignInModal(); return false;">
+
+<span class="">Start Free Evaluation</span>
+
+<span class="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1" data-icon="arrow_forward">arrow_forward</span>
+
+</a>
+
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-transparent border border-zinc-700 hover:border-zinc-500 text-zinc-100 font-body-md font-semibold px-6 py-4 rounded-lg hover:bg-zinc-900 transition-all" href="#sales">
+
+<span class="material-symbols-outlined text-[19px] text-zinc-300" data-icon="support_agent">support_agent</span>
+
+<span class="">Talk to Sales</span>
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+      <div id="copilotWorkspace" class="copilot-workspace-visible max-w-7xl mx-auto px-6 py-8 w-full">
+<button type="button" class="guest-signin-btn" id="guestBannerSignInBtn">
           <i class="ri-login-box-r-line"></i> Sign In to Unlock &rarr;
         </button>
       </div>
@@ -2622,13 +3838,10 @@
         </div>
       </section>
 
-    </div> <!-- /#copilotWorkspace -->
-
+    </div>
+      </div>
     </div> <!-- /#viewHome -->
 
-    <!-- ══════════════════════════════════════════════
-         PAGE VIEW: FLEET IQ & ASSET HEALTH (Image Top-Left)
-         ══════════════════════════════════════════════ -->
     <div id="viewFleet" class="app-page-view" style="display: none;">
       <!-- Title Bar -->
       <div class="page-title-row">
@@ -3258,6 +4471,48 @@
   <!-- ══════════════════════════════════════════════
        8. REASONING TRACE DRAWER (SLIDE-OVER)
        ══════════════════════════════════════════════ -->
+  <footer class="bg-white border-t border-zinc-200 full-width bottom transition-colors duration-150">
+
+<div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center gap-6 w-full">
+
+<!-- Brand & Copyright -->
+
+<div class="flex flex-col items-center md:items-start gap-1">
+
+<div class="flex items-center gap-2"><img alt="RÍDO Logistics &amp; Delivery" class="h-8 w-auto object-contain" src="images/rido-logo.png"></div>
+
+<p class="font-body-sm text-body-sm text-zinc-500 mt-1">
+
+          © 2025 RÍDO Logistics Infrastructure Technologies Inc. All rights reserved.
+
+        </p>
+
+</div>
+
+<!-- Footer Quick Links -->
+
+<div class="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2">
+
+<a class="font-body-sm text-body-sm text-zinc-600 hover:text-black transition-colors" href="#overview">Product Overview</a>
+
+<a class="font-body-sm text-body-sm text-zinc-600 hover:text-black transition-colors" href="#telemetry">Fleet Telemetry</a>
+
+<a class="font-body-sm text-body-sm text-zinc-600 hover:text-black transition-colors" href="#route">Route Optimization</a>
+
+<a class="font-body-sm text-body-sm text-zinc-600 hover:text-black transition-colors" href="#security">Security &amp; Compliance</a>
+
+<a class="font-body-sm text-body-sm text-zinc-600 hover:text-black transition-colors" href="#api">API Documentation</a>
+
+<a class="font-body-sm text-body-sm text-zinc-600 hover:text-black transition-colors" href="#contact">Contact Sales</a>
+
+<a class="font-body-sm text-body-sm text-zinc-600 hover:text-black transition-colors" href="#privacy">Privacy Policy</a>
+
+</div>
+
+</div>
+
+</footer>
+
   <aside id="reasoningDrawer" class="collapsed">
     <div class="drawer-header">
       <span><i class="ri-mind-map text-indigo-600"></i> Azure Inference Trace</span>
@@ -3272,5 +4527,309 @@
 
   <!-- Script Module -->
   <script type="module" src="js/app.js"></script>
+
+  <!-- User Redesign Typewriter & Observer Animations -->
+  <script>
+// Authentic Realistic Typewriter with Character-by-Character Delete / Backspace Effect
+
+  (function initTypewriter() {
+
+    const line1El = document.getElementById('typewriter-line1');
+
+    const line2El = document.getElementById('typewriter-line2');
+
+    const cursor1 = document.getElementById('cursor-line1');
+
+    const cursor2 = document.getElementById('cursor-line2');
+
+    const underline = document.getElementById('hero-underline');
+
+
+
+    if (!line1El || !line2El) return;
+
+
+
+    // Check prefers-reduced-motion
+
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+
+      line1El.textContent = "Every Route.";
+
+      line2El.textContent = "Costs Lower.";
+
+      if (cursor1) cursor1.style.display = 'none';
+
+      if (cursor2) cursor2.style.display = 'none';
+
+      return;
+
+    }
+
+
+
+    const textLine1 = "Every Route.";
+
+    const textLine2 = "Costs Lower.";
+
+
+
+    // Start with fully rendered state matching snapshot
+
+    let currentL1 = textLine1.length;
+
+    let currentL2 = textLine2.length;
+
+    let state = 'PAUSE_FULL'; // 'PAUSE_FULL', 'BACKSPACE_L2', 'BACKSPACE_L1', 'PAUSE_EMPTY', 'TYPE_L1', 'TYPE_L2'
+
+
+
+    function updateCursorPosition() {
+
+      if (state === 'TYPE_L1' || state === 'BACKSPACE_L1') {
+
+        if (cursor1) cursor1.classList.remove('hidden');
+
+        if (cursor2) cursor2.classList.add('hidden');
+
+      } else {
+
+        if (cursor1) cursor1.classList.add('hidden');
+
+        if (cursor2) cursor2.classList.remove('hidden');
+
+      }
+
+
+
+      // Update underline scale based on whether Line 2 has characters
+
+      if (underline) {
+
+        if (currentL2 === 0) {
+
+          underline.style.transform = 'scaleX(0)';
+
+          underline.style.opacity = '0';
+
+        } else {
+
+          underline.style.transform = 'scaleX(1)';
+
+          underline.style.opacity = '1';
+
+        }
+
+      }
+
+    }
+
+
+
+    function step() {
+
+      let delay = 75;
+
+
+
+      switch(state) {
+
+        case 'PAUSE_FULL':
+
+          // Wait 2.5 seconds so users comfortably read the message
+
+          delay = 2500;
+
+          state = 'BACKSPACE_L2';
+
+          break;
+
+
+
+        case 'BACKSPACE_L2':
+
+          if (currentL2 > 0) {
+
+            currentL2--;
+
+            line2El.textContent = textLine2.substring(0, currentL2);
+
+            // Realistic backspace speed with organic jitter
+
+            delay = 35 + Math.random() * 30;
+
+          } else {
+
+            // Line 2 finished backspacing, switch cursor to line 1
+
+            state = 'BACKSPACE_L1';
+
+            delay = 120;
+
+          }
+
+          break;
+
+
+
+        case 'BACKSPACE_L1':
+
+          if (currentL1 > 0) {
+
+            currentL1--;
+
+            line1El.textContent = textLine1.substring(0, currentL1);
+
+            delay = 35 + Math.random() * 25;
+
+          } else {
+
+            // Finished erasing everything
+
+            state = 'PAUSE_EMPTY';
+
+            delay = 600; // brief pause when cleared
+
+          }
+
+          break;
+
+
+
+        case 'PAUSE_EMPTY':
+
+          state = 'TYPE_L1';
+
+          delay = 200;
+
+          break;
+
+
+
+        case 'TYPE_L1':
+
+          if (currentL1 < textLine1.length) {
+
+            currentL1++;
+
+            line1El.textContent = textLine1.substring(0, currentL1);
+
+            // Natural typewriter cadence
+
+            delay = 60 + Math.random() * 50;
+
+            if (textLine1[currentL1 - 1] === '.') delay += 180; // slight pause after period
+
+          } else {
+
+            state = 'TYPE_L2';
+
+            delay = 140;
+
+          }
+
+          break;
+
+
+
+        case 'TYPE_L2':
+
+          if (currentL2 < textLine2.length) {
+
+            currentL2++;
+
+            line2El.textContent = textLine2.substring(0, currentL2);
+
+            delay = 65 + Math.random() * 55;
+
+            if (textLine2[currentL2 - 1] === ' ') delay += 40;
+
+            if (textLine2[currentL2 - 1] === '.') delay += 100;
+
+          } else {
+
+            // Fully re-typed
+
+            state = 'PAUSE_FULL';
+
+            delay = 100;
+
+          }
+
+          break;
+
+      }
+
+
+
+      updateCursorPosition();
+
+      setTimeout(step, delay);
+
+    }
+
+
+
+    // Initialize initial cursor state and begin sequence
+
+    updateCursorPosition();
+
+    setTimeout(step, 2400);
+
+  })();
+
+
+
+  // Intersection Observer for scroll-triggered text reveal
+
+  document.addEventListener('DOMContentLoaded', function() {
+
+    if ('IntersectionObserver' in window) {
+
+      const observer = new IntersectionObserver((entries) => {
+
+        entries.forEach(entry => {
+
+          if (entry.isIntersecting) {
+
+            entry.target.classList.add('is-visible');
+
+            observer.unobserve(entry.target);
+
+          }
+
+        });
+
+      }, {
+
+        threshold: 0.15,
+
+        rootMargin: '0px 0px -40px 0px'
+
+      });
+
+
+
+      document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+
+        observer.observe(el);
+
+      });
+
+    } else {
+
+      document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+
+        el.classList.add('is-visible');
+
+      });
+
+    }
+
+  });
+
+
+  </script>
+
 </body>
 </html>
