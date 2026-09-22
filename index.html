@@ -30,8 +30,10 @@
       --text:           #0f172a;
       --text-muted:     #64748b;
       --primary:        #0f172a;
-      --accent:         #4f46e5;
-      --accent-light:   #eff2fe;
+      --accent:         #ea580c;
+      --accent-hover:   #c2410c;
+      --accent-light:   #fff7ed;
+      --accent-border:  #fed7aa;
       --cyan:           #0284c7;
       --cyan-light:     #f0f9ff;
       --emerald:        #16a34a;
@@ -178,7 +180,7 @@
 
     .apple-forgot-link {
       font-size: 0.78rem;
-      color: #0071e3;
+      color: #ea580c;
       text-decoration: none;
       transition: opacity 0.15s;
     }
@@ -208,8 +210,8 @@
     }
 
     .apple-form-input:focus {
-      border-color: #0071e3;
-      box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
+      border-color: #ea580c;
+      box-shadow: 0 0 0 4px rgba(234, 88, 12, 0.12);
     }
 
     .apple-btn-toggle-pw {
@@ -233,7 +235,7 @@
     .apple-btn-submit {
       width: 100%;
       height: 44px;
-      background: #0071e3;
+      background: #ea580c;
       color: #ffffff;
       border: none;
       border-radius: 10px;
@@ -249,7 +251,7 @@
     }
 
     .apple-btn-submit:hover {
-      background: #0077ed;
+      background: #c2410c;
     }
 
     .apple-btn-submit:active {
@@ -264,7 +266,7 @@
     }
 
     .apple-signup-link {
-      color: #0071e3;
+      color: #ea580c;
       font-weight: 500;
       text-decoration: none;
       margin-left: 4px;
@@ -339,7 +341,7 @@
 
     .nav-link.locked:hover {
       opacity: 0.85;
-      color: #2563eb;
+      color: #ea580c;
     }
 
     .nav-lock-icon {
@@ -352,7 +354,7 @@
     }
 
     .nav-link.locked:hover .nav-lock-icon {
-      color: #2563eb;
+      color: #ea580c;
     }
 
     /* Guest Preview Banner */
@@ -379,8 +381,8 @@
       width: 42px;
       height: 42px;
       border-radius: 12px;
-      background: #eff6ff;
-      color: #2563eb;
+      background: #fff7ed;
+      color: #ea580c;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -421,7 +423,7 @@
     }
 
     .guest-signin-btn:hover {
-      background: #2563eb;
+      background: #ea580c;
       transform: translateY(-1px);
     }
 
@@ -493,8 +495,8 @@
     }
 
     .nav-persona-btn:hover {
-      border-color: #cbd5e1;
-      background: #f8fafc;
+      border-color: #fed7aa;
+      background: #fff7ed;
     }
 
     .persona-dropdown-menu {
@@ -581,7 +583,8 @@
     }
 
     .btn-signin:hover {
-      background: #1e293b;
+      background: #ea580c;
+      border-color: #ea580c;
     }
 
     /* ══════════════════════════════════════════════
@@ -990,7 +993,7 @@
     .process-tag {
       font-size: 0.68rem;
       font-weight: 800;
-      color: #4f46e5;
+      color: #ea580c;
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
@@ -1022,8 +1025,8 @@
     }
 
     .process-badge {
-      background: #eff6ff;
-      border: 1px solid #dbeafe;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
       border-radius: 12px;
       padding: 8px 14px;
       display: flex;
@@ -1031,7 +1034,7 @@
       gap: 8px;
       font-size: 0.74rem;
       font-weight: 600;
-      color: #1d4ed8;
+      color: #c2410c;
     }
 
     /* OPERATIONAL ROLE LIVE HUD */
@@ -1119,9 +1122,9 @@
     }
 
     .hud-action-btn:hover {
-      background: #eff6ff;
-      border-color: #3b82f6;
-      color: #1d4ed8;
+      background: #fff7ed;
+      border-color: #ea580c;
+      color: #c2410c;
       transform: translateY(-1px);
     }
 
@@ -1151,9 +1154,9 @@
     }
 
     .quick-chip-btn:hover {
-      border-color: #4f46e5;
-      color: #4f46e5;
-      background: #eff2fe;
+      border-color: #ea580c;
+      color: #ea580c;
+      background: #fff7ed;
       transform: translateY(-1px);
     }
 
@@ -1295,14 +1298,14 @@
     }
 
     .role-action-pill.primary {
-      background: #2563eb;
+      background: #ea580c;
       color: #ffffff;
-      border-color: #2563eb;
+      border-color: #ea580c;
     }
 
     .role-action-pill.primary:hover {
-      background: #1d4ed8;
-      border-color: #1d4ed8;
+      background: #c2410c;
+      border-color: #c2410c;
     }
 
     /* ══════════════════════════════════════════════
@@ -1409,9 +1412,9 @@
     }
 
     .msg.ai .msg-avatar {
-      background: #eff2fe;
-      border: 1px solid #c7d2fe;
-      color: #4f46e5;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #ea580c;
     }
 
     .msg-bubble-wrap {
@@ -1524,7 +1527,7 @@
     .typing-indicator { display: flex; gap: 5px; padding: 6px 4px; align-items: center; }
     .typing-dot {
       width: 7px; height: 7px;
-      background: #4f46e5;
+      background: #ea580c;
       border-radius: 50%;
       animation: bounce 1.2s infinite;
     }
@@ -1552,8 +1555,8 @@
     }
 
     .input-row:focus-within {
-      border-color: #4f46e5;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+      border-color: #ea580c;
+      box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.10);
     }
 
     #userInput {
@@ -1588,9 +1591,9 @@
     }
 
     .input-tool-btn:hover {
-      border-color: #4f46e5;
-      color: #4f46e5;
-      background: #eff2fe;
+      border-color: #ea580c;
+      color: #ea580c;
+      background: #fff7ed;
     }
 
     .input-tool-btn.listening {
@@ -1688,7 +1691,7 @@
     .thought-step {
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-left: 3px solid #4f46e5;
+      border-left: 3px solid #ea580c;
       border-radius: 10px;
       padding: 12px 14px;
       font-size: 0.76rem;
@@ -1698,7 +1701,7 @@
       font-size: 0.68rem;
       text-transform: uppercase;
       font-family: 'JetBrains Mono', monospace;
-      color: #4f46e5;
+      color: #ea580c;
       font-weight: 700;
       margin-bottom: 3px;
     }
@@ -2273,8 +2276,8 @@
     }
 
     .folder-item.active {
-      background: #eff6ff;
-      color: #1d4ed8;
+      background: #fff7ed;
+      color: #c2410c;
       font-weight: 700;
     }
 
@@ -2314,7 +2317,7 @@
     }
 
     .reports-search-input:focus {
-      border-color: #0071e3;
+      border-color: #ea580c;
     }
 
     .action-icon-btn {
@@ -2372,7 +2375,7 @@
     .btn-generate-report:hover {
       background: #f1f5f9;
       border-color: #cbd5e1;
-      color: #0071e3;
+      color: #ea580c;
     }
   
 
