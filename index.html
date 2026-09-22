@@ -582,12 +582,23 @@
        3. MAIN LAYOUT CONTAINER
        ══════════════════════════════════════════════ */
     .main-container {
-      max-width: 1320px;
+      width: 100%;
       margin: 0 auto;
-      padding: 24px 28px 60px;
       display: flex;
       flex-direction: column;
-      gap: 28px;
+    }
+
+    .app-page-view:not(#viewHome) {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 28px 60px;
+    }
+
+    #viewHome {
+      width: 100%;
+      margin: 0;
+      padding: 0;
     }
 
     /* ══════════════════════════════════════════════
@@ -3100,7 +3111,7 @@
     <div id="viewHome" class="app-page-view flex flex-col w-full">
 
       <!-- HERO SECTION -->
-      <section class="max-w-7xl mx-auto px-6 pt-16 pb-20 lg:pt-24 lg:pb-28">
+      <section class="max-w-7xl mx-auto px-6 pt-4 pb-16 lg:pt-6 lg:pb-20">
 
 <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
