@@ -45,8 +45,14 @@
       --shadow-xl:      0 20px 40px -15px rgba(0,0,0,0.12);
     }
 
-    html, body {
+    html {
       height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
@@ -586,6 +592,8 @@
       margin: 0 auto;
       display: flex;
       flex-direction: column;
+      flex: 1 0 auto;
+      min-height: 0;
     }
 
     .app-page-view:not(#viewHome) {
@@ -2939,7 +2947,7 @@
   </script>
 
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
   <!-- ══════════════════════════════════════════════
        1. APPLE-INSPIRED ENTERPRISE LOGIN SCREEN (MODAL ON HOME PAGE)
@@ -3215,7 +3223,7 @@
   <!-- ══════════════════════════════════════════════
        3. MAIN WORKSPACE CONTENT
        ══════════════════════════════════════════════ -->
-  <div class="main-container">
+  <main class="main-container flex-1 w-full flex flex-col">
     <div id="viewHome" class="app-page-view flex flex-col w-full">
       <!-- 1. PUBLIC MARKETING LANDING (Visible ONLY when NOT authenticated) -->
       <div id="homePublicMarketing" class="w-full">
@@ -4877,12 +4885,12 @@
       </div>
     </div>
 
-  </div>
+  </main>
 
   <!-- ══════════════════════════════════════════════
        8. REASONING TRACE DRAWER (SLIDE-OVER)
        ══════════════════════════════════════════════ -->
-  <footer class="bg-white border-t border-zinc-200 full-width bottom transition-colors duration-150">
+  <footer class="bg-white border-t border-zinc-200 full-width bottom transition-colors duration-150 mt-auto flex-shrink-0">
 
 <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center gap-6 w-full">
 
