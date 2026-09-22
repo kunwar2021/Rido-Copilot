@@ -1490,6 +1490,7 @@ if (closeCopilotBtn) {
    3. SPEECH-TO-TEXT (VOICE DICTATION)
    ══════════════════════════════════════════════ */
 function setupSpeechRecognition() {
+  if (!voiceMicBtn) return; // mic button not in DOM, skip
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
     voiceMicBtn.style.display = "none";
@@ -1503,7 +1504,7 @@ function setupSpeechRecognition() {
   speechRecognizer.onstart = () => {
     isListening = true;
     voiceMicBtn.classList.add("listening");
-    userInput.placeholder = "Listening to your voice command...";
+    if (userInput) userInput.placeholder = "Listening to your voice command...";
   };
 
   speechRecognizer.onresult = (event) => {
@@ -1511,7 +1512,7 @@ function setupSpeechRecognition() {
     for (let i = event.resultIndex; i < event.results.length; ++i) {
       transcript += event.results[i][0].transcript;
     }
-    userInput.value = transcript;
+    if (userInput) userInput.value = transcript;
   };
 
   speechRecognizer.onerror = (e) => {
@@ -1535,8 +1536,8 @@ function setupSpeechRecognition() {
 
 function stopListening() {
   isListening = false;
-  voiceMicBtn.classList.remove("listening");
-  userInput.placeholder = "Instruct RIDO Copilot or click the Mic to speak...";
+  if (voiceMicBtn) voiceMicBtn.classList.remove("listening");
+  if (userInput) userInput.placeholder = "Ask RÍDO Copilot or click the Mic to speak...";
 }
 
 /* ══════════════════════════════════════════════
@@ -1565,12 +1566,14 @@ function speakText(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-ttsToggleBtn.addEventListener("click", () => {
-  isTTSActive = !isTTSActive;
-  ttsStatusText.innerText = isTTSActive ? "ON" : "OFF";
-  ttsToggleBtn.classList.toggle("active", isTTSActive);
-  if (!isTTSActive && window.speechSynthesis) window.speechSynthesis.cancel();
-});
+if (ttsToggleBtn) {
+  ttsToggleBtn.addEventListener("click", () => {
+    isTTSActive = !isTTSActive;
+    if (ttsStatusText) ttsStatusText.innerText = isTTSActive ? "ON" : "OFF";
+    ttsToggleBtn.classList.toggle("active", isTTSActive);
+    if (!isTTSActive && window.speechSynthesis) window.speechSynthesis.cancel();
+  });
+}
 
 /* ══════════════════════════════════════════════
    5. FEATURE CARDS & ACTION PROMPTS
@@ -1621,10 +1624,20 @@ if (clearBtn) {
 
 
 // Suppress Enter key — dispatch via Send button only
-userInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") { e.preventDefault(); } // block submit / reload
+if (userInput) {
+  userInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); } // block submit / reload
+  });
+}
+if (sendBtn) {
+  sendBtn.addEventListener("click", handleSend);
+}
+
+// Global delegation fallback — ensures send always fires regardless of binding order
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest("#copilotSendBtn, #sendBtn");
+  if (btn) { e.preventDefault(); handleSend(); }
 });
-sendBtn.addEventListener("click", handleSend);
 
 /* ══════════════════════════════════════════════
    AZURE AI FOUNDRY AGENT ORCHESTRATION PIPELINE
@@ -1635,7 +1648,7 @@ async function handleSend() {
   if (!text) return;
 
   userInput.value = "";
-  sendBtn.disabled = true;
+  if (sendBtn) sendBtn.disabled = true;
   sfx.playTransmit();
 
   if (!hasStarted) {
@@ -1643,7 +1656,7 @@ async function handleSend() {
     if (welcome) welcome.style.display = "none";
   }
 
-  thoughtLog.innerHTML = "";
+  if (thoughtLog) thoughtLog.innerHTML = "";
   appendMessage("user", text);
   const typingId = "typing_" + Date.now();
   appendTyping(typingId);
@@ -1682,8 +1695,8 @@ async function handleSend() {
     appendMessage("ai", `**Operational Assistant:** An error occurred during inference: ${err.message}. Running in offline fallback mode.`);
   }
 
-  sendBtn.disabled = false;
-  userInput.focus();
+  if (sendBtn) sendBtn.disabled = false;
+  if (userInput) userInput.focus();
 }
 
 function renderHigWidget(widget) {
