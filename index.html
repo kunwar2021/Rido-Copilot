@@ -2827,6 +2827,58 @@
 
 
 
+    /* Hero Headline & Radar Truck Card Animations */
+    @keyframes headlineCursorBlink {
+      0%, 45% { opacity: 1; }
+      50%, 95% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .animate-headline-cursor {
+      animation: headlineCursorBlink 0.9s infinite;
+    }
+
+    @keyframes radarGlow {
+      0%, 100% { transform: scale(0.95); opacity: 0.45; }
+      50% { transform: scale(1.08); opacity: 0.75; }
+    }
+    .animate-radar-glow {
+      animation: radarGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes radarOrbit {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-radar-orbit {
+      animation: radarOrbit 18s linear infinite;
+    }
+
+    @keyframes truckBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    .animate-truck-bounce {
+      animation: truckBounce 1.2s ease-in-out infinite;
+    }
+
+    @keyframes wheelSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-wheel-spin {
+      animation: wheelSpin 0.75s linear infinite;
+    }
+
+    @keyframes roadSlide {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+    .animate-road-slide {
+      animation: roadSlide 1.2s linear infinite;
+    }
+
+
+
     /* Accessibility: Respect Reduced Motion */
 
     @media (prefers-reduced-motion: reduce) {
@@ -3253,324 +3305,146 @@
     <div id="viewHome" class="app-page-view flex flex-col w-full">
       <!-- 1. PUBLIC MARKETING LANDING (Visible ONLY when NOT authenticated) -->
       <div id="homePublicMarketing" class="w-full">
-        <!-- HERO SECTION -->
-        <section class="max-w-7xl mx-auto px-6 pt-4 pb-16 lg:pt-6 lg:pb-20">
-
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-
-<!-- Left Column: Copy & Actions (7 cols) -->
-
-<div class="lg:col-span-7 flex flex-col items-start space-y-7">
-
-<!-- Operational Status Pill (Animated Tag Badge) -->
-
-<div class="animate-badge-entrance inline-flex items-center gap-2.5 px-3 py-1.5 rounded-full border border-zinc-300 bg-zinc-100/90">
-
-<span class="relative flex h-2 w-2">
-
-<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-zinc-950 opacity-50"></span>
-
-<span class="relative inline-flex rounded-full h-2 w-2 bg-zinc-950"></span>
-
-</span>
-
-<span class="font-label-sm text-label-sm font-bold text-zinc-800 uppercase tracking-wider transition-all duration-300">
-
-              YOUR SMARTER LOGISTICS COMPANION
-
-            </span>
-
-</div>
-
-<!-- Main Value Headline with Dynamic Realistic Typewriter / Backspace & Re-type Animation -->
-
-<h1 aria-label="Every Route. Costs Lower." class="font-display text-display text-4xl sm:text-5xl lg:text-[3.25rem] lg:leading-[3.75rem] font-extrabold tracking-tight text-zinc-950 min-h-[5.5rem] sm:min-h-[7rem] lg:min-h-[7.75rem] flex flex-col justify-start">
-
-<span class="pb-1 block whitespace-nowrap">
-
-<span class="inline-block" id="typewriter-line1">Every Ro</span><span class="typewriter-cursor h-[0.9em]" id="cursor-line1"></span>
-
-</span>
-
-<span class="pb-2 block whitespace-nowrap">
-
-<span class="inline-block relative">
-
-<span class="font-black" id="typewriter-line2"></span>
-
-<span class="typewriter-cursor h-[0.9em] hidden" id="cursor-line2"></span>
-
-</span>
-
-</span>
-
-</h1>
-
-<!-- Descriptive Value Proposition (Staggered Soft Reveal) -->
-
-<p class="hero-subtitle-animate font-body-lg text-body-lg text-zinc-600 max-w-xl leading-relaxed">
-
-            RÍDO helps you plan better routes, choose the right vehicle, track your fleet, and reduce fuel and delivery costs — all from one simple platform.
-
-          </p>
-
-<!-- Horizontal Action Button Row -->
-
-<div class="hero-actions-animate flex flex-wrap items-center gap-3.5 pt-1 w-full sm:w-auto">
-  <!-- Primary Single CTA Button -->
-  <button type="button" onclick="openSignInModal()" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-black hover:bg-zinc-800 text-white font-body-md font-semibold shadow-md active:scale-[0.98] transition-all group">
-    <span>Get Started</span>
-    <span class="material-symbols-outlined text-[19px] transition-transform group-hover:translate-x-1">arrow_forward</span>
-  </button>
-</div>
-
-<!-- Capabilities Strip -->
-
-<div class="hero-actions-animate pt-2 flex flex-wrap items-center gap-y-2 gap-x-3 text-zinc-600 font-label-md text-label-md">
-
-<span class="text-zinc-900 font-semibold transition-colors hover:text-black">Smart Routing</span>
-
-<span class="text-zinc-300">•</span>
-
-<span class="text-zinc-900 font-semibold transition-colors hover:text-black">Fleet Tracking</span>
-
-<span class="text-zinc-300">•</span>
-
-<span class="text-zinc-900 font-semibold transition-colors hover:text-black">Vehicle Optimization</span>
-
-<span class="text-zinc-300">•</span>
-
-<span class="text-zinc-900 font-semibold transition-colors hover:text-black">Live Insights</span>
-
-</div>
-
-<!-- Social Proof Bar -->
-
-<div class="hero-actions-animate pt-4 border-t border-zinc-200 w-full flex items-center gap-3">
-
-<div class="flex -space-x-2 overflow-hidden">
-
-<div class="inline-flex h-7 w-7 rounded-full bg-black text-white font-label-sm text-[10px] items-center justify-center font-bold ring-2 ring-white">TX</div>
-
-<div class="inline-flex h-7 w-7 rounded-full bg-zinc-700 text-white font-label-sm text-[10px] items-center justify-center font-bold ring-2 ring-white">NX</div>
-
-<div class="inline-flex h-7 w-7 rounded-full bg-zinc-400 text-black font-label-sm text-[10px] items-center justify-center font-bold ring-2 ring-white">RL</div>
-
-</div>
-
-<div class="font-body-sm text-body-sm text-zinc-600">
-
-<span class="font-semibold text-zinc-950">Trusted by 450+</span> freight lines &amp; dispatch networks
-
-            </div>
-
-</div>
-
-</div>
-
-<!-- Right Column: Line-Art Freight Truck Illustration Card with Dynamic Motion (5 cols) -->
-
-<div class="lg:col-span-5 relative flex justify-center">
-
-<!-- Ambient Monochrome Glow -->
-
-<div class="absolute -inset-4 bg-zinc-200/50 rounded-full blur-3xl -z-10"></div>
-
-<!-- Modern Technical Showcase Card -->
-
-<div class="relative w-full max-w-md bg-white border border-zinc-200 rounded-2xl p-6 sm:p-8 shadow-sm flex flex-col items-center">
-
-<!-- Concentric Circular Orbit Decoration -->
-
-<div class="relative w-full aspect-square max-w-[320px] flex items-center justify-center">
-
-<!-- Outer Ring -->
-
-<div class="absolute inset-0 rounded-full border border-dashed border-zinc-300 animate-spin" style="animation-duration: 40s;"></div>
-
-<!-- Inner Orbit Ring -->
-
-<div class="absolute inset-6 rounded-full border border-zinc-200"></div>
-
-<!-- Orbit Node Dots -->
-
-<div class="absolute top-0 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-black ring-4 ring-zinc-100"></div>
-
-<div class="absolute bottom-6 right-6 w-2 h-2 rounded-full bg-zinc-500"></div>
-
-<!-- Center Line-Art Commercial Freight Truck Illustration with Active Motion -->
-
-<div class="relative z-10 w-48 h-48 flex items-center justify-center overflow-visible">
-
-<svg class="w-full h-full text-zinc-900" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 200 160">
-
-<!-- Moving Ground / Highway Track Line Flowing Backward -->
-
-<g class="animate-road-markers">
-
-<line class="animate-road-markers" stroke="#CBD5E1" stroke-dasharray="6 6" stroke-width="1.75" x1="-20" x2="220" y1="125" y2="125"></line>
-
-</g>
-
-<!-- Animated Truck Chassis & Payload Group (Road Bounce & Float) -->
-
-<g class="animate-truck-body">
-
-<!-- Flatbed Chassis -->
-
-<rect fill="#F4F4F5" height="8" rx="2" stroke-width="2" width="150" x="25" y="105"></rect>
-
-<!-- Animated Cargo Stacks Group (Slight dynamic vibration & float) -->
-
-<g class="animate-truck-cargo">
-
-<!-- Box 1 (Bottom Left) -->
-
-<rect fill="#FFFFFF" height="30" rx="1.5" stroke-width="1.8" width="38" x="35" y="75"></rect>
-
-<line stroke="#E4E4E7" stroke-width="1" x1="35" x2="73" y1="90" y2="90"></line>
-
-<line stroke="#E4E4E7" stroke-width="1" x1="54" x2="54" y1="75" y2="105"></line>
-
-<!-- Box 2 (Bottom Mid) -->
-
-<rect fill="#FFFFFF" height="37" rx="1.5" stroke-width="1.8" width="45" x="76" y="68"></rect>
-
-<line stroke="#E4E4E7" stroke-width="1" x1="76" x2="121" y1="86" y2="86"></line>
-
-<circle cx="98.5" cy="80" r="3" stroke="#18181B" stroke-width="1.2"></circle>
-
-<!-- Box 3 (Top Stacked) -->
-
-<rect fill="#F4F4F5" height="30" rx="1.5" stroke-width="1.8" width="30" x="42" y="45"></rect>
-
-<line stroke="#E4E4E7" stroke-width="1" x1="42" x2="72" y1="60" y2="60"></line>
-
-<!-- Rig Straps / Fasteners -->
-
-<path d="M32 105 L57 45 L80 105" stroke="#27272A" stroke-dasharray="2 2" stroke-width="1.5"></path>
-
-</g>
-
-<!-- Animated Cab Unit (Highway suspension tilt & pitch) -->
-
-<g class="animate-truck-cab">
-
-<!-- Truck Cab Body -->
-
-<path d="M125 105 V65 H155 L175 88 V105 H125 Z" fill="#FFFFFF" stroke-width="2"></path>
-
-<path d="M150 69 L168 88 H132 V69 H150 Z" fill="#F4F4F5" stroke="#71717A" stroke-width="1.5"></path>
-
-<!-- Front Grille & Headlight -->
-
-<line stroke="#18181B" stroke-width="2.5" x1="175" x2="175" y1="95" y2="104"></line>
-
-<circle cx="170" cy="98" fill="#18181B" r="2" stroke="none"></circle>
-
-</g>
-
-</g>
-
-<!-- Animated Rolling Wheels (Smooth Continuous 360deg Rotation with Spokes) -->
-
-<!-- Trailer Wheel 1 (x=48, y=120) -->
-
-<g class="animate-wheel-spin-trailer1">
-
-<circle cx="48" cy="120" fill="#FFFFFF" r="11" stroke-width="2"></circle>
-
-<line stroke="#71717A" stroke-width="1.2" x1="48" x2="48" y1="109" y2="131"></line>
-
-<line stroke="#71717A" stroke-width="1.2" x1="37" x2="59" y1="120" y2="120"></line>
-
-<circle cx="48" cy="120" fill="#09090B" r="4"></circle>
-
-<circle cx="48" cy="120" fill="#FFFFFF" r="1.5"></circle>
-
-</g>
-
-<!-- Trailer Wheel 2 (x=72, y=120) -->
-
-<g class="animate-wheel-spin-trailer2">
-
-<circle cx="72" cy="120" fill="#FFFFFF" r="11" stroke-width="2"></circle>
-
-<line stroke="#71717A" stroke-width="1.2" x1="72" x2="72" y1="109" y2="131"></line>
-
-<line stroke="#71717A" stroke-width="1.2" x1="61" x2="83" y1="120" y2="120"></line>
-
-<circle cx="72" cy="120" fill="#09090B" r="4"></circle>
-
-<circle cx="72" cy="120" fill="#FFFFFF" r="1.5"></circle>
-
-</g>
-
-<!-- Cab Wheel (x=152, y=120) -->
-
-<g class="animate-wheel-spin-cab">
-
-<circle cx="152" cy="120" fill="#FFFFFF" r="11" stroke-width="2"></circle>
-
-<line stroke="#71717A" stroke-width="1.2" x1="152" x2="152" y1="109" y2="131"></line>
-
-<line stroke="#71717A" stroke-width="1.2" x1="141" x2="163" y1="120" y2="120"></line>
-
-<circle cx="152" cy="120" fill="#09090B" r="4"></circle>
-
-<circle cx="152" cy="120" fill="#FFFFFF" r="1.5"></circle>
-
-</g>
-
-</svg>
-
-</div>
-
-</div>
-
-<!-- Floating Corridor Pill Badge -->
-
-<div class="mt-4 inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-zinc-200 shadow-sm">
-
-<span class="w-2 h-2 rounded-full bg-black animate-pulse"></span>
-
-<span class="font-label-sm text-label-sm font-semibold text-zinc-900 tracking-tight">64 km/h</span>
-
-<span class="text-zinc-300">•</span>
-
-<span class="font-body-sm text-body-sm font-medium text-zinc-600">NH-44 Freight Traversal</span>
-
-<span class="material-symbols-outlined text-[16px] text-zinc-800 font-bold" data-icon="verified">verified</span>
-
-</div>
-
-<!-- Micro Telemetry Footer in Card -->
-
-<div class="mt-6 w-full pt-4 border-t border-zinc-100 flex items-center justify-between text-zinc-600 font-label-sm text-label-sm">
-
-<div class="flex items-center gap-1.5">
-
-<span class="material-symbols-outlined text-[15px] text-zinc-800" data-icon="tune">tune</span>
-
-<span class="">Payload: 14.8t / 18.0t</span>
-
-</div>
-
-<div class="text-zinc-950 font-semibold">
-
-                98.4% On Schedule
-
+        <!-- HERO SECTION (ENLARGED TECHNICAL COPY & SCALED-DOWN TRUCK CARD) -->
+        <section class="max-w-7xl mx-auto px-6 py-12 flex-1 flex flex-col justify-center">
+          <!-- Asymmetric Grid: 8 Columns for Text (Wide & Dominant), 4 Columns for Compact Truck Card -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            
+            <!-- Left Column: Wide, Enlarged Technical Copy & CTAs (Span 8) -->
+            <div class="lg:col-span-8 flex flex-col items-start w-full">
+              
+              <!-- Monospace Technical Badge -->
+              <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 mb-6 transition hover:border-orange-300 cursor-default">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+                </span>
+                <span class="text-xs font-mono font-extrabold tracking-wider uppercase text-slate-800">
+                  REAL-TIME TELEMATICS &amp; CORRIDOR ROUTING
+                </span>
               </div>
 
-</div>
+              <!-- Enlarged Hero Headline (Wide, No Underline, Solid Accent & Cursor) -->
+              <h1 class="text-6xl sm:text-7xl lg:text-8xl xl:text-9xl font-black text-slate-900 tracking-tight leading-[0.98] mb-6 select-none">
+                Every Mile.<br />
+                <span class="text-orange-500">Fully Optimized.</span>
+                <span class="inline-block w-3 h-[0.8em] bg-orange-500 ml-2 align-baseline animate-headline-cursor"></span>
+              </h1>
 
-</div>
+              <!-- Expanded Lead Paragraph -->
+              <p class="text-slate-600 text-lg sm:text-xl lg:text-2xl leading-relaxed max-w-3xl mb-8 font-medium">
+                Dynamic routing algorithms balance payload weights, driver HOS limits, and real-time charging access so every truck departs on schedule and under budget.
+              </p>
 
-</div>
+              <!-- Primary Action Button -->
+              <div class="mb-10">
+                <button type="button" onclick="handleHeroCTA()" class="group relative px-9 py-4 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-3 transition-all duration-200 shadow-md hover:shadow-xl active:scale-[0.97] overflow-hidden cursor-pointer">
+                  <span class="relative z-10">Get Started</span>
+                  <i class="ri-arrow-right-line text-xl relative z-10 transition-transform duration-200 group-hover:translate-x-1.5" data-lucide="arrow-right"></i>
+                  <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                </button>
+              </div>
 
-</div>
+              <!-- Monospace Capability Strip -->
+              <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs font-mono font-bold text-slate-700 mb-8">
+                <span class="transition hover:text-orange-600 cursor-pointer">Dynamic Corridors</span>
+                <span class="text-slate-300">•</span>
+                <span class="transition hover:text-orange-600 cursor-pointer">Live SOC Telematics</span>
+                <span class="text-slate-300">•</span>
+                <span class="transition hover:text-orange-600 cursor-pointer">Cold-Chain Guard</span>
+                <span class="text-slate-300">•</span>
+                <span class="transition hover:text-orange-600 cursor-pointer">Instant Dispatch</span>
+              </div>
 
-</section>
+              <!-- Social Proof Metrics -->
+              <div class="flex items-center space-x-3 text-xs font-semibold text-slate-500">
+                <div class="flex -space-x-1.5">
+                  <span class="w-6 h-6 rounded-full bg-slate-900 text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-white">TX</span>
+                  <span class="w-6 h-6 rounded-full bg-slate-700 text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-white">NX</span>
+                  <span class="w-6 h-6 rounded-full bg-slate-500 text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-white">RL</span>
+                </div>
+                <span>Powering <b class="text-slate-800">10M+ freight km</b> across 450+ enterprise fleets</span>
+              </div>
+            </div>
+
+            <!-- Right Column: Subordinate, Scaled-Down Truck Radar Card (Span 4) -->
+            <div class="lg:col-span-4 flex justify-center lg:justify-end w-full">
+              <div class="group relative w-full max-w-xs bg-white rounded-3xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+                
+                <!-- Scaled-Down Graphic Container -->
+                <div class="relative w-full aspect-square bg-slate-50/70 rounded-2xl flex items-center justify-center p-3 border border-dashed border-slate-200 overflow-hidden">
+                  
+                  <!-- Pulsing Radar Glow -->
+                  <div class="absolute w-44 h-44 rounded-full bg-orange-100/60 pointer-events-none animate-radar-glow"></div>
+
+                  <!-- Rotating Radar Ring with Orbiting Satellites -->
+                  <div class="absolute inset-3 rounded-full border border-slate-200/80 border-dashed animate-radar-orbit pointer-events-none">
+                    <span class="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-slate-900 border border-white shadow-sm"></span>
+                    <span class="absolute -bottom-1 right-8 w-2 h-2 rounded-full bg-orange-500 border border-white"></span>
+                  </div>
+
+                  <!-- Animated SVG Graphic: Floating Truck Body + Spinning Wheels + Sliding Road -->
+                  <div class="relative z-10 w-40 h-auto flex flex-col items-center">
+                    
+                    <!-- Floating Truck Upper Body -->
+                    <div class="animate-truck-bounce w-full">
+                      <svg class="w-full h-auto text-slate-800" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Chassis and Cabin -->
+                        <path d="M45 155h230M55 155v-65h85l35 25h65v40" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M140 90v65M80 100h40v30H80z" stroke="#0F172A" stroke-width="2" stroke-linecap="round"/>
+                        
+                        <!-- Cargo Stacks -->
+                        <rect x="175" y="75" width="35" height="35" rx="3" stroke="#0F172A" stroke-width="2" fill="#FFF7ED"/>
+                        <rect x="210" y="60" width="40" height="50" rx="3" stroke="#0F172A" stroke-width="2" fill="#FFEDD5"/>
+                        <rect x="180" y="110" width="75" height="40" rx="3" stroke="#0F172A" stroke-width="2" fill="#FEF3C7"/>
+
+                        <!-- Front Wheel -->
+                        <g class="animate-wheel-spin" style="transform-origin: 90px 155px;">
+                          <circle cx="90" cy="155" r="14" stroke="#0F172A" stroke-width="3" fill="#FFF"/>
+                          <circle cx="90" cy="155" r="5" fill="#F97316"/>
+                          <line x1="90" y1="143" x2="90" y2="167" stroke="#CBD5E1" stroke-width="1.5"/>
+                          <line x1="78" y1="155" x2="102" y2="155" stroke="#CBD5E1" stroke-width="1.5"/>
+                        </g>
+
+                        <!-- Rear Wheel 1 -->
+                        <g class="animate-wheel-spin" style="transform-origin: 210px 155px;">
+                          <circle cx="210" cy="155" r="14" stroke="#0F172A" stroke-width="3" fill="#FFF"/>
+                          <circle cx="210" cy="155" r="5" fill="#F97316"/>
+                          <line x1="210" y1="143" x2="210" y2="167" stroke="#CBD5E1" stroke-width="1.5"/>
+                          <line x1="198" y1="155" x2="222" y2="155" stroke="#CBD5E1" stroke-width="1.5"/>
+                        </g>
+
+                        <!-- Rear Wheel 2 -->
+                        <g class="animate-wheel-spin" style="transform-origin: 248px 155px;">
+                          <circle cx="248" cy="155" r="14" stroke="#0F172A" stroke-width="3" fill="#FFF"/>
+                          <circle cx="248" cy="155" r="5" fill="#F97316"/>
+                          <line x1="248" y1="143" x2="248" y2="167" stroke="#CBD5E1" stroke-width="1.5"/>
+                          <line x1="236" y1="155" x2="260" y2="155" stroke="#CBD5E1" stroke-width="1.5"/>
+                        </g>
+                      </svg>
+                    </div>
+
+                    <!-- Sliding Road Line -->
+                    <div class="w-full h-1 bg-slate-200 rounded-full mt-1 overflow-hidden relative">
+                      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-orange-500 to-transparent animate-road-slide"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Compact Telemetry Status Footer Inside Card -->
+                <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-slate-500 font-mono text-[11px]">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="font-bold text-slate-800">Unit TRK-A</span>
+                  </div>
+                  <span class="text-orange-600 font-bold">75% SOC • +3.6°C</span>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </section>
 
 <!-- SECTION: HOW RÍDO WORKS -->
 
@@ -5129,235 +5003,10 @@
   <!-- Script Module -->
   <script type="module" src="js/app.js"></script>
 
-  <!-- User Redesign Typewriter & Observer Animations -->
+  <!-- Scroll-Triggered Observer Animations -->
   <script>
-// Authentic Realistic Typewriter with Character-by-Character Delete / Backspace Effect
-
-  (function initTypewriter() {
-
-    const line1El = document.getElementById('typewriter-line1');
-
-    const line2El = document.getElementById('typewriter-line2');
-
-    const cursor1 = document.getElementById('cursor-line1');
-
-    const cursor2 = document.getElementById('cursor-line2');
-
-
-
-    if (!line1El || !line2El) return;
-
-
-
-    // Check prefers-reduced-motion
-
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-
-      line1El.textContent = "Every Route.";
-
-      line2El.textContent = "Costs Lower.";
-
-      if (cursor1) cursor1.style.display = 'none';
-
-      if (cursor2) cursor2.style.display = 'none';
-
-      return;
-
-    }
-
-
-
-    const textLine1 = "Every Route.";
-
-    const textLine2 = "Costs Lower.";
-
-
-
-    // Start with fully rendered state matching snapshot
-
-    let currentL1 = textLine1.length;
-
-    let currentL2 = textLine2.length;
-
-    let state = 'PAUSE_FULL'; // 'PAUSE_FULL', 'BACKSPACE_L2', 'BACKSPACE_L1', 'PAUSE_EMPTY', 'TYPE_L1', 'TYPE_L2'
-
-
-
-    function updateCursorPosition() {
-
-      if (state === 'TYPE_L1' || state === 'BACKSPACE_L1') {
-
-        if (cursor1) cursor1.classList.remove('hidden');
-
-        if (cursor2) cursor2.classList.add('hidden');
-
-      } else {
-
-        if (cursor1) cursor1.classList.add('hidden');
-
-        if (cursor2) cursor2.classList.remove('hidden');
-
-      }
-
-    }
-
-
-
-    function step() {
-
-      let delay = 75;
-
-
-
-      switch(state) {
-
-        case 'PAUSE_FULL':
-
-          // Wait 2.5 seconds so users comfortably read the message
-
-          delay = 2500;
-
-          state = 'BACKSPACE_L2';
-
-          break;
-
-
-
-        case 'BACKSPACE_L2':
-
-          if (currentL2 > 0) {
-
-            currentL2--;
-
-            line2El.textContent = textLine2.substring(0, currentL2);
-
-            // Realistic backspace speed with organic jitter
-
-            delay = 35 + Math.random() * 30;
-
-          } else {
-
-            // Line 2 finished backspacing, switch cursor to line 1
-
-            state = 'BACKSPACE_L1';
-
-            delay = 120;
-
-          }
-
-          break;
-
-
-
-        case 'BACKSPACE_L1':
-
-          if (currentL1 > 0) {
-
-            currentL1--;
-
-            line1El.textContent = textLine1.substring(0, currentL1);
-
-            delay = 35 + Math.random() * 25;
-
-          } else {
-
-            // Finished erasing everything
-
-            state = 'PAUSE_EMPTY';
-
-            delay = 600; // brief pause when cleared
-
-          }
-
-          break;
-
-
-
-        case 'PAUSE_EMPTY':
-
-          state = 'TYPE_L1';
-
-          delay = 200;
-
-          break;
-
-
-
-        case 'TYPE_L1':
-
-          if (currentL1 < textLine1.length) {
-
-            currentL1++;
-
-            line1El.textContent = textLine1.substring(0, currentL1);
-
-            // Natural typewriter cadence
-
-            delay = 60 + Math.random() * 50;
-
-            if (textLine1[currentL1 - 1] === '.') delay += 180; // slight pause after period
-
-          } else {
-
-            state = 'TYPE_L2';
-
-            delay = 140;
-
-          }
-
-          break;
-
-
-
-        case 'TYPE_L2':
-
-          if (currentL2 < textLine2.length) {
-
-            currentL2++;
-
-            line2El.textContent = textLine2.substring(0, currentL2);
-
-            delay = 65 + Math.random() * 55;
-
-            if (textLine2[currentL2 - 1] === ' ') delay += 40;
-
-            if (textLine2[currentL2 - 1] === '.') delay += 100;
-
-          } else {
-
-            // Fully re-typed
-
-            state = 'PAUSE_FULL';
-
-            delay = 100;
-
-          }
-
-          break;
-
-      }
-
-
-
-      updateCursorPosition();
-
-      setTimeout(step, delay);
-
-    }
-
-
-
-    // Initialize initial cursor state and begin sequence
-
-    updateCursorPosition();
-
-    setTimeout(step, 2400);
-
-  })();
-
-
-
   // Intersection Observer for scroll-triggered text reveal
+
 
   document.addEventListener('DOMContentLoaded', function() {
 

@@ -281,6 +281,17 @@ window.switchTab = switchTab;
 window.switchView = switchView;
 window.logout = logout;
 
+function handleHeroCTA() {
+  if (isAuthenticated()) {
+    const currentPersona = state.persona || localStorage.getItem("rido_persona") || "Driver In-Cab";
+    const config = ROLE_CONFIG[currentPersona] || ROLE_CONFIG["Driver In-Cab"];
+    switchTab(config.defaultTab || "home");
+  } else {
+    openSignInModal();
+  }
+}
+window.handleHeroCTA = handleHeroCTA;
+
 
 function updateUIAuthState(isLoggedIn) {
   const authSlot = document.getElementById("authSlot");
