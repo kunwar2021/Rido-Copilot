@@ -3023,6 +3023,115 @@
   </div>
 
   <!-- ══════════════════════════════════════════════
+       1.5 DUAL-ACCOUNT AZURE AI FOUNDRY SETTINGS MODAL ($200 BUDGET POOL)
+       ══════════════════════════════════════════════ -->
+  <div id="azureSettingsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto">
+    <div class="bg-white rounded-2xl shadow-2xl border border-zinc-200 max-w-2xl w-full p-6 sm:p-8 relative my-auto animate-in fade-in zoom-in-95 duration-200">
+      <!-- Close Button -->
+      <button type="button" id="closeSettingsModalBtn" class="absolute top-4 right-4 text-zinc-400 hover:text-zinc-700 bg-zinc-100 hover:bg-zinc-200 p-2 rounded-full transition" title="Close Settings">
+        <i class="ri-close-line text-lg"></i>
+      </button>
+
+      <!-- Modal Header -->
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 flex items-center justify-center text-white text-2xl shadow-md">
+          <i class="ri-azure-fill"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-zinc-900">Microsoft Azure AI Foundry & Dual-Account Pool</h2>
+          <p class="text-xs text-zinc-500">Real-Time $200 Budget Balancer, Failover & Multi-IDE MCP Management</p>
+        </div>
+      </div>
+
+      <!-- Mode Selector Tabs: Live Dual Azure vs Zero-Cost Offline -->
+      <div class="bg-zinc-100 p-1.5 rounded-xl flex gap-2 mb-6 text-xs font-semibold">
+        <button type="button" id="modeLiveAzureBtn" class="flex-1 py-2 px-3 rounded-lg text-center transition bg-white text-zinc-900 shadow-sm flex items-center justify-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          Live Dual Azure Pool ($200 Budget)
+        </button>
+        <button type="button" id="modeOfflineBtn" class="flex-1 py-2 px-3 rounded-lg text-center transition text-zinc-600 hover:text-zinc-900 flex items-center justify-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+          Zero-Cost Offline Simulator ($0)
+        </button>
+      </div>
+
+      <!-- $200 Budget Real-Time Meter Card -->
+      <div class="bg-zinc-50 border border-zinc-200 rounded-xl p-4 mb-6">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-xs font-bold text-zinc-700 uppercase tracking-wider">Total Azure Pool Budget</span>
+          <span class="text-xs font-mono font-bold text-emerald-700" id="modalPoolRemaining">$200.00 Remaining</span>
+        </div>
+        <div class="w-full bg-zinc-200 h-2 rounded-full overflow-hidden mb-3">
+          <div id="modalPoolProgressBar" class="bg-gradient-to-r from-emerald-500 to-blue-600 h-full w-[99.9%]"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-xs">
+          <div class="bg-white p-2.5 rounded-lg border border-zinc-200">
+            <div class="flex items-center justify-between text-zinc-500 mb-1">
+              <span class="font-semibold text-zinc-700">Account 1 (Primary - Yours)</span>
+              <span id="modalAcc1Status" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">Active</span>
+            </div>
+            <div class="flex justify-between font-mono text-zinc-600">
+              <span>Budget: $100</span>
+              <span id="modalAcc1Remaining" class="text-emerald-700 font-bold">$100.00 left</span>
+            </div>
+            <div class="text-[11px] text-zinc-400 mt-1" id="modalAcc1Tokens">Tokens: 25 | Spent: $0.0001</div>
+          </div>
+          <div class="bg-white p-2.5 rounded-lg border border-zinc-200">
+            <div class="flex items-center justify-between text-zinc-500 mb-1">
+              <span class="font-semibold text-zinc-700">Account 2 (Secondary - Friend's)</span>
+              <span id="modalAcc2Status" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-zinc-100 text-zinc-600">Standby</span>
+            </div>
+            <div class="flex justify-between font-mono text-zinc-600">
+              <span>Budget: $100</span>
+              <span id="modalAcc2Remaining" class="text-zinc-600 font-bold">$100.00 left</span>
+            </div>
+            <div class="text-[11px] text-zinc-400 mt-1" id="modalAcc2Tokens">Tokens: 0 | Spent: $0.0000</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account 1 Form -->
+      <div class="mb-4">
+        <h4 class="text-xs font-bold text-zinc-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <i class="ri-user-star-line text-blue-600"></i> Account 1 Credentials (Your Azure Subscription)
+        </h4>
+        <div class="space-y-2">
+          <input type="text" id="azureEndpoint1" placeholder="Azure Foundry Agent Endpoint URL..." class="w-full text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
+          <div class="grid grid-cols-2 gap-2">
+            <input type="password" id="azureKey1" placeholder="Azure API Key 1..." class="text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
+            <input type="text" id="azureDeployment1" placeholder="Deployment (e.g. gpt-6-astra or gpt-4o-mini)" value="gpt-6-astra" class="text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Account 2 Form -->
+      <div class="mb-6">
+        <h4 class="text-xs font-bold text-zinc-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <i class="ri-user-shared-line text-indigo-600"></i> Account 2 Credentials (Friend's Azure Subscription)
+        </h4>
+        <div class="space-y-2">
+          <input type="text" id="azureEndpoint2" placeholder="Friend's Azure Foundry Endpoint URL (Optional)..." class="w-full text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
+          <div class="grid grid-cols-2 gap-2">
+            <input type="password" id="azureKey2" placeholder="Friend's API Key (Optional)..." class="text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
+            <input type="text" id="azureDeployment2" placeholder="Deployment (e.g. gpt-4o-mini)" value="gpt-6-astra" class="text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center justify-between pt-4 border-t border-zinc-200">
+        <button type="button" id="testAzureConnectionBtn" class="text-xs font-semibold px-4 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 transition flex items-center gap-1.5">
+          <i class="ri-pulse-line text-blue-600"></i> Test Connection & Balance
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="cancelSettingsBtn" class="text-xs font-semibold px-4 py-2 rounded-lg text-zinc-600 hover:text-zinc-900 transition">Cancel</button>
+          <button type="button" id="saveSettingsBtn" class="text-xs font-semibold px-5 py-2 rounded-lg bg-black hover:bg-zinc-800 text-white shadow-sm transition">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
        2. TOP CLEAN NAVBAR (EXACT MATCH TO DESIGN)
        ══════════════════════════════════════════════ -->
     <!-- ══════════════════════════════════════════════
@@ -3080,6 +3189,11 @@
           </span>
           <span class="tracking-wide">System: Online</span>
         </div>
+
+        <!-- Azure Settings Button (Dual-Account & $200 Budget Pool) -->
+        <button type="button" class="btn-settings inline-flex items-center justify-center w-9 h-9 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-100 text-zinc-700 shadow-sm transition-all" id="navSettingsBtn" title="Azure AI Foundry & Dual-Account Settings ($200 Budget Pool)">
+          <i class="ri-settings-3-line text-lg"></i>
+        </button>
 
         <!-- Authenticated Security Context (Role Isolated) -->
         <div class="nav-persona-wrapper" id="personaWrapper" style="display: none;">

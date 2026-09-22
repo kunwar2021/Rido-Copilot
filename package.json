@@ -1,0 +1,27 @@
+{
+  "name": "rido-copilot",
+  "version": "2.0.0",
+  "description": "RIDO AI — Enterprise Fleet Intelligence & Autonomous Agent Platform powered by Azure AI Foundry and MCP",
+  "main": "mcp-server/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node mcp-server/server.js",
+    "server": "node mcp-server/server.js --port 3000",
+    "mcp": "node mcp-server/server.js",
+    "test": "node -c js/app.js && node -c mcp-server/server.js",
+    "dev": "python -m http.server 8080"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.0"
+  },
+  "keywords": [
+    "azure-ai-foundry",
+    "model-context-protocol",
+    "mcp",
+    "fleet-intelligence",
+    "route-optimization",
+    "rag"
+  ],
+  "author": "Kunwar Bansal",
+  "license": "MIT"
+}
