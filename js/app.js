@@ -258,6 +258,13 @@ function openLoginModal(targetView = null) {
     screen.style.display = "flex";
     if (loginPassword) loginPassword.value = "RIDO2026";
     if (loginIdInput) loginIdInput.focus();
+
+    // Backdrop click — dismiss if clicking the overlay itself, not the card
+    screen._backdropHandler = (e) => {
+      if (e.target === screen) closeLoginModal();
+    };
+    screen.removeEventListener("click", screen._backdropHandler);
+    screen.addEventListener("click", screen._backdropHandler);
   }
 }
 
@@ -282,15 +289,39 @@ window.switchView = switchView;
 window.logout = logout;
 
 function handleHeroCTA() {
-  if (isAuthenticated()) {
-    const currentPersona = state.persona || localStorage.getItem("rido_persona") || "Driver In-Cab";
-    const config = ROLE_CONFIG[currentPersona] || ROLE_CONFIG["Driver In-Cab"];
-    switchTab(config.defaultTab || "home");
-  } else {
-    openSignInModal();
+  const raw = localStorage.getItem('rido_session');
+  if (raw) {
+    try {
+      const session = JSON.parse(raw);
+      if (session && session.role) {
+        // Existing valid session — route directly to role view
+        routeToRoleView(session.role);
+        return;
+      }
+    } catch (e) {
+      localStorage.removeItem('rido_session');
+    }
   }
+  // No session — show persona selection modal
+  openSignInModal();
 }
 window.handleHeroCTA = handleHeroCTA;
+
+// One-click role authentication — called directly from modal role cards
+function authenticateRole(roleKey) {
+  // Delegate fully to the existing login() pipeline
+  login({ persona: roleKey });
+}
+window.authenticateRole = authenticateRole;
+
+// Route user to the appropriate view for their role
+function routeToRoleView(roleKey) {
+  // Normalise key — support both title-case and upper-case
+  const config = ROLE_CONFIG[roleKey] || ROLE_CONFIG[roleKey?.toUpperCase()] || ROLE_CONFIG["Driver In-Cab"];
+  const destTab = config.defaultTab || "home";
+  switchTab(destTab);
+}
+window.routeToRoleView = routeToRoleView;
 
 
 function updateUIAuthState(isLoggedIn) {

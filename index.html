@@ -2985,86 +2985,125 @@
 <body class="min-h-screen flex flex-col">
 
   <!-- ══════════════════════════════════════════════
-       1. APPLE-INSPIRED ENTERPRISE LOGIN SCREEN (MODAL ON HOME PAGE)
+       1. ENTERPRISE PERSONA SELECTION MODAL
        ══════════════════════════════════════════════ -->
   <div id="loginScreen" class="hidden">
-    <!-- Centered Minimal Apple Login Card -->
-    <div class="apple-login-card">
-      <!-- Close Button to return to Home Page -->
-      <button type="button" class="apple-login-close-btn" id="closeLoginModalBtn" title="Close and browse Home Page">
+    <!-- Centered Enterprise Card -->
+    <div class="apple-login-card" style="max-width: 480px; padding: 36px 32px 28px;">
+      <!-- Close Button -->
+      <button type="button" class="apple-login-close-btn" id="closeLoginModalBtn" title="Close">
         <i class="ri-close-line"></i>
       </button>
 
-      <div class="apple-card-header">
-        <div style="margin-bottom: 14px;">
-          <img src="images/rido-logo.png" alt="RIDO" style="height: 32px; object-fit: contain;" />
+      <!-- Header -->
+      <div class="apple-card-header" style="margin-bottom: 20px;">
+        <div style="margin-bottom: 12px;">
+          <img src="images/rido-logo.png" alt="RIDO" style="height: 30px; object-fit: contain;" />
         </div>
-        <h1 class="apple-card-title">Welcome to RIDO</h1>
-        <p class="apple-card-subtitle">Sign in to your RIDO account</p>
-
-        <!-- Quick Demo Persona Selector Pills -->
-        <div class="login-persona-pills" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 12px;">
-          <button type="button" class="role-pill-btn active" data-email="driver@rido.ai" data-persona="Driver In-Cab" style="border: 1.5px solid #2563eb; background: #eff6ff; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #1d4ed8; cursor: pointer; transition: all 0.15s;">
-            🚛 Driver
-          </button>
-          <button type="button" class="role-pill-btn" data-email="officer@rido.ai" data-persona="Compliance Officer" style="border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;">
-            🛡️ Officer
-          </button>
-          <button type="button" class="role-pill-btn" data-email="dispatcher@rido.ai" data-persona="Dispatcher Gate" style="border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;">
-            🛰️ Dispatcher
-          </button>
-          <button type="button" class="role-pill-btn" data-email="analyst@rido.ai" data-persona="ESG Analyst" style="border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;">
-            📊 Analyst
-          </button>
-          <button type="button" class="role-pill-btn" data-email="fleet@rido.ai" data-persona="Fleet Manager" style="border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;">
-            ⚡ Fleet Mgr
-          </button>
-        </div>
+        <h1 class="apple-card-title" style="font-size: 1.35rem;">Select Operational Persona</h1>
+        <p class="apple-card-subtitle">Choose your role to access your personalised command deck</p>
       </div>
 
-      <!-- Clean Error Notification -->
+      <!-- Error Banner -->
       <div id="loginError" class="apple-error-banner">
         <i class="ri-error-warning-fill"></i>
-        <span>Invalid email or password</span>
+        <span>Authentication error. Please try again.</span>
       </div>
 
-      <form id="loginForm" autocomplete="on">
-        <!-- Email field -->
-        <div class="apple-form-group">
-          <div class="apple-label-row">
-            <label class="apple-form-label" for="loginId">Email address</label>
-          </div>
-          <div class="apple-input-wrapper">
-            <input type="email" id="loginId" class="apple-form-input" placeholder="e.g. driver@rido.ai, officer@rido.ai..." value="driver@rido.ai" required />
-          </div>
-        </div>
+      <!-- Role Selection Cards -->
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px;">
 
-        <!-- Password field -->
-        <div class="apple-form-group">
-          <div class="apple-label-row">
-            <label class="apple-form-label" for="loginPassword">Password</label>
-            <a href="#" class="apple-forgot-link" onclick="alert('Password reset link sent to your registered email.'); return false;">Forgot password?</a>
+        <!-- Dispatcher Gate -->
+        <button type="button"
+          onclick="authenticateRole('Dispatcher Gate')"
+          style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; cursor: pointer; text-align: left; transition: all 0.18s ease; font-family: inherit; width: 100%;"
+          onmouseover="this.style.borderColor='#ea580c';this.style.background='#fff7ed';"
+          onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: #0f172a; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="ri-shield-user-line" style="color: #fff; font-size: 18px;"></i>
           </div>
-          <div class="apple-input-wrapper">
-            <input type="password" id="loginPassword" class="apple-form-input" placeholder="Enter password" value="RIDO2026" required />
-            <button type="button" id="togglePasswordBtn" class="apple-btn-toggle-pw" title="Show/Hide password">
-              <i class="ri-eye-line" id="togglePasswordIcon"></i>
-            </button>
+          <div>
+            <div style="font-size: 0.88rem; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">Dispatcher Gate</div>
+            <div style="font-size: 0.74rem; color: #64748b; margin-top: 2px;">Yard capacity · Gate queues · Corridor departure manifests</div>
           </div>
-        </div>
-
-        <!-- Sign In Button -->
-        <button type="submit" id="loginSubmitBtn" class="apple-btn-submit">
-          Sign In &rarr;
         </button>
 
-        <!-- Don't have an account? Sign up -->
-        <div class="apple-signup-footer">
-          Don't have an account?<a href="#" class="apple-signup-link" onclick="alert('Please contact your RIDO organization administrator for enterprise onboarding.'); return false;">Sign up</a>
-        </div>
-        <div style="text-align: center; margin-top: 12px;">
-          <a href="#" id="browseGuestLink" style="font-size: 0.8rem; color: #64748b; text-decoration: none;">Continue browsing Home Page &rarr;</a>
-        </div>
+        <!-- Driver In-Cab -->
+        <button type="button"
+          onclick="authenticateRole('Driver In-Cab')"
+          style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; cursor: pointer; text-align: left; transition: all 0.18s ease; font-family: inherit; width: 100%;"
+          onmouseover="this.style.borderColor='#ea580c';this.style.background='#fff7ed';"
+          onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: #16a34a; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="ri-truck-line" style="color: #fff; font-size: 18px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.88rem; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">Driver In-Cab</div>
+            <div style="font-size: 0.74rem; color: #64748b; margin-top: 2px;">CAN-bus telematics · 350 kW charging · HOS rest logs</div>
+          </div>
+        </button>
+
+        <!-- Compliance Officer -->
+        <button type="button"
+          onclick="authenticateRole('Compliance Officer')"
+          style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; cursor: pointer; text-align: left; transition: all 0.18s ease; font-family: inherit; width: 100%;"
+          onmouseover="this.style.borderColor='#ea580c';this.style.background='#fff7ed';"
+          onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: #7c3aed; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="ri-shield-check-line" style="color: #fff; font-size: 18px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.88rem; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">Compliance Officer</div>
+            <div style="font-size: 0.74rem; color: #64748b; margin-top: 2px;">Cold-chain thermal audit logs · Electronic POD inspection</div>
+          </div>
+        </button>
+
+        <!-- Fleet Manager -->
+        <button type="button"
+          onclick="authenticateRole('Fleet Manager')"
+          style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; cursor: pointer; text-align: left; transition: all 0.18s ease; font-family: inherit; width: 100%;"
+          onmouseover="this.style.borderColor='#ea580c';this.style.background='#fff7ed';"
+          onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: #0284c7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="ri-dashboard-line" style="color: #fff; font-size: 18px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.88rem; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">Fleet Manager</div>
+            <div style="font-size: 0.74rem; color: #64748b; margin-top: 2px;">TCO modeling · Cross-corridor health · EV energy tariffs</div>
+          </div>
+        </button>
+
+        <!-- ESG Analyst -->
+        <button type="button"
+          onclick="authenticateRole('ESG Analyst')"
+          style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; cursor: pointer; text-align: left; transition: all 0.18s ease; font-family: inherit; width: 100%;"
+          onmouseover="this.style.borderColor='#ea580c';this.style.background='#fff7ed';"
+          onmouseout="this.style.borderColor='#e2e8f0';this.style.background='#f8fafc';">
+          <div style="width: 40px; height: 40px; border-radius: 10px; background: #10b981; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="ri-pie-chart-line" style="color: #fff; font-size: 18px;"></i>
+          </div>
+          <div>
+            <div style="font-size: 0.88rem; font-weight: 800; color: #0f172a; letter-spacing: -0.01em;">ESG Analyst</div>
+            <div style="font-size: 0.74rem; color: #64748b; margin-top: 2px;">Scope 1 emissions · Fleet fuel parity · TCO cost modeling</div>
+          </div>
+        </button>
+
+      </div>
+
+      <!-- Footer -->
+      <div style="text-align: center;">
+        <a href="#" id="browseGuestLink"
+          style="font-size: 0.78rem; color: #94a3b8; text-decoration: none; transition: color 0.15s;"
+          onmouseover="this.style.color='#64748b';"
+          onmouseout="this.style.color='#94a3b8';">
+          Continue as Guest &rarr;
+        </a>
+      </div>
+
+      <!-- Hidden form for legacy JS compatibility (loginForm, loginId, loginPassword) -->
+      <form id="loginForm" autocomplete="on" style="display: none;">
+        <input type="email" id="loginId" value="driver@rido.ai" />
+        <input type="password" id="loginPassword" value="RIDO2026" />
       </form>
     </div>
   </div>
