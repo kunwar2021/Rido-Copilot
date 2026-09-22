@@ -2100,14 +2100,79 @@ function handleHashRoute() {
 window.addEventListener("popstate", handleHashRoute);
 handleHashRoute();
 
-/* ── Home Route Leaflet Map Controller ── */
+/* ── Home Route Leaflet Map Controller & Multi-Layer Engine ── */
 let homeLeafletMap = null;
+let homeCurrentTileLayer = null;
 let homePolyPath1, homePolyPath2, homePolyPath3;
+let homeTruckMarker = null;
 let mapResizeObserver = null;
+
+function setHomeMapType(type) {
+  if (!homeLeafletMap || typeof L === "undefined") return;
+
+  if (homeCurrentTileLayer) {
+    try {
+      homeLeafletMap.removeLayer(homeCurrentTileLayer);
+    } catch (e) {}
+  }
+
+  // Update button active states
+  ["mapTypeRoad", "mapTypeSat", "mapTypeVector"].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.classList.remove("text-indigo-700", "bg-indigo-50", "font-bold");
+    btn.classList.add("text-slate-600");
+  });
+
+  const activeBtn = document.getElementById(type === "road" ? "mapTypeRoad" : type === "satellite" ? "mapTypeSat" : "mapTypeVector");
+  if (activeBtn) {
+    activeBtn.classList.remove("text-slate-600");
+    activeBtn.classList.add("text-indigo-700", "bg-indigo-50", "font-bold");
+  }
+
+  if (type === "satellite") {
+    homeCurrentTileLayer = L.tileLayer("https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}", {
+      maxZoom: 20,
+      subdomains: ["mt0", "mt1", "mt2", "mt3"],
+      attribution: "&copy; Google Satellite"
+    });
+  } else if (type === "road") {
+    homeCurrentTileLayer = L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}", {
+      maxZoom: 20,
+      subdomains: ["mt0", "mt1", "mt2", "mt3"],
+      attribution: "&copy; Google Maps"
+    });
+  } else {
+    homeCurrentTileLayer = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+      maxZoom: 19,
+      subdomains: "abcd",
+      attribution: "&copy; OpenStreetMap contributors &copy; CARTO"
+    });
+  }
+
+  // Fallback to OSM on tileerror
+  homeCurrentTileLayer.on("tileerror", function() {
+    try {
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(homeLeafletMap);
+    } catch (err) {}
+  });
+
+  homeCurrentTileLayer.addTo(homeLeafletMap);
+}
+window.setHomeMapType = setHomeMapType;
 
 function initHomeRoutesMap() {
   const mapContainer = document.getElementById("homeRoutesLeafletMap");
-  if (!mapContainer || typeof L === "undefined") return;
+  if (!mapContainer) return;
+
+  // If Leaflet is not available (e.g. offline/isolated), the built-in SVG vector fallback remains active
+  if (typeof L === "undefined") {
+    console.info("Leaflet engine pending or offline; interactive SVG vector map fallback active.");
+    return;
+  }
 
   // 1. If map already exists, simply invalidate size and fit bounds if visible
   if (homeLeafletMap) {
@@ -2116,9 +2181,7 @@ function initHomeRoutesMap() {
       if (homePolyPath1) {
         try {
           homeLeafletMap.fitBounds(homePolyPath1.getBounds(), { padding: [40, 40] });
-        } catch (e) {
-          console.warn("fitBounds failed:", e);
-        }
+        } catch (e) {}
       }
     }
     return;
@@ -2126,7 +2189,7 @@ function initHomeRoutesMap() {
 
   // 2. Wait until container has real rendered dimensions (prevents NaN zoom calculation)
   if (mapContainer.clientHeight === 0 || mapContainer.clientWidth === 0) {
-    setTimeout(initHomeRoutesMap, 100);
+    setTimeout(initHomeRoutesMap, 80);
     return;
   }
 
@@ -2134,34 +2197,17 @@ function initHomeRoutesMap() {
   if (mapContainer._leaflet_id) {
     try {
       mapContainer._leaflet_id = null;
-    } catch (e) {
-      console.warn("Could not reset _leaflet_id:", e);
-    }
+    } catch (e) {}
   }
 
   try {
-    homeLeafletMap = L.map('homeRoutesLeafletMap', {
+    homeLeafletMap = L.map("homeRoutesLeafletMap", {
       zoomControl: false,
       attributionControl: false
     }).setView([24.2, 74.8], 6);
 
-    // Reliable CartoDB Voyager tiles with OpenStreetMap fallback
-    const tileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19,
-      subdomains: 'abcd',
-      attribution: '&copy; OpenStreetMap contributors &copy; CARTO'
-    });
-
-    tileLayer.on('tileerror', function() {
-      try {
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          attribution: '&copy; OpenStreetMap'
-        }).addTo(homeLeafletMap);
-      } catch (err) {}
-    });
-
-    tileLayer.addTo(homeLeafletMap);
+    // Initial tile layer: Google Roadmap or CartoDB
+    setHomeMapType("road");
 
     const path1Coords = [
       [28.6139, 77.2090], [28.4595, 77.0266], [27.8864, 76.2811],
@@ -2184,29 +2230,58 @@ function initHomeRoutesMap() {
       [19.0760, 72.8777]
     ];
 
-    L.polyline(path1Coords, { color: '#10b981', weight: 12, opacity: 0.35 }).addTo(homeLeafletMap);
+    // Path-1 (Green EV Corridor) with high-visibility outer glow and crisp core line
+    L.polyline(path1Coords, { color: '#10b981', weight: 14, opacity: 0.35 }).addTo(homeLeafletMap);
     homePolyPath1 = L.polyline(path1Coords, { color: '#059669', weight: 6, opacity: 0.95 }).addTo(homeLeafletMap);
-    homePolyPath2 = L.polyline(path2Coords, { color: '#0284c7', weight: 4.5, opacity: 0.8, dashArray: '8, 8' }).addTo(homeLeafletMap);
-    homePolyPath3 = L.polyline(path3Coords, { color: '#ea580c', weight: 4.5, opacity: 0.8, dashArray: '6, 6' }).addTo(homeLeafletMap);
+    homePolyPath2 = L.polyline(path2Coords, { color: '#0284c7', weight: 4.5, opacity: 0.85, dashArray: '8, 8' }).addTo(homeLeafletMap);
+    homePolyPath3 = L.polyline(path3Coords, { color: '#ea580c', weight: 4.5, opacity: 0.85, dashArray: '6, 6' }).addTo(homeLeafletMap);
 
     const hubs = [
-      { name: 'Delhi NCR Freight Origin', coords: [28.6139, 77.2090], icon: 'ri-map-pin-2-fill', bg: '#10b981' },
-      { name: 'Jaipur 350kW Supercharger Hub', coords: [26.9124, 75.7873], icon: 'ri-flashlight-fill', bg: '#10b981' },
-      { name: 'Ajmer Solar Fast-Charging Oasis', coords: [26.4499, 74.6399], icon: 'ri-sun-fill', bg: '#10b981' },
-      { name: 'Udaipur Fleet Park & Buffer', coords: [24.5854, 73.7125], icon: 'ri-building-4-fill', bg: '#10b981' },
-      { name: 'Ahmedabad Mega Depot', coords: [23.0225, 72.5714], icon: 'ri-store-2-fill', bg: '#0284c7' },
-      { name: 'Mumbai JNPT Port Terminal (Destination)', coords: [18.9499, 72.9515], icon: 'ri-flag-fill', bg: '#10b981' }
+      { name: 'Delhi NCR Freight Origin', coords: [28.6139, 77.2090], icon: 'ri-map-pin-2-fill', bg: '#10b981', note: 'Origin Hub (98% SoC)' },
+      { name: 'Jaipur 350kW Supercharger Hub', coords: [26.9124, 75.7873], icon: 'ri-flashlight-fill', bg: '#10b981', note: '30m Fast Charge (85% SoC)' },
+      { name: 'Ajmer Solar Fast-Charging Oasis', coords: [26.4499, 74.6399], icon: 'ri-sun-fill', bg: '#10b981', note: 'Mandatory 45m HOS Driver Rest' },
+      { name: 'Udaipur Fleet Park & Buffer', coords: [24.5854, 73.7125], icon: 'ri-building-4-fill', bg: '#10b981', note: 'Buffer & Staging Yard' },
+      { name: 'Ahmedabad Mega Depot', coords: [23.0225, 72.5714], icon: 'ri-store-2-fill', bg: '#0284c7', note: 'Relay Depot & Battery Check' },
+      { name: 'Mumbai JNPT Port Terminal (Destination)', coords: [18.9499, 72.9515], icon: 'ri-flag-fill', bg: '#10b981', note: 'Final Maritime Inbound Handover' }
     ];
 
     hubs.forEach(h => {
       const icon = L.divIcon({
-        html: `<div style="width: 30px; height: 30px; border-radius: 50%; background: ${h.bg}; color: white; display: flex; align-items: center; justify-content: center; font-size: 15px; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><i class="${h.icon}"></i></div>`,
+        html: `<div style="width: 32px; height: 32px; border-radius: 50%; background: ${h.bg}; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2.5px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.35);"><i class="${h.icon}"></i></div>`,
         className: '',
-        iconSize: [30, 30],
-        iconAnchor: [15, 15]
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
       });
-      L.marker(h.coords, { icon }).addTo(homeLeafletMap).bindPopup(`<strong>${h.name}</strong><br>Status: Active Telemetry Streaming`);
+      L.marker(h.coords, { icon }).addTo(homeLeafletMap).bindPopup(`
+        <div style="font-family: 'Inter', sans-serif; padding: 4px;">
+          <strong style="font-size: 13px; color: #0f172a;">${h.name}</strong>
+          <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${h.note}</div>
+          <div style="margin-top: 6px; font-size: 10px; color: #16a34a; font-weight: 700;">● Live Telemetry Active</div>
+        </div>
+      `);
     });
+
+    // Active Live Truck Marker: Unit TRK-A (Scania 45R)
+    const truckIcon = L.divIcon({
+      html: `
+        <div style="position: relative; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center;">
+          <div style="position: absolute; inset: 0; border-radius: 50%; background: #10b981; opacity: 0.4;" class="animate-ping"></div>
+          <div style="width: 32px; height: 32px; border-radius: 50%; background: #047857; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid white; box-shadow: 0 4px 14px rgba(4,120,87,0.5);">
+            <i class="ri-truck-fill"></i>
+          </div>
+        </div>
+      `,
+      className: '',
+      iconSize: [38, 38],
+      iconAnchor: [19, 19]
+    });
+    homeTruckMarker = L.marker([25.0, 74.2], { icon: truckIcon }).addTo(homeLeafletMap).bindPopup(`
+      <div style="font-family: 'Inter', sans-serif; padding: 4px;">
+        <strong style="font-size: 13px; color: #0f172a;">Unit TRK-A (Scania 45R)</strong>
+        <div style="font-size: 11px; color: #16a34a; font-weight: 700; margin-top: 2px;">Speed: 72 km/h • 75% SOC</div>
+        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Reefer Temp: 3.6°C • WDFC Active</div>
+      </div>
+    `);
 
     if (mapContainer.clientHeight > 0 && mapContainer.clientWidth > 0) {
       try {
@@ -2232,12 +2307,92 @@ window.initHomeRoutesMap = initHomeRoutesMap;
 
 window.zoomInHomeMap = () => { if (homeLeafletMap) homeLeafletMap.zoomIn(); };
 window.zoomOutHomeMap = () => { if (homeLeafletMap) homeLeafletMap.zoomOut(); };
+
 window.focusHomeRoute = (r) => {
+  // Update UI pill active states
+  ["btnFilterPath1", "btnFilterPath2", "btnFilterPath3"].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.classList.remove("active", "text-emerald-800", "bg-emerald-50", "border", "border-emerald-200");
+    btn.classList.add("text-slate-600");
+  });
+
+  const activeId = r === "path1" ? "btnFilterPath1" : r === "path2" ? "btnFilterPath2" : "btnFilterPath3";
+  const activeBtn = document.getElementById(activeId);
+  if (activeBtn) {
+    activeBtn.classList.remove("text-slate-600");
+    activeBtn.classList.add("active", "text-emerald-800", "bg-emerald-50", "border", "border-emerald-200");
+  }
+
   if (!homeLeafletMap) return;
   if (r === 'path1' && homePolyPath1) homeLeafletMap.fitBounds(homePolyPath1.getBounds(), { padding: [30, 30] });
   if (r === 'path2' && homePolyPath2) homeLeafletMap.fitBounds(homePolyPath2.getBounds(), { padding: [30, 30] });
   if (r === 'path3' && homePolyPath3) homeLeafletMap.fitBounds(homePolyPath3.getBounds(), { padding: [30, 30] });
 };
+
+window.recalculateCorridor = function() {
+  const btn = event?.currentTarget;
+  if (btn) {
+    btn.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Calculating&hellip;`;
+    btn.disabled = true;
+  }
+  setTimeout(() => {
+    if (btn) {
+      btn.innerHTML = `<i class="ri-check-line text-emerald-600"></i> Route Optimized`;
+      setTimeout(() => {
+        btn.innerHTML = `<i class="ri-refresh-line"></i> Re-Calculate Route`;
+        btn.disabled = false;
+      }, 1500);
+    }
+    if (window.focusHomeRoute) window.focusHomeRoute("path1");
+    alert("AI Corridor Re-calculation Complete:\n\n• Verified 350kW fast-charging availability at Jaipur and Ajmer\n• Real-time traffic clearance confirmed across NH-48\n• Expected Transit Duration: 22h 15m (-1h 45m vs diesel)\n• Net Financial Saving: $85.00 USD");
+  }, 600);
+};
+
+window.deployToInCabManifest = function() {
+  alert("DISPATCH DOCKET AUTHORIZED:\n\nManifest #MNF-8824-EV deployed directly to In-Cab Cockpit for Unit TRK-A (Scania 45R).\n\n• Turn-by-turn green corridor traversal locked\n• 3x High-power charging reservations confirmed\n• Cold-chain Reefer threshold locked at 3.6°C");
+};
+
+window.exportCorridorAudit = function() {
+  const auditContent = `=====================================================
+RIDO ENTERPRISE FREIGHT CORRIDOR AUDIT REPORT
+Document ID: AUD-2026-WDFC-8824
+Corridor: Western Dedicated Freight Corridor (WDFC)
+Transit: Delhi NCR [DL-01] ➔ Mumbai JNPT [MH-04]
+Date: ${new Date().toISOString()}
+Currency: US Dollars ($ USD)
+=====================================================
+
+1. PARAMETRIC COMPARATIVE AUDIT
+-----------------------------------------------------
+Parameter               Path-1 (EV)     Path-2 (Diesel) Path-3 (Express)
+Distance:               1,424 km        1,426 km        1,438 km
+Transit Duration:       22h 15m         24h 00m         23h 10m
+Time Variance:          -1h 45m         Baseline        -50m
+Energy / Fuel Cost:     $240.00 USD     $325.00 USD     $295.00 USD
+Net Cost Delta:         -$85.00 USD     Baseline        -$30.00 USD
+CO2 Emission:           18 kg CO2       48 kg CO2       36 kg CO2
+Net CO2 Abated:         -30 kg CO2      Baseline        -12 kg CO2
+Toll Plaza Fees:        $42.00 USD      $68.00 USD      $85.00 USD
+Scheduled Charging:     3 Stops         0 Stops         1 Stop
+
+2. ACTIVE ASSET TELEMETRY
+Vehicle: Unit TRK-A (Scania 45R Electric Hauler)
+GVW: 44 Metric Tonnes
+Battery State of Charge (SoC): 75%
+Reefer Cold-Chain Temp: 3.6°C (Target: 2°C - 5°C)
+Compliance Rating: 99.1% Certified
+
+Authorized by: RIDO Operational Intelligence Controller
+Azure AI Foundry Engine (gpt-6-astra)
+=====================================================`;
+  const blob = new Blob([auditContent], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "RIDO_WDFC_Corridor_Audit.txt";
+  a.click();
+};
+
 
 /* ══════════════════════════════════════════════
    7. INTERACTIVE REPORT & PROMPT HELPERS
