@@ -279,6 +279,7 @@ window.openLoginModal = openLoginModal;
 window.closeLoginModal = closeLoginModal;
 window.switchTab = switchTab;
 window.switchView = switchView;
+window.logout = logout;
 
 
 function updateUIAuthState(isLoggedIn) {
@@ -298,8 +299,9 @@ function updateUIAuthState(isLoggedIn) {
             <span class="text-[10px] bg-zinc-200 text-zinc-700 px-1.5 py-0.5 rounded font-bold uppercase">VERIFIED</span>
           </div>
         </div>
-        <button class="btn-signout inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs font-semibold shadow-sm transition-all" id="logoutBtn" title="Sign Out of Mission Control" onclick="logout()">
-          <i class="ri-logout-box-r-line"></i> <span>Sign Out</span>
+        <button onclick="logout()" data-action="logout" id="logoutBtn" class="btn-signout inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-bold text-slate-700 hover:text-red-600 hover:border-red-200 transition shadow-sm" title="Sign Out of Mission Control">
+          <i class="ri-logout-box-r-line w-3.5 h-3.5"></i>
+          <span>Sign Out</span>
         </button>
       `;
     }
@@ -1161,7 +1163,7 @@ window.login = login;
 window.executeLogin = executeLogin;
 
 function logout() {
-  // 1. Purge All Session Storage & Auth Flags
+  // 1. Clear session tokens across all storage
   localStorage.removeItem("rido_session");
   localStorage.removeItem("rido_auth_token");
   localStorage.removeItem("rido_user_data");
@@ -1180,13 +1182,13 @@ function logout() {
     window.speechSynthesis.cancel();
   }
 
-  // 2. Hide all operational decks & page views
+  // 2. Hide all authenticated dashboards (including Driver Cockpit and Copilot Console)
   document.querySelectorAll('.app-page-view, .app-view, [id^="view"]').forEach(el => {
     el.classList.add("hidden");
     el.style.display = "none";
   });
 
-  // 3. Show home landing view cleanly
+  // 3. Reveal the public Home landing view
   const homeView = document.getElementById("viewHome");
   if (homeView) {
     homeView.classList.remove("hidden");
@@ -1211,15 +1213,23 @@ function logout() {
   const roleDeck = document.getElementById("roleOperationalDeck");
   if (roleDeck) roleDeck.innerHTML = "";
 
-  // 4. Reset Navigation Bar & user status slot to Guest State
-  updateUIAuthState(false);
-  renderGuestExperience();
+  // 4. Reset Navigation Bar to locked guest state
   renderNavForRole(null);
 
-  // 5. Scroll & History Cleanup
+  // 5. Reset top-right header controls to guest actions
+  updateUIAuthState(false);
+  renderGuestExperience();
+
+  // 6. Reset browser address bar and scroll to top
   window.history.replaceState({}, document.title, window.location.pathname);
   window.scrollTo({ top: 0, behavior: "instant" });
+
+  // 7. Refresh Lucide icons if loaded
+  if (window.lucide && typeof lucide.createIcons === "function") {
+    lucide.createIcons();
+  }
 }
+window.logout = logout;
 
 function checkAuth() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -1320,9 +1330,19 @@ if (processStrip) {
   });
 }
 
-/* ── Sign Out Handler ── */
-logoutBtn.addEventListener("click", () => {
-  logout();
+/* ── Sign Out Handler & Global Delegation ── */
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", () => {
+    logout();
+  });
+}
+
+document.addEventListener("click", function(e) {
+  const btn = e.target.closest('[data-action="logout"], #logoutBtn, .btn-signout');
+  if (btn || (e.target.textContent && e.target.textContent.trim() === "Sign Out")) {
+    e.preventDefault();
+    logout();
+  }
 });
 
 /* ── Persona Dropdown Toggle ── */
