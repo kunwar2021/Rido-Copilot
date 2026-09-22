@@ -31,14 +31,14 @@ const loginForm         = document.getElementById("loginForm");
 const evaluatorDemoBtn  = document.getElementById("evaluatorDemoBtn");
 const welcome           = document.getElementById("welcome");
 const messages          = document.getElementById("copilotMessageFeed") || document.getElementById("messages");
-const userInput         = document.getElementById("userInput");
-const sendBtn           = document.getElementById("sendBtn");
+const userInput         = document.getElementById("copilotInput") || document.getElementById("userInput");
+const sendBtn           = document.getElementById("copilotSendBtn") || document.getElementById("sendBtn");
 const clearBtn          = document.getElementById("clearBtn");
 const thoughtLog        = document.getElementById("thoughtLog");
 const reasoningDrawer   = document.getElementById("reasoningDrawer");
 const toggleBtn         = document.getElementById("toggleThoughtsBtn");
 const closeDrawerBtn    = document.getElementById("closeDrawerBtn");
-const voiceMicBtn       = document.getElementById("voiceMicBtn");
+const voiceMicBtn       = document.getElementById("copilotMicBtn") || document.getElementById("voiceMicBtn");
 const ttsToggleBtn      = document.getElementById("ttsToggleBtn");
 const ttsStatusText     = document.getElementById("ttsStatusText");
 const hudPing           = document.getElementById("hudPing");
@@ -1512,7 +1512,6 @@ function setupSpeechRecognition() {
       transcript += event.results[i][0].transcript;
     }
     userInput.value = transcript;
-    userInput.style.height = Math.min(userInput.scrollHeight, 120) + "px";
   };
 
   speechRecognizer.onerror = (e) => {
@@ -1621,13 +1620,9 @@ if (clearBtn) {
 }
 
 
-userInput.addEventListener("input", () => {
-  userInput.style.height = "auto";
-  userInput.style.height = Math.min(userInput.scrollHeight, 120) + "px";
-});
-
+// Suppress Enter key — dispatch via Send button only
 userInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSend(); }
+  if (e.key === "Enter") { e.preventDefault(); } // block submit / reload
 });
 sendBtn.addEventListener("click", handleSend);
 
@@ -1640,7 +1635,6 @@ async function handleSend() {
   if (!text) return;
 
   userInput.value = "";
-  userInput.style.height = "auto";
   sendBtn.disabled = true;
   sfx.playTransmit();
 
