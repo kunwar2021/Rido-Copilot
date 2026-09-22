@@ -3148,32 +3148,32 @@
       <nav class="hidden md:flex items-center bg-zinc-100/90 p-1.5 rounded-full border border-zinc-200/80 shadow-inner">
         <ul class="nav-links flex items-center gap-1 list-none m-0 p-0">
           <li>
-            <a href="#home" class="nav-link active inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-zinc-900 bg-white shadow-sm transition-all" id="navHome" data-view="viewHome" data-tab="home" title="Mission Control">
-              <span class="nav-label">Mission Control</span>
+            <a href="#home" class="nav-link nav-tab active inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold text-slate-900 bg-white shadow-sm border border-slate-200/80 transition-all" id="navHome" data-view="viewHome" data-tab="home" title="Home" onclick="switchView('viewHome'); return false;">
+              <span class="nav-label">Home</span>
             </a>
           </li>
           <li>
-            <a href="#fleet" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navFleet" data-view="viewFleet" data-tab="fleet" title="Fleet IQ">
-              <span class="nav-label">Fleet IQ</span>
-              <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
+            <a href="#fleet" class="nav-link nav-tab locked inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-500 hover:text-slate-800 transition-all" id="navFleet" data-view="viewFleet" data-tab="fleet" title="Fleet" onclick="switchView('viewFleet'); return false;">
+              <span class="nav-label">Fleet</span>
+              <span class="text-xs ml-0.5">🔒</span>
             </a>
           </li>
           <li>
-            <a href="#routes" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navRoutes" data-view="viewRoutes" data-tab="routes" title="Corridor Routes">
-              <span class="nav-label">Corridor Routes</span>
-              <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
+            <a href="#routes" class="nav-link nav-tab locked inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-500 hover:text-slate-800 transition-all" id="navRoutes" data-view="viewRoutes" data-tab="routes" title="Routes" onclick="switchView('viewRoutes'); return false;">
+              <span class="nav-label">Routes</span>
+              <span class="text-xs ml-0.5">🔒</span>
             </a>
           </li>
           <li>
-            <a href="#analytics" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navAnalytics" data-view="viewAnalytics" data-tab="analytics" title="Analytics">
+            <a href="#analytics" class="nav-link nav-tab locked inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-500 hover:text-slate-800 transition-all" id="navAnalytics" data-view="viewAnalytics" data-tab="analytics" title="Analytics" onclick="switchView('viewAnalytics'); return false;">
               <span class="nav-label">Analytics</span>
-              <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
+              <span class="text-xs ml-0.5">🔒</span>
             </a>
           </li>
           <li>
-            <a href="#reports" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navReports" data-view="viewReports" data-tab="reports" title="Reports">
+            <a href="#reports" class="nav-link nav-tab locked inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-500 hover:text-slate-800 transition-all" id="navReports" data-view="viewReports" data-tab="reports" title="Reports" onclick="switchView('viewReports'); return false;">
               <span class="nav-label">Reports</span>
-              <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
+              <span class="text-xs ml-0.5">🔒</span>
             </a>
           </li>
         </ul>
@@ -3195,25 +3195,14 @@
           <i class="ri-settings-3-line text-lg"></i>
         </button>
 
-        <!-- Authenticated Security Context (Role Isolated) -->
-        <div class="nav-persona-wrapper" id="personaWrapper" style="display: none;">
-          <div class="nav-persona-btn static-badge inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-800 text-xs font-semibold" id="personaDropdownBtn" title="Authenticated Operational Role (Enforced by RBAC)">
-            <i class="ri-shield-check-line text-emerald-600 text-sm"></i>
-            <span id="headerPersonaBadge">[DRIVER IN-CAB]</span>
-            <span class="text-[10px] bg-zinc-200 text-zinc-700 px-1.5 py-0.5 rounded font-bold uppercase">VERIFIED</span>
-          </div>
+        <!-- User Status / Auth Slot (Dynamically Managed) -->
+        <div id="authSlot" class="flex items-center gap-2">
+          <button onclick="openSignInModal()" id="navSignInBtn" class="text-xs font-bold text-slate-700 hover:text-slate-900 px-3 py-1.5 transition-colors">Sign In</button>
+          <button onclick="openSignInModal()" id="navGetStartedBtn" class="btn-signin inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition active:scale-[0.98]">
+            <span>Get Started</span>
+            <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </button>
         </div>
-
-        <!-- Sign Out Button -->
-        <button class="btn-signout inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs font-semibold shadow-sm transition-all" id="logoutBtn" title="Sign Out of Mission Control" style="display: none;">
-          <i class="ri-logout-box-r-line"></i> <span>Sign Out</span>
-        </button>
-
-        <!-- Get Started / Sign In Button (Shown when signed out) -->
-        <button class="btn-signin inline-flex items-center justify-center gap-2 bg-black hover:bg-zinc-800 text-white font-body-md text-body-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm active:scale-[0.98] transition-all" id="navSignInBtn" onclick="openSignInModal()">
-          <span>Get Started</span>
-          <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-        </button>
       </div>
     </div>
   </header>
@@ -3291,37 +3280,11 @@
 <!-- Horizontal Action Button Row -->
 
 <div class="hero-actions-animate flex flex-wrap items-center gap-3.5 pt-1 w-full sm:w-auto">
-
-<!-- Primary Solid Black Button -->
-
-<a class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-lg bg-black hover:bg-zinc-800 text-white font-body-md font-semibold shadow-md active:scale-[0.98] transition-all group" href="#optimize">
-
-<span class="material-symbols-outlined text-[19px] fill-icon text-white transition-transform group-hover:scale-110" data-icon="bolt">bolt</span>
-
-<span class="">Optimize My Route</span>
-
-</a>
-
-<!-- Secondary Outline Button -->
-
-<a class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg bg-white border border-zinc-300 hover:border-zinc-900 text-zinc-900 font-body-md font-semibold shadow-sm hover:bg-zinc-50 active:scale-[0.98] transition-all group" href="#plan">
-
-<span class="material-symbols-outlined text-[19px] text-zinc-700 transition-transform group-hover:rotate-12" data-icon="alt_route">alt_route</span>
-
-<span class="">Plan a Route</span>
-
-</a>
-
-<!-- Tertiary Outline Button -->
-
-<a class="inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-lg bg-transparent border border-transparent hover:border-zinc-300 text-zinc-700 hover:text-zinc-950 font-body-md font-medium hover:bg-zinc-100 active:scale-[0.98] transition-all" href="#fleet">
-
-<span class="material-symbols-outlined text-[19px] text-zinc-600" data-icon="garage">garage</span>
-
-<span class="">View Fleet</span>
-
-</a>
-
+  <!-- Primary Single CTA Button -->
+  <button type="button" onclick="openSignInModal()" class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg bg-black hover:bg-zinc-800 text-white font-body-md font-semibold shadow-md active:scale-[0.98] transition-all group">
+    <span>Get Started</span>
+    <span class="material-symbols-outlined text-[19px] transition-transform group-hover:translate-x-1">arrow_forward</span>
+  </button>
 </div>
 
 <!-- Capabilities Strip -->

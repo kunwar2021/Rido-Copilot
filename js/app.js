@@ -278,15 +278,30 @@ window.switchView = switchView;
 
 
 function updateUIAuthState(isLoggedIn) {
+  const authSlot = document.getElementById("authSlot");
   const guestBanner = document.getElementById("guestLockBanner");
   const inputDock = document.getElementById("copilotInputDock");
+  const currentPersona = state.persona || "Guest";
 
   if (isLoggedIn) {
-    if (headerPersonaBadge) headerPersonaBadge.innerText = `[${state.persona.toUpperCase()}]`;
-    if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${state.persona}</strong>`;
-    if (navSignInBtn) navSignInBtn.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "flex";
-    if (personaWrapper) personaWrapper.style.display = "block";
+    if (authSlot) {
+      const displayBadge = currentPersona.toUpperCase().startsWith("[") ? currentPersona.toUpperCase() : `[${currentPersona.toUpperCase()}]`;
+      authSlot.innerHTML = `
+        <div class="nav-persona-wrapper" id="personaWrapper" style="display: block;">
+          <div class="nav-persona-btn static-badge inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-200 bg-zinc-50 text-zinc-800 text-xs font-semibold" id="personaDropdownBtn" title="Authenticated Operational Role (Enforced by RBAC)">
+            <i class="ri-shield-check-line text-emerald-600 text-sm"></i>
+            <span id="headerPersonaBadge">${displayBadge}</span>
+            <span class="text-[10px] bg-zinc-200 text-zinc-700 px-1.5 py-0.5 rounded font-bold uppercase">VERIFIED</span>
+          </div>
+        </div>
+        <button class="btn-signout inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-zinc-300 bg-white hover:bg-zinc-100 text-zinc-700 text-xs font-semibold shadow-sm transition-all" id="logoutBtn" title="Sign Out of Mission Control" onclick="logout()">
+          <i class="ri-logout-box-r-line"></i> <span>Sign Out</span>
+        </button>
+      `;
+    }
+    const hBadge = document.getElementById("headerPersonaBadge");
+    if (hBadge) hBadge.innerText = currentPersona.toUpperCase().startsWith("[") ? currentPersona.toUpperCase() : `[${currentPersona.toUpperCase()}]`;
+    if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${currentPersona}</strong>`;
     if (loginScreen) loginScreen.classList.add("hidden");
     if (guestBanner) guestBanner.style.display = "none";
 
@@ -303,9 +318,19 @@ function updateUIAuthState(isLoggedIn) {
     document.querySelectorAll(".nav-link.locked").forEach(l => l.classList.remove("locked"));
     document.querySelectorAll(".nav-lock-icon").forEach(icon => icon.style.display = "none");
   } else {
-    if (navSignInBtn) navSignInBtn.style.display = "flex";
-    if (logoutBtn) logoutBtn.style.display = "none";
-    if (personaWrapper) personaWrapper.style.display = "none";
+    if (authSlot) {
+      authSlot.innerHTML = `
+        <button onclick="openSignInModal()" id="navSignInBtn" class="text-xs font-bold text-slate-700 hover:text-slate-900 px-3 py-1.5 transition-colors">Sign In</button>
+        <button onclick="openSignInModal()" id="navGetStartedBtn" class="btn-signin inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition active:scale-[0.98]">
+          <span>Get Started</span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </button>
+      `;
+    }
+    const personaWrap = document.getElementById("personaWrapper");
+    if (personaWrap) personaWrap.style.display = "none";
+    const logoutB = document.getElementById("logoutBtn");
+    if (logoutB) logoutB.style.display = "none";
     if (guestBanner) guestBanner.style.display = "flex";
 
     // Lock Copilot Console input & buttons
@@ -502,34 +527,48 @@ window.ROLE_CONFIG = ROLE_CONFIG;
 window.ROLE_PERMISSIONS = ROLE_PERMISSIONS;
 
 function renderNavForRole(personaName = null) {
-  const navContainer = document.querySelector(".site-header nav ul.nav-links");
+  const navContainer = document.querySelector(".site-header nav ul.nav-links") || document.querySelector("header nav ul") || document.querySelector("header nav");
   if (!navContainer) return;
 
   const currentHash = (window.location.hash || "#home").replace("#", "").toLowerCase() || "home";
   const activeTabKey = normalizeTabKey(currentHash);
 
   if (!personaName || !isAuthenticated()) {
-    // Guest Mode: all 5 tabs rendered, with protected ones locked
+    // Guest Mode: all 5 tabs rendered, first tab is "Home", protected tabs are locked with 🔒
     const guestTabs = [
-      { key: "home", label: "Mission Control", locked: false },
-      { key: "fleet", label: "Fleet IQ", locked: true },
-      { key: "routes", label: "Corridor Routes", locked: true },
+      { key: "home", label: "Home", locked: false },
+      { key: "fleet", label: "Fleet", locked: true },
+      { key: "routes", label: "Routes", locked: true },
       { key: "analytics", label: "Analytics", locked: true },
       { key: "reports", label: "Reports", locked: true }
     ];
 
-    navContainer.innerHTML = guestTabs.map(t => {
+    const html = guestTabs.map(t => {
       const isActive = activeTabKey === t.key;
-      const activeClass = isActive ? "bg-white text-zinc-900 font-semibold shadow-sm" : "text-zinc-600 hover:text-zinc-900";
+      const activeClass = isActive 
+        ? "bg-white text-slate-900 shadow-sm border border-slate-200/80 font-bold" 
+        : "text-slate-500 hover:text-slate-800 font-medium";
+      const targetView = VIEW_MAP[t.key] || `view${t.key.charAt(0).toUpperCase() + t.key.slice(1)}`;
       return `
         <li>
-          <a href="#${t.key}" class="nav-link ${isActive ? 'active' : ''} ${t.locked ? 'locked' : ''} inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium ${activeClass} transition-all" id="nav${t.key.charAt(0).toUpperCase() + t.key.slice(1)}" data-view="${VIEW_MAP[t.key]}" data-tab="${t.key}" title="${t.label}" onclick="switchView('${VIEW_MAP[t.key]}'); return false;">
+          <a href="#${t.key}" class="nav-link nav-tab ${isActive ? 'active' : ''} ${t.locked ? 'locked' : ''} inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs ${activeClass} transition-all" id="nav${t.key.charAt(0).toUpperCase() + t.key.slice(1)}" data-view="${targetView}" data-tab="${t.key}" title="${t.label}" onclick="switchView('${targetView}'); return false;">
             <span class="nav-label">${t.label}</span>
-            ${t.locked ? '<i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>' : ''}
+            ${t.locked ? '<span class="text-xs ml-0.5">🔒</span>' : ''}
           </a>
         </li>
       `;
     }).join("");
+
+    if (navContainer.tagName.toLowerCase() === "ul") {
+      navContainer.innerHTML = html;
+    } else {
+      const ul = navContainer.querySelector("ul.nav-links");
+      if (ul) {
+        ul.innerHTML = html;
+      } else {
+        navContainer.innerHTML = `<ul class="nav-links flex items-center gap-1 list-none m-0 p-0">${html}</ul>`;
+      }
+    }
     return;
   }
 
@@ -537,22 +576,35 @@ function renderNavForRole(personaName = null) {
   const config = ROLE_CONFIG[personaName] || ROLE_CONFIG["Driver In-Cab"];
   const allowed = config.allowedTabs || ["home"];
 
-  navContainer.innerHTML = allowed.map(tabKey => {
+  const html = allowed.map(tabKey => {
     const label = (config.tabLabels && config.tabLabels[tabKey]) || tabKey;
     const icon = (config.tabIcons && config.tabIcons[tabKey]) || "ri-circle-line";
     const isActive = activeTabKey === tabKey;
-    const activeClass = isActive ? "bg-white text-zinc-900 font-semibold shadow-sm" : "text-zinc-600 hover:text-zinc-900";
+    const activeClass = isActive 
+      ? "bg-white text-zinc-900 font-semibold shadow-sm" 
+      : "text-zinc-600 hover:text-zinc-900 font-medium";
     const targetView = VIEW_MAP[tabKey] || `view${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}`;
 
     return `
       <li>
-        <a href="#${tabKey}" class="nav-link ${isActive ? 'active' : ''} inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium ${activeClass} transition-all" id="nav${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}" data-view="${targetView}" data-tab="${tabKey}" title="${label}" onclick="switchView('${targetView}'); return false;">
+        <a href="#${tabKey}" class="nav-link nav-tab ${isActive ? 'active' : ''} inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs ${activeClass} transition-all" id="nav${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}" data-view="${targetView}" data-tab="${tabKey}" title="${label}" onclick="switchView('${targetView}'); return false;">
           <i class="${icon} text-[13px] text-zinc-500"></i>
           <span class="nav-label font-semibold">${label}</span>
         </a>
       </li>
     `;
   }).join("");
+
+  if (navContainer.tagName.toLowerCase() === "ul") {
+    navContainer.innerHTML = html;
+  } else {
+    const ul = navContainer.querySelector("ul.nav-links");
+    if (ul) {
+      ul.innerHTML = html;
+    } else {
+      navContainer.innerHTML = `<ul class="nav-links flex items-center gap-1 list-none m-0 p-0">${html}</ul>`;
+    }
+  }
 }
 window.renderNavForRole = renderNavForRole;
 
@@ -988,12 +1040,12 @@ window.login = login;
 window.executeLogin = executeLogin;
 
 function logout() {
+  // 1. Purge All Session Storage & Auth Flags
   localStorage.removeItem("rido_session");
   localStorage.removeItem("rido_auth_token");
   localStorage.removeItem("rido_user_data");
   localStorage.removeItem("rido_persona");
-  sessionStorage.removeItem("rido_session_token");
-  sessionStorage.removeItem("rido_persona");
+  sessionStorage.clear();
 
   state.sessionToken = null;
   state.isAuthenticated = false;
@@ -1007,11 +1059,45 @@ function logout() {
     window.speechSynthesis.cancel();
   }
 
+  // 2. Hide all operational decks & page views
+  document.querySelectorAll('.app-page-view, .app-view, [id^="view"]').forEach(el => {
+    el.classList.add("hidden");
+    el.style.display = "none";
+  });
+
+  // 3. Show home landing view cleanly
+  const homeView = document.getElementById("viewHome");
+  if (homeView) {
+    homeView.classList.remove("hidden");
+    homeView.style.display = "block";
+  }
+
+  // Ensure within viewHome: authenticated role workspace is hidden, public marketing is shown
+  const homeRole = document.getElementById("homeRoleWorkspace");
+  if (homeRole) {
+    homeRole.classList.add("hidden");
+    homeRole.style.display = "none";
+  }
+  const homePublic = document.getElementById("homePublicMarketing");
+  if (homePublic) {
+    homePublic.classList.remove("hidden");
+    homePublic.style.display = "block";
+  }
+
+  // Clear live HUD & role operational decks
+  const liveHUD = document.getElementById("personaLiveHUD");
+  if (liveHUD) liveHUD.innerHTML = "";
+  const roleDeck = document.getElementById("roleOperationalDeck");
+  if (roleDeck) roleDeck.innerHTML = "";
+
+  // 4. Reset Navigation Bar & user status slot to Guest State
   updateUIAuthState(false);
   renderGuestExperience();
   renderNavForRole(null);
-  switchView("viewHome");
-  history.pushState(null, "", "#home");
+
+  // 5. Scroll & History Cleanup
+  window.history.replaceState({}, document.title, window.location.pathname);
+  window.scrollTo({ top: 0, behavior: "instant" });
 }
 
 function checkAuth() {
