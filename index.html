@@ -309,13 +309,9 @@
     }
 
     .nav-link {
-      font-size: 0.88rem;
-      font-weight: 500;
-      color: #64748b;
       text-decoration: none;
-      padding: 8px 0;
       position: relative;
-      transition: color 0.15s;
+      transition: all 0.15s;
       cursor: pointer;
     }
 
@@ -326,16 +322,6 @@
     .nav-link.active {
       color: #0f172a;
       font-weight: 700;
-    }
-
-    .nav-link.active::after {
-      content: '';
-      position: absolute;
-      bottom: -13px;
-      left: 0; right: 0;
-      height: 2px;
-      background: #0f172a;
-      border-radius: 2px;
     }
 
     /* Locked Nav Link State for Guests */
