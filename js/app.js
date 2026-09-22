@@ -703,6 +703,10 @@ function switchView(viewId) {
     link.classList.toggle("active", link.dataset.view === viewId);
   });
 
+  if (viewId === "viewRoutes") {
+    setTimeout(initHomeRoutesMap, 80);
+  }
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -739,6 +743,85 @@ function handleHashRoute() {
 
 window.addEventListener("popstate", handleHashRoute);
 handleHashRoute();
+
+/* ── Home Route Leaflet Map Controller ── */
+let homeLeafletMap = null;
+let homePolyPath1, homePolyPath2, homePolyPath3;
+
+function initHomeRoutesMap() {
+  const mapContainer = document.getElementById("homeRoutesLeafletMap");
+  if (!mapContainer || typeof L === "undefined") return;
+  if (homeLeafletMap) {
+    setTimeout(() => homeLeafletMap.invalidateSize(), 150);
+    return;
+  }
+
+  homeLeafletMap = L.map('homeRoutesLeafletMap', {
+    zoomControl: false,
+    attributionControl: false
+  }).setView([24.2, 74.8], 6);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    maxZoom: 18,
+    subdomains: 'abcd'
+  }).addTo(homeLeafletMap);
+
+  const path1Coords = [
+    [28.6139, 77.2090], [28.4595, 77.0266], [27.8864, 76.2811],
+    [26.9124, 75.7873], [26.5750, 74.8639], [26.4499, 74.6399],
+    [25.3407, 74.6313], [24.5854, 73.7125], [23.5977, 72.9667],
+    [23.0225, 72.5714], [22.3072, 73.1812], [21.7051, 72.9959],
+    [21.1702, 72.8311], [20.3893, 72.9106], [19.2183, 72.9781],
+    [18.9499, 72.9515]
+  ];
+
+  const path2Coords = [
+    [28.6139, 77.2090], [27.1767, 78.0081], [26.2183, 78.1828],
+    [24.5362, 77.7289], [22.7196, 75.8577], [21.8314, 75.6179],
+    [20.9042, 74.7749], [19.9975, 73.7898], [19.0760, 72.8777]
+  ];
+
+  const path3Coords = [
+    [28.6139, 77.2090], [27.5706, 76.6433], [25.2138, 75.8648],
+    [23.3315, 75.0367], [22.7758, 73.6149], [22.3072, 73.1812],
+    [19.0760, 72.8777]
+  ];
+
+  L.polyline(path1Coords, { color: '#10b981', weight: 12, opacity: 0.35 }).addTo(homeLeafletMap);
+  homePolyPath1 = L.polyline(path1Coords, { color: '#059669', weight: 6, opacity: 0.95 }).addTo(homeLeafletMap);
+  homePolyPath2 = L.polyline(path2Coords, { color: '#0284c7', weight: 4.5, opacity: 0.8, dashArray: '8, 8' }).addTo(homeLeafletMap);
+  homePolyPath3 = L.polyline(path3Coords, { color: '#ea580c', weight: 4.5, opacity: 0.8, dashArray: '6, 6' }).addTo(homeLeafletMap);
+
+  const hubs = [
+    { name: 'Delhi NCR Freight Origin', coords: [28.6139, 77.2090], icon: 'ri-map-pin-2-fill', bg: '#10b981' },
+    { name: 'Jaipur 350kW Supercharger Hub', coords: [26.9124, 75.7873], icon: 'ri-flashlight-fill', bg: '#10b981' },
+    { name: 'Ajmer Solar Fast-Charging Oasis', coords: [26.4499, 74.6399], icon: 'ri-sun-fill', bg: '#10b981' },
+    { name: 'Udaipur Fleet Park & Buffer', coords: [24.5854, 73.7125], icon: 'ri-building-4-fill', bg: '#10b981' },
+    { name: 'Ahmedabad Mega Depot', coords: [23.0225, 72.5714], icon: 'ri-store-2-fill', bg: '#0284c7' },
+    { name: 'Mumbai JNPT Port Terminal (Destination)', coords: [18.9499, 72.9515], icon: 'ri-flag-fill', bg: '#10b981' }
+  ];
+
+  hubs.forEach(h => {
+    const icon = L.divIcon({
+      html: `<div style="width: 30px; height: 30px; border-radius: 50%; background: ${h.bg}; color: white; display: flex; align-items: center; justify-content: center; font-size: 15px; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><i class="${h.icon}"></i></div>`,
+      className: '',
+      iconSize: [30, 30],
+      iconAnchor: [15, 15]
+    });
+    L.marker(h.coords, { icon }).addTo(homeLeafletMap).bindPopup(`<strong>${h.name}</strong><br>Status: Active Telemetry Streaming`);
+  });
+
+  homeLeafletMap.fitBounds(homePolyPath1.getBounds(), { padding: [40, 40] });
+}
+
+window.zoomInHomeMap = () => { if (homeLeafletMap) homeLeafletMap.zoomIn(); };
+window.zoomOutHomeMap = () => { if (homeLeafletMap) homeLeafletMap.zoomOut(); };
+window.focusHomeRoute = (r) => {
+  if (!homeLeafletMap) return;
+  if (r === 'path1' && homePolyPath1) homeLeafletMap.fitBounds(homePolyPath1.getBounds(), { padding: [30, 30] });
+  if (r === 'path2' && homePolyPath2) homeLeafletMap.fitBounds(homePolyPath2.getBounds(), { padding: [30, 30] });
+  if (r === 'path3' && homePolyPath3) homeLeafletMap.fitBounds(homePolyPath3.getBounds(), { padding: [30, 30] });
+};
 
 /* ══════════════════════════════════════════════
    7. INTERACTIVE REPORT & PROMPT HELPERS

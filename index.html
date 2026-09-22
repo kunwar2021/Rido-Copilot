@@ -14,6 +14,10 @@
   <!-- Markdown renderer -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
+  <!-- Leaflet CSS & JS for Real Interactive Corridor Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1487,16 +1491,23 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      min-height: 190px;
-      background: radial-gradient(circle at center, #f0fdf4 0%, #ffffff 70%);
-      border-radius: 14px;
+      min-height: 250px;
+      background: radial-gradient(circle at center, #f0fdf4 0%, #ffffff 75%);
+      border-radius: 16px;
       padding: 16px;
+      overflow: hidden;
     }
 
     .fleet-3d-graphic-wrap img {
-      max-height: 150px;
+      max-height: 210px;
+      width: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 12px 20px rgba(16, 185, 129, 0.25));
+      filter: drop-shadow(0 14px 28px rgba(16, 185, 129, 0.28));
+      transition: transform 0.3s ease;
+    }
+
+    .fleet-3d-graphic-wrap:hover img {
+      transform: scale(1.025);
     }
 
     .telemetry-chip-tag {
@@ -2551,20 +2562,20 @@
       </div>
 
       <!-- Route Interactive Map Card -->
-      <div class="routes-map-card">
-        <div class="map-canvas-background"></div>
+      <div class="routes-map-card" style="height: 680px;">
+        <div id="homeRoutesLeafletMap" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 10; background: #e5edf5;"></div>
 
         <!-- Top Map Header -->
-        <div class="map-top-bar">
-          <div class="map-zoom-controls">
-            <button class="map-zoom-btn" title="Zoom in">+</button>
-            <button class="map-zoom-btn" title="Zoom out">&minus;</button>
+        <div class="map-top-bar" style="position: relative; z-index: 20; pointer-events: none;">
+          <div class="map-zoom-controls" style="pointer-events: auto;">
+            <button class="map-zoom-btn" title="Zoom in" onclick="zoomInHomeMap()">+</button>
+            <button class="map-zoom-btn" title="Zoom out" onclick="zoomOutHomeMap()">&minus;</button>
           </div>
 
-          <div class="map-legend-pill">
-            <div class="legend-item"><div class="legend-line green"></div> Path-1 (Green EV Corridor)</div>
-            <div class="legend-item"><div class="legend-line blue"></div> Path-2 (Diesel Tollway)</div>
-            <div class="legend-item"><div class="legend-line orange"></div> Path-3 (Expressway)</div>
+          <div class="map-legend-pill" style="pointer-events: auto;">
+            <div class="legend-item" style="cursor: pointer;" onclick="focusHomeRoute('path1')"><div class="legend-line green"></div> Path-1 (Green EV Corridor)</div>
+            <div class="legend-item" style="cursor: pointer;" onclick="focusHomeRoute('path2')"><div class="legend-line blue"></div> Path-2 (Diesel Tollway)</div>
+            <div class="legend-item" style="cursor: pointer;" onclick="focusHomeRoute('path3')"><div class="legend-line orange"></div> Path-3 (Expressway)</div>
           </div>
         </div>
 

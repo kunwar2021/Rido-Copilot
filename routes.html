@@ -10,18 +10,21 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:             #f1f5f9;
+      --bg:             #f8fafc;
       --card-bg:        #ffffff;
       --border:         #e2e8f0;
       --text:           #0f172a;
       --text-muted:     #64748b;
       --accent:         #4f46e5;
       --accent-light:   #eff2fe;
-      --emerald:        #16a34a;
+      --emerald:        #10b981;
       --emerald-light:  #f0fdf4;
       --cyan:           #0284c7;
       --cyan-light:     #f0f9ff;
@@ -53,7 +56,7 @@
       justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 1000;
     }
 
     .nav-left {
@@ -130,10 +133,6 @@
       50% { opacity: 0.6; transform: scale(0.85); }
     }
 
-    .nav-persona-wrapper {
-      position: relative;
-    }
-
     .nav-persona-btn {
       background: #f8fafc;
       border: 1px solid var(--border);
@@ -145,7 +144,6 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      cursor: pointer;
       font-family: inherit;
     }
 
@@ -174,17 +172,16 @@
     .main-container {
       max-width: 1440px;
       margin: 0 auto;
-      padding: 24px 28px 60px 28px;
+      padding: 24px 28px 40px 28px;
       display: flex;
       flex-direction: column;
-      gap: 22px;
+      gap: 18px;
     }
 
     .page-title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 2px;
     }
 
     .page-title {
@@ -203,103 +200,106 @@
 
     .filter-select-btn {
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 8px;
-      padding: 7px 14px;
-      font-size: 0.78rem;
-      font-weight: 600;
+      border: 1px solid #cbd5e1;
+      border-radius: 9px;
+      padding: 8px 15px;
+      font-size: 0.8rem;
+      font-weight: 700;
       color: #334155;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
       cursor: pointer;
       transition: all 0.15s;
       font-family: inherit;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
 
     .filter-select-btn:hover {
-      border-color: #cbd5e1;
+      border-color: #94a3b8;
       background: #f8fafc;
+      transform: translateY(-1px);
     }
 
-    /* ROUTES PAGE STYLES */
+    /* ══════════════════════════════════════════════
+       REAL INTERACTIVE MAP CARD
+       ══════════════════════════════════════════════ */
     .routes-map-card {
       background: #ffffff;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
       border-radius: 24px;
       overflow: hidden;
       position: relative;
-      min-height: 640px;
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+      height: 680px;
+      box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
-    .map-canvas-background {
+    #routesLeafletMap {
       position: absolute;
       inset: 0;
-      background: #e5edf5 url('images/route-map-corridor.png') center center/cover no-repeat;
-      z-index: 1;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      background: #e5edf5;
     }
 
-    /* Interactive overlay corridor pins */
-    .map-corridor-overlay {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-    }
-
+    /* Top Floating Overlays */
     .map-top-bar {
       position: relative;
-      z-index: 5;
-      padding: 20px 24px;
+      z-index: 20;
+      padding: 18px 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      pointer-events: none;
     }
 
     .map-zoom-controls {
       display: flex;
       flex-direction: column;
       gap: 6px;
+      pointer-events: auto;
     }
 
     .map-zoom-btn {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       background: #ffffff;
       border: 1px solid #cbd5e1;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 1.15rem;
+      font-weight: 800;
+      font-size: 1.25rem;
       color: #0f172a;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
       cursor: pointer;
       transition: all 0.15s;
     }
 
     .map-zoom-btn:hover {
-      background: #f1f5f9;
-      transform: scale(1.05);
+      background: #f8fafc;
+      border-color: #94a3b8;
+      transform: scale(1.06);
     }
 
     .map-legend-pill {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(8px);
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 10px 18px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 999px;
+      padding: 8px 20px;
       display: flex;
       align-items: center;
-      gap: 20px;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-      font-size: 0.78rem;
+      gap: 22px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.1);
+      font-size: 0.8rem;
       font-weight: 700;
+      pointer-events: auto;
     }
 
     .legend-item {
@@ -307,33 +307,42 @@
       align-items: center;
       gap: 8px;
       color: #1e293b;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: all 0.15s;
+    }
+
+    .legend-item:hover {
+      background: #f1f5f9;
     }
 
     .legend-line {
       width: 24px;
-      height: 4px;
+      height: 5px;
       border-radius: 999px;
     }
 
-    .legend-line.green  { background: #16a34a; box-shadow: 0 0 6px rgba(22, 163, 74, 0.5); }
+    .legend-line.green  { background: #10b981; box-shadow: 0 0 8px rgba(16, 185, 129, 0.6); }
     .legend-line.blue   { background: #0284c7; }
     .legend-line.orange { background: #ea580c; }
 
     /* Bottom Floating Comparison Card */
     .route-floating-comparison-card {
       position: relative;
-      z-index: 5;
-      margin: 24px;
+      z-index: 20;
+      margin: 18px 20px;
       background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(14px);
+      backdrop-filter: blur(16px);
       border: 1px solid rgba(226, 232, 240, 0.9);
       border-radius: 20px;
       padding: 22px 28px;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      box-shadow: 0 16px 36px -10px rgba(15, 23, 42, 0.15);
       display: grid;
       grid-template-columns: 1fr 280px;
       gap: 24px;
       align-items: center;
+      pointer-events: auto;
     }
 
     .route-comp-title {
@@ -370,9 +379,10 @@
     .comp-bar-fill {
       height: 100%;
       border-radius: 999px;
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .comp-bar-fill.green { background: #16a34a; }
+    .comp-bar-fill.green { background: #10b981; }
     .comp-bar-fill.blue  { background: #0284c7; }
     .comp-bar-fill.gold  { background: #d97706; }
     .comp-bar-fill.teal  { background: #0d9488; }
@@ -396,7 +406,7 @@
     }
 
     .route-comp-badge .big-percent {
-      font-size: 2.7rem;
+      font-size: 2.85rem;
       font-weight: 900;
       color: #0f172a;
       line-height: 1;
@@ -407,10 +417,103 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      color: #16a34a;
+      color: #10b981;
       font-weight: 800;
       font-size: 0.95rem;
       margin-top: 4px;
+    }
+
+    .deploy-in-cab-btn {
+      margin-top: 10px;
+      background: #ffffff;
+      border: 1.5px solid #10b981;
+      color: #047857;
+      font-weight: 700;
+      border-radius: 8px;
+      padding: 7px 16px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .deploy-in-cab-btn:hover {
+      background: #10b981;
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Custom Map Marker Styling */
+    .custom-hub-marker {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      font-size: 16px;
+      border: 2px solid #ffffff;
+    }
+
+    .custom-hub-marker.green {
+      background: #10b981;
+      animation: pulseGreen 2s infinite;
+    }
+
+    .custom-hub-marker.blue {
+      background: #0284c7;
+    }
+
+    .custom-hub-marker.orange {
+      background: #ea580c;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+      50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    }
+
+    .leaflet-popup-content-wrapper {
+      border-radius: 12px;
+      padding: 4px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+    }
+
+    .hub-popup {
+      font-family: 'Inter', sans-serif;
+      padding: 6px 10px;
+    }
+
+    .hub-popup-title {
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #0f172a;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hub-popup-desc {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    .hub-popup-metric {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: inline-block;
     }
 
     @media (max-width: 900px) {
@@ -452,46 +555,56 @@
       </div>
 
       <div class="nav-persona-wrapper">
-        <button type="button" class="nav-persona-btn" title="Operational Persona">
+        <div class="nav-persona-btn" title="Operational Persona">
           <i class="ri-compass-3-line"></i>
-          <span>[ROUTE PLANNER]</span>
-        </button>
+          <span>[DISPATCHER GATE]</span>
+        </div>
       </div>
 
       <a href="index.html" class="nav-logout-btn">
-        <i class="ri-arrow-left-line"></i> Main Mission Control
+        <i class="ri-logout-box-r-line"></i> Sign Out
       </a>
     </div>
   </header>
 
   <!-- ══════════════════════════════════════════════
-       MAIN CONTENT: AI OPTIMIZED GREEN ROUTE
+       MAIN CONTENT: REAL INTERACTIVE ROUTE MAP
        ══════════════════════════════════════════════ -->
   <main class="main-container">
     <!-- Title Bar -->
     <div class="page-title-row">
       <h1 class="page-title">AI OPTIMIZED GREEN ROUTE &amp; CORRIDOR MAP</h1>
       <div class="page-controls-row">
-        <button class="filter-select-btn" onclick="recalculateRoutes()"><i class="ri-route-line"></i> Re-Calculate Optimal Route</button>
-        <button class="filter-select-btn" onclick="alert('Querying Copilot: Evaluating Delhi-Mumbai multi-modal corridor for high-speed EV chargers.')"><i class="ri-sparkling-fill text-indigo-600"></i> Ask Copilot</button>
+        <button class="filter-select-btn" onclick="recalculateRoutes()"><i class="ri-refresh-line"></i> Re-Calculate Optimal Route</button>
+        <button class="filter-select-btn" onclick="askCopilotRoute()"><i class="ri-sparkling-fill text-indigo-600"></i> Ask Copilot</button>
       </div>
     </div>
 
-    <!-- Route Interactive Map Card -->
+    <!-- Real Interactive Map Card -->
     <div class="routes-map-card">
-      <div class="map-canvas-background"></div>
+      <!-- Leaflet Map Container -->
+      <div id="routesLeafletMap"></div>
 
-      <!-- Top Map Header -->
+      <!-- Top Map Controls Bar -->
       <div class="map-top-bar">
         <div class="map-zoom-controls">
-          <button class="map-zoom-btn" title="Zoom in" onclick="zoomMap(1.1)">+</button>
-          <button class="map-zoom-btn" title="Zoom out" onclick="zoomMap(0.9)">&minus;</button>
+          <button class="map-zoom-btn" title="Zoom in" onclick="zoomInMap()">+</button>
+          <button class="map-zoom-btn" title="Zoom out" onclick="zoomOutMap()">&minus;</button>
         </div>
 
         <div class="map-legend-pill">
-          <div class="legend-item"><div class="legend-line green"></div> Path-1 (Green EV Corridor)</div>
-          <div class="legend-item"><div class="legend-line blue"></div> Path-2 (Diesel Tollway)</div>
-          <div class="legend-item"><div class="legend-line orange"></div> Path-3 (Expressway)</div>
+          <div class="legend-item" onclick="focusRoute('path1')">
+            <div class="legend-line green"></div>
+            <span>Path-1 (Green EV Corridor)</span>
+          </div>
+          <div class="legend-item" onclick="focusRoute('path2')">
+            <div class="legend-line blue"></div>
+            <span>Path-2 (Diesel Tollway)</span>
+          </div>
+          <div class="legend-item" onclick="focusRoute('path3')">
+            <div class="legend-line orange"></div>
+            <span>Path-3 (Expressway)</span>
+          </div>
         </div>
       </div>
 
@@ -501,14 +614,14 @@
           <div class="route-comp-title">
             <span>Current Route</span>
             <span style="color:#64748b; font-weight: 500;">vs</span>
-            <span style="color:#16a34a;">AI Optimized Green Route</span>
+            <span style="color:#10b981;">AI Optimized Green Route</span>
           </div>
 
           <!-- Time Metric -->
           <div class="comp-metric-row">
             <span class="comp-metric-label">Time</span>
             <div class="comp-bar-container"><div class="comp-bar-fill green" style="width: 78%;"></div></div>
-            <span class="comp-metric-diff" style="color: #16a34a;">Saved 1h 45m</span>
+            <span class="comp-metric-diff" style="color: #10b981;">Saved 1h 45m</span>
           </div>
 
           <!-- Distance Metric -->
@@ -536,7 +649,7 @@
         <div class="route-comp-badge">
           <span class="big-percent">100%</span>
           <span class="badge-tag"><i class="ri-checkbox-circle-fill"></i> EV Corridor</span>
-          <button class="filter-select-btn" style="margin-top: 10px; background: #ffffff; border-color: #16a34a; color: #15803d;" onclick="deployToInCab()">
+          <button class="deploy-in-cab-btn" onclick="deployToInCab()">
             Deploy to In-Cab &rarr;
           </button>
         </div>
@@ -544,24 +657,228 @@
     </div>
   </main>
 
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
   <script>
-    let currentZoom = 1.0;
-    function zoomMap(factor) {
-      currentZoom = Math.max(0.8, Math.min(2.0, currentZoom * factor));
-      const bg = document.querySelector('.map-canvas-background');
-      if (bg) {
-        bg.style.transform = `scale(${currentZoom})`;
-        bg.style.transition = 'transform 0.25s ease';
+    let map;
+    let polyPath1, polyPath2, polyPath3;
+
+    function initMap() {
+      // Center on Western Dedicated Freight Corridor (Delhi to Mumbai)
+      map = L.map('routesLeafletMap', {
+        zoomControl: false,
+        attributionControl: false
+      }).setView([24.2, 74.8], 6);
+
+      // Clean, enterprise Carto Voyager tiles
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 18,
+        subdomains: 'abcd'
+      }).addTo(map);
+
+      // Path-1 (Green EV Corridor) - Through Solar & 350kW Fast Charging Stations
+      const path1Coords = [
+        [28.6139, 77.2090], // Delhi NCR Freight Hub
+        [28.4595, 77.0266], // Gurgaon
+        [27.8864, 76.2811], // Behror Oasis
+        [26.9124, 75.7873], // Jaipur 350kW Supercharger
+        [26.5750, 74.8639], // Kishangarh Fast-Charger
+        [26.4499, 74.6399], // Ajmer Solar Substation
+        [25.3407, 74.6313], // Bhilwara
+        [24.5854, 73.7125], // Udaipur EV Logistics Park
+        [23.5977, 72.9667], // Himatnagar
+        [23.0225, 72.5714], // Ahmedabad Mega Depot
+        [22.3072, 73.1812], // Vadodara
+        [21.7051, 72.9959], // Bharuch
+        [21.1702, 72.8311], // Surat Terminal
+        [20.3893, 72.9106], // Vapi
+        [19.2183, 72.9781], // Thane North
+        [18.9499, 72.9515]  // Mumbai JNPT Port Terminal
+      ];
+
+      // Path-2 (Diesel Tollway) - Via Agra / Gwalior / Indore / Nashik
+      const path2Coords = [
+        [28.6139, 77.2090], // Delhi
+        [27.1767, 78.0081], // Agra
+        [26.2183, 78.1828], // Gwalior
+        [24.5362, 77.7289], // Guna
+        [22.7196, 75.8577], // Indore
+        [21.8314, 75.6179], // Sendhwa
+        [20.9042, 74.7749], // Dhule
+        [19.9975, 73.7898], // Nashik
+        [19.0760, 72.8777]  // Mumbai
+      ];
+
+      // Path-3 (Expressway) - Via Kota / Ratlam / Godhra
+      const path3Coords = [
+        [28.6139, 77.2090], // Delhi
+        [27.5706, 76.6433], // Alwar
+        [25.2138, 75.8648], // Kota Expressway
+        [23.3315, 75.0367], // Ratlam
+        [22.7758, 73.6149], // Godhra
+        [22.3072, 73.1812], // Vadodara
+        [19.0760, 72.8777]  // Mumbai
+      ];
+
+      // Outer Glow for Green EV Path
+      L.polyline(path1Coords, {
+        color: '#10b981',
+        weight: 12,
+        opacity: 0.35,
+        lineCap: 'round',
+        lineJoin: 'round'
+      }).addTo(map);
+
+      // Path-1 Main Line
+      polyPath1 = L.polyline(path1Coords, {
+        color: '#059669',
+        weight: 6,
+        opacity: 0.95,
+        lineCap: 'round',
+        lineJoin: 'round'
+      }).addTo(map).bindPopup(`
+        <div class="hub-popup">
+          <div class="hub-popup-title"><i class="ri-leaf-fill" style="color: #10b981;"></i> Path-1: AI Optimized Green Corridor</div>
+          <div class="hub-popup-desc">100% electrified heavy freight corridor with dedicated 350kW DC fast charging reservations.</div>
+          <div class="hub-popup-metric">⚡ $85 USD Saved &bull; 1h 45m Faster &bull; 0 Spoilage</div>
+        </div>
+      `);
+
+      // Path-2 Polyline
+      polyPath2 = L.polyline(path2Coords, {
+        color: '#0284c7',
+        weight: 4.5,
+        opacity: 0.8,
+        dashArray: '8, 8'
+      }).addTo(map).bindPopup(`
+        <div class="hub-popup">
+          <div class="hub-popup-title"><i class="ri-truck-line" style="color: #0284c7;"></i> Path-2: Conventional Diesel Tollway</div>
+          <div class="hub-popup-desc">Standard NH48 tollway with multiple congestion bottlenecks and non-EV toll penalties.</div>
+          <div class="hub-popup-metric">Cost: +$85 USD Baseline &bull; Scope 1 Emissions: 142 kg CO2</div>
+        </div>
+      `);
+
+      // Path-3 Polyline
+      polyPath3 = L.polyline(path3Coords, {
+        color: '#ea580c',
+        weight: 4.5,
+        opacity: 0.8,
+        dashArray: '6, 6'
+      }).addTo(map).bindPopup(`
+        <div class="hub-popup">
+          <div class="hub-popup-title"><i class="ri-road-map-line" style="color: #ea580c;"></i> Path-3: High-Speed Expressway</div>
+          <div class="hub-popup-desc">Speed-optimized arterial, elevated toll fees ($120 USD) with limited commercial EV charging.</div>
+        </div>
+      `);
+
+      // Add Custom Interactive Markers
+      const hubs = [
+        {
+          name: 'Delhi NCR Freight Origin',
+          coords: [28.6139, 77.2090],
+          type: 'green',
+          icon: 'ri-map-pin-2-fill',
+          desc: 'Primary dispatch staging depot with 48 Scania 45R heavy haulers active.'
+        },
+        {
+          name: 'Jaipur 350kW Supercharger Hub',
+          coords: [26.9124, 75.7873],
+          type: 'green',
+          icon: 'ri-flashlight-fill',
+          desc: 'Automated 15-min battery boost halt. 8/10 Bays currently vacant.'
+        },
+        {
+          name: 'Ajmer Solar Fast-Charging Oasis',
+          coords: [26.4499, 74.6399],
+          type: 'green',
+          icon: 'ri-sun-fill',
+          desc: '100% solar microgrid powered. Reefer cold-chain telemetry synced.'
+        },
+        {
+          name: 'Udaipur Fleet Park & Buffer',
+          coords: [24.5854, 73.7125],
+          type: 'green',
+          icon: 'ri-building-4-fill',
+          desc: 'Mandatory 45-min driver rest station with certified biometric check-in.'
+        },
+        {
+          name: 'Ahmedabad Mega Logistics Depot',
+          coords: [23.0225, 72.5714],
+          type: 'blue',
+          icon: 'ri-store-2-fill',
+          desc: 'Consolidation center for Western corridor cargo distribution.'
+        },
+        {
+          name: 'Mumbai JNPT Port Terminal (Destination)',
+          coords: [18.9499, 72.9515],
+          type: 'green',
+          icon: 'ri-flag-fill',
+          desc: 'International maritime container gateway. Delivery SLA 100% on time.'
+        }
+      ];
+
+      hubs.forEach(h => {
+        const markerHtml = `
+          <div class="custom-hub-marker ${h.type}" style="width: 32px; height: 32px;">
+            <i class="${h.icon}"></i>
+          </div>
+        `;
+        const customIcon = L.divIcon({
+          html: markerHtml,
+          className: '',
+          iconSize: [32, 32],
+          iconAnchor: [16, 16]
+        });
+
+        L.marker(h.coords, { icon: customIcon }).addTo(map).bindPopup(`
+          <div class="hub-popup">
+            <div class="hub-popup-title">${h.name}</div>
+            <div class="hub-popup-desc">${h.desc}</div>
+            <div class="hub-popup-metric">Status: Active &bull; Telemetry Streaming (100ms)</div>
+          </div>
+        `);
+      });
+
+      // Fit bounds to comfortably display corridor
+      map.fitBounds(polyPath1.getBounds(), { padding: [50, 50] });
+    }
+
+    function zoomInMap() {
+      if (map) map.zoomIn();
+    }
+
+    function zoomOutMap() {
+      if (map) map.zoomOut();
+    }
+
+    function focusRoute(routeKey) {
+      if (!map) return;
+      if (routeKey === 'path1') {
+        map.fitBounds(polyPath1.getBounds(), { padding: [40, 40] });
+        polyPath1.openPopup([25.5, 74.8]);
+      } else if (routeKey === 'path2') {
+        map.fitBounds(polyPath2.getBounds(), { padding: [40, 40] });
+        polyPath2.openPopup([23.5, 76.5]);
+      } else if (routeKey === 'path3') {
+        map.fitBounds(polyPath3.getBounds(), { padding: [40, 40] });
+        polyPath3.openPopup([24.0, 74.5]);
       }
     }
 
     function recalculateRoutes() {
-      alert('AI Route Solver: Recalculating live corridor with real-time toll prices and wind resistance factors. Optimal Path-1 Green EV reaffirmed.');
+      alert('AI Route Solver: Recalculating live corridor with real-time wind resistance and highway elevation grade. Path-1 Green EV reaffirmed as optimal (Saving $85 USD).');
+    }
+
+    function askCopilotRoute() {
+      window.location.href = "index.html#copilot";
     }
 
     function deployToInCab() {
-      alert('Path-1 Green EV Corridor parameters deployed to In-Cab telematics units! Driver turn-by-turn navigation synced with 350kW DC fast-charger reservation.');
+      alert('SUCCESS: Path-1 Green EV Corridor parameters deployed to 250 in-cab telematics units!\n\n- Speed limit profile: 72 km/h optimized\n- 350kW DC fast charging halt: Jaipur Supercharger reserved\n- Projected savings: $85 USD per hauler');
     }
+
+    window.addEventListener('DOMContentLoaded', initMap);
   </script>
 </body>
 </html>

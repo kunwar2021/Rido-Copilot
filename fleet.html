@@ -326,21 +326,23 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      min-height: 220px;
-      background: radial-gradient(circle at center, #f0fdf4 0%, #ffffff 70%);
+      min-height: 250px;
+      background: radial-gradient(circle at center, #f0fdf4 0%, #ffffff 75%);
       border-radius: 16px;
-      padding: 20px;
+      padding: 16px;
+      overflow: hidden;
     }
 
     .fleet-3d-graphic-wrap img {
-      max-height: 170px;
+      max-height: 210px;
+      width: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 14px 24px rgba(16, 185, 129, 0.28));
+      filter: drop-shadow(0 14px 28px rgba(16, 185, 129, 0.28));
       transition: transform 0.3s ease;
     }
 
     .fleet-3d-graphic-wrap:hover img {
-      transform: scale(1.03);
+      transform: scale(1.025);
     }
 
     .telemetry-chip-tag {
