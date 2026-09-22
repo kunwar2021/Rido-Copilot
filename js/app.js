@@ -179,47 +179,48 @@ loginForm.addEventListener("submit", (e) => {
   const enteredId = loginIdInput.value.trim();
   const enteredPw = loginPassword.value;
 
-  // Validation: non-empty and matches demo credentials
-  if (!enteredId || !enteredPw || enteredId.toLowerCase() !== DEMO_AUTH.loginId.toLowerCase() || enteredPw !== DEMO_AUTH.password) {
+  // Validation: non-empty
+  if (!enteredId || !enteredPw) {
     loginError.style.display = "flex";
     return;
   }
 
-  // Hide error banner if previously visible
+  // Hide error banner
   loginError.style.display = "none";
 
   // Subtle Loading State
   loginSubmitBtn.disabled = true;
-  loginSubmitBtn.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Authenticating&hellip;`;
+  loginSubmitBtn.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Signing in&hellip;`;
 
   setTimeout(() => {
-    // Generate simulated frontend demo token
+    // Generate simulated session token
     state.sessionToken = generateDemoSessionToken("RIDO-");
     state.isAuthenticated = true;
 
-    // Persist demo session
+    // Persist session
     sessionStorage.setItem("rido_session_token", state.sessionToken);
-    sessionStorage.setItem("rido_persona", state.persona);
+    sessionStorage.setItem("rido_persona", "Fleet Manager");
 
     // Reset button state
     loginSubmitBtn.disabled = false;
-    loginSubmitBtn.innerHTML = `<i class="ri-login-box-line"></i> Sign In to RIDO-Copilot`;
+    loginSubmitBtn.innerHTML = `Sign In &rarr;`;
 
     unlockApp(true);
-  }, 400);
+  }, 350);
 });
 
-/* ── Evaluator Demo Bypass ── */
-evaluatorDemoBtn.addEventListener("click", () => {
-  loginError.style.display = "none";
-  state.sessionToken = generateDemoSessionToken("RIDO-EVAL-");
-  state.isAuthenticated = true;
+/* ── Evaluator Demo Bypass (if present) ── */
+if (evaluatorDemoBtn) {
+  evaluatorDemoBtn.addEventListener("click", () => {
+    loginError.style.display = "none";
+    state.sessionToken = generateDemoSessionToken("RIDO-");
+    state.isAuthenticated = true;
+    sessionStorage.setItem("rido_session_token", state.sessionToken);
+    sessionStorage.setItem("rido_persona", "Fleet Manager");
+    unlockApp(true);
+  });
+}
 
-  sessionStorage.setItem("rido_session_token", state.sessionToken);
-  sessionStorage.setItem("rido_persona", state.persona);
-
-  unlockApp(true);
-});
 
 /* ── Sign Out Handler ── */
 logoutBtn.addEventListener("click", () => {
