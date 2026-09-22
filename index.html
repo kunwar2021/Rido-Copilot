@@ -916,6 +916,129 @@
       color: #1d4ed8;
     }
 
+    /* OPERATIONAL ROLE LIVE HUD */
+    .persona-live-hud {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+      transition: all 0.25s ease;
+    }
+
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hud-role-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .hud-role-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-role-subtitle {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .hud-metrics-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hud-metric-pill {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hud-action-btn {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #0f172a;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .hud-action-btn:hover {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      color: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    /* PERSONA QUICK ACTION CHIPS */
+    .persona-quick-chips {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .quick-chip-btn {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .quick-chip-btn:hover {
+      border-color: #4f46e5;
+      color: #4f46e5;
+      background: #eff2fe;
+      transform: translateY(-1px);
+    }
+
     /* ══════════════════════════════════════════════
        7. AI COPILOT INTERACTIVE CONSOLE
        ══════════════════════════════════════════════ */
@@ -2002,6 +2125,25 @@
         </div>
         <h1 class="apple-card-title">Welcome to RIDO</h1>
         <p class="apple-card-subtitle">Sign in to your RIDO account</p>
+
+        <!-- Quick Demo Persona Selector Pills -->
+        <div class="login-persona-pills" style="display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 12px;">
+          <button type="button" class="role-pill-btn active" data-email="driver@rido.ai" data-persona="Driver In-Cab" style="border: 1.5px solid #2563eb; background: #eff6ff; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #1d4ed8; cursor: pointer; transition: all 0.15s;">
+            🚛 Driver
+          </button>
+          <button type="button" class="role-pill-btn" data-email="officer@rido.ai" data-persona="Compliance Officer" style="border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;">
+            🛡️ Officer
+          </button>
+          <button type="button" class="role-pill-btn" data-email="dispatcher@rido.ai" data-persona="Dispatcher Gate" style="border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;">
+            🛰️ Dispatcher
+          </button>
+          <button type="button" class="role-pill-btn" data-email="analyst@rido.ai" data-persona="ESG Analyst" style="border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;">
+            📊 Analyst
+          </button>
+          <button type="button" class="role-pill-btn" data-email="fleet@rido.ai" data-persona="Fleet Manager" style="border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 999px; padding: 4px 11px; font-size: 0.74rem; font-weight: 700; color: #334155; cursor: pointer; transition: all 0.15s;">
+            ⚡ Fleet Mgr
+          </button>
+        </div>
       </div>
 
       <!-- Clean Error Notification -->
@@ -2017,7 +2159,7 @@
             <label class="apple-form-label" for="loginId">Email address</label>
           </div>
           <div class="apple-input-wrapper">
-            <input type="email" id="loginId" class="apple-form-input" placeholder="name@example.com" value="dispatcher@rido.ai" required />
+            <input type="email" id="loginId" class="apple-form-input" placeholder="e.g. driver@rido.ai, officer@rido.ai..." value="driver@rido.ai" required />
           </div>
         </div>
 
@@ -2083,14 +2225,20 @@
           <i class="ri-arrow-down-s-line"></i>
         </button>
         <div class="persona-dropdown-menu" id="personaDropdownMenu">
+          <button type="button" class="persona-menu-item" data-persona="Driver In-Cab">
+            <i class="ri-truck-line"></i> Driver In-Cab
+          </button>
+          <button type="button" class="persona-menu-item" data-persona="Compliance Officer">
+            <i class="ri-shield-check-line"></i> Compliance Officer
+          </button>
           <button type="button" class="persona-menu-item active" data-persona="Dispatcher Gate">
             <i class="ri-shield-user-line"></i> Dispatcher Gate
           </button>
           <button type="button" class="persona-menu-item" data-persona="Fleet Manager">
             <i class="ri-dashboard-line"></i> Fleet Manager
           </button>
-          <button type="button" class="persona-menu-item" data-persona="Driver In-Cab">
-            <i class="ri-truck-line"></i> Driver In-Cab
+          <button type="button" class="persona-menu-item" data-persona="ESG Analyst">
+            <i class="ri-pie-chart-line"></i> ESG &amp; Financial Analyst
           </button>
         </div>
       </div>
@@ -2145,6 +2293,10 @@
           <i class="ri-flashlight-line"></i> Smarter decisions. Greater efficiency.
         </div>
       </section>
+
+      <!-- OPERATIONAL ROLE LIVE HUD & QUICK ACTIONS -->
+      <div id="personaLiveHUD" class="persona-live-hud"></div>
+      <div id="personaQuickChips" class="persona-quick-chips"></div>
 
       <!-- AI COPILOT INTERACTIVE CONSOLE (EXACT IMAGE 2 MATCH) -->
       <section id="copilotSection">

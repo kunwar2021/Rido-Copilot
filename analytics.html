@@ -563,5 +563,13 @@
       </div>
     </div>
   </main>
+  <script>
+    // Sync persona badge with active session
+    const activePersona = sessionStorage.getItem("rido_persona");
+    if (activePersona) {
+      const pBtn = document.querySelector(".nav-persona-btn span");
+      if (pBtn) pBtn.textContent = `[${activePersona.toUpperCase()}]`;
+    }
+  </script>
 </body>
 </html>

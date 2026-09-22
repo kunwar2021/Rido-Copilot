@@ -683,6 +683,13 @@ Certified by: RIDO Operational AI Controller
     function generateReport(reportName) {
       alert(`Generating ${reportName} with real-time telematics from 250 assets... Certified docket ready for download.`);
     }
+
+    // Sync persona badge with active session
+    const activePersona = sessionStorage.getItem("rido_persona");
+    if (activePersona) {
+      const pBtn = document.querySelector(".nav-persona-btn span");
+      if (pBtn) pBtn.textContent = `[${activePersona.toUpperCase()}]`;
+    }
   </script>
 </body>
 </html>

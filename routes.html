@@ -919,7 +919,14 @@
       alert('SUCCESS: Path-1 Green EV Corridor parameters deployed to 250 in-cab telematics units!\n\n- Speed limit profile: 72 km/h optimized\n- 350kW DC fast charging halt: Jaipur Supercharger reserved\n- Projected savings: $85 USD per hauler');
     }
 
-    window.addEventListener('DOMContentLoaded', initMap);
+    window.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      const activePersona = sessionStorage.getItem("rido_persona");
+      if (activePersona) {
+        const pBtn = document.querySelector(".nav-persona-btn span");
+        if (pBtn) pBtn.textContent = `[${activePersona.toUpperCase()}]`;
+      }
+    });
   </script>
 </body>
 </html>

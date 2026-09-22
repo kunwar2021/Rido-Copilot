@@ -163,22 +163,230 @@ function updateUIAuthState(isLoggedIn) {
   }
 }
 
+/* ══════════════════════════════════════════════
+   2. OPERATIONAL PERSONA PROFILES & ARCHITECTURE
+   (Driver In-Cab, Compliance Officer, Dispatcher, Analyst, Fleet Mgr)
+   ══════════════════════════════════════════════ */
+const PERSONA_PROFILES = {
+  "Driver In-Cab": {
+    title: "In-Cab Cockpit Telematics",
+    subtitle: "Connected Vehicle: Scania 45R (TRK-A) &bull; Driver: Alex Vance",
+    icon: "ri-truck-line",
+    iconBg: "#16a34a",
+    badge: "[DRIVER IN-CAB]",
+    metrics: [
+      { label: "⚡ SOC", value: "75%", color: "#16a34a" },
+      { label: "🌡️ Reefer", value: "3.6°C", color: "#0284c7" },
+      { label: "⏱️ HOS Left", value: "4h 18m", color: "#64748b" },
+      { label: "📍 Next Halt", value: "Jaipur Supercharger (42 km)", color: "#ea580c" }
+    ],
+    actionBtn: { text: "Open Corridor Map", href: "routes.html", icon: "ri-map-2-line" },
+    welcome: "<strong>👋 Welcome, Driver Alex.</strong> Connected to Cab <strong>TRK-A (Scania 45R)</strong>. High-voltage battery is at <strong>75% SOC</strong> and cargo chiller is stable at <strong>3.6°C</strong>. Your AI-optimized Green Corridor to Mumbai is active with a 15-minute DC fast-charging reservation at Jaipur Supercharger Oasis. How can I assist your shift?",
+    chips: [
+      { label: "⚡ Nearest 350kW Fast Charger", prompt: "Driver Assistant: Find the nearest 350kW DC fast-charging hub along Path-1 Green EV Corridor and reserve a bay." },
+      { label: "🌡️ Reefer Temperature Check", prompt: "Driver Assistant: Audit Reefer Chiller telemetry on TRK-A and report temperature stability." },
+      { label: "⏱️ Check Shift Mandatory Rest", prompt: "Driver Assistant: Calculate remaining driving hours before mandatory 45-min rest break under HOS regulations." },
+      { label: "🚨 Report Highway Hazard", prompt: "Driver Assistant: Check traffic congestion or road hazard advisories between Jaipur and Udaipur." }
+    ]
+  },
+  "Compliance Officer": {
+    title: "Regulatory & Safety Surveillance",
+    subtitle: "Auditing: 250 Commercial Vehicles &bull; Authority: Azure AI Foundry",
+    icon: "ri-shield-check-line",
+    iconBg: "#4f46e5",
+    badge: "[COMPLIANCE OFFICER]",
+    metrics: [
+      { label: "📋 Cold-Chain SLA", value: "99.1%", color: "#16a34a" },
+      { label: "⚖️ HOS Adherence", value: "100% Verified", color: "#16a34a" },
+      { label: "⚠️ Active Warning", value: "1 Chiller Warning (Jaipur)", color: "#e11d48" }
+    ],
+    actionBtn: { text: "Open Audit Hub", href: "reports.html", icon: "ri-file-shield-2-line" },
+    welcome: "<strong>🛡️ Welcome, Compliance Officer.</strong> Autonomous regulatory surveillance is active across all <strong>250 commercial assets</strong>. Cold-Chain integrity is at <strong>99.1%</strong>, driver rest adherence is certified, and Scope 1 & 2 carbon accounting is verified in <strong>$ USD</strong>. Which compliance docket or audit trail would you like to review?",
+    chips: [
+      { label: "📋 Certify TCO Financial Audit ($ USD)", prompt: "Compliance Audit: Compile and certify TCO Financial Audit in US Dollars ($ USD) with Scope 1 & 2 fuel breakdown." },
+      { label: "🚨 Inspect Jaipur Temp Breach Alert", prompt: "Compliance Alert: Inspect TRK-A Jaipur sector temperature breach log and verify secondary chiller engagement." },
+      { label: "⚖️ Generate Regulatory HOS Docket", prompt: "Compliance Audit: Generate certified Hours-of-Service shift docket across active drivers." },
+      { label: "🌱 Scope 1 & 2 ESG Carbon Report", prompt: "Compliance Audit: Generate certified ESG emissions reduction docket comparing electric vs diesel corridors." }
+    ]
+  },
+  "Dispatcher Gate": {
+    title: "Dispatcher Mission Control",
+    subtitle: "Network: Western Dedicated Freight Corridor &bull; Gate: Active",
+    icon: "ri-shield-user-line",
+    iconBg: "#0f172a",
+    badge: "[DISPATCHER GATE]",
+    metrics: [
+      { label: "🛰️ Active Assets", value: "242 / 250 Online", color: "#16a34a" },
+      { label: "⚡ Energy Mix", value: "48% EV / 52% Diesel", color: "#0284c7" },
+      { label: "💰 Corridor Savings", value: "$85 USD / leg", color: "#ea580c" }
+    ],
+    actionBtn: { text: "Open Fleet IQ", href: "fleet.html", icon: "ri-dashboard-line" },
+    welcome: "<strong>🛰️ Dispatcher Mission Control online.</strong> 242 of 250 commercial freight assets are active on the Western Corridor. Multi-modal EV route solver and fast-charger reservations are synced. How can I optimize dispatch operations?",
+    chips: [
+      { label: "Optimize Ludhiana-Jaipur Leg in $ USD", prompt: "Optimize logistics corridor from Ludhiana to Jaipur for Commercial EV Truck with 8500 kg payload. Provide full fuel, toll, and cost comparison in US Dollars ($ USD)." },
+      { label: "Run 250-Asset Fleet Diagnostics", prompt: "Perform telematics asset health audit across 250 commercial vehicles in $ USD." },
+      { label: "Schedule Departure: Interstate-07", prompt: "Schedule departure docket and driver assignment for Interstate-07 departing Ahmedabad for Mumbai in $ USD." },
+      { label: "Export Active Fleet CSV Telematics", prompt: "Export full fleet telemetry CSV data breakdown with fuel vs EV kWh charging in $ USD." }
+    ]
+  },
+  "Fleet Manager": {
+    title: "Asset Health & Fleet Management",
+    subtitle: "Fleet Status: 250 Commercial Units &bull; Depot: All Hubs",
+    icon: "ri-dashboard-line",
+    iconBg: "#0284c7",
+    badge: "[FLEET MANAGER]",
+    metrics: [
+      { label: "⚡ Battery Health", value: "76% Avg SOC", color: "#16a34a" },
+      { label: "🔧 Maintenance Due", value: "3 Scheduled", color: "#ea580c" },
+      { label: "🚛 Deployed Assets", value: "242 Units", color: "#0f172a" }
+    ],
+    actionBtn: { text: "Manage Assets", href: "fleet.html", icon: "ri-truck-line" },
+    welcome: "<strong>⚡ Welcome, Fleet Operations Manager.</strong> 242 commercial haulers deployed. Battery degradation telemetry indicates optimal cell balancing across all Scania 45R electric packs. What fleet asset diagnostic would you like to run?",
+    chips: [
+      { label: "Powertrain Diagnostic: Scania 45R", prompt: "Perform telemetry health audit on Scania 45R electric powertrain and high-voltage battery cell balance in $ USD." },
+      { label: "Fast-Charging Bay Availability", prompt: "Audit charging bay availability and average dwell times across Delhi-Mumbai corridor hubs." },
+      { label: "Reefer Chiller Fleet Health", prompt: "Inspect cold-chain chiller compressor status and refrigerant pressure across all 250 reefers." }
+    ]
+  },
+  "ESG Analyst": {
+    title: "Intelligence & ESG Analytics",
+    subtitle: "Sustainability Rating: Top Decile &bull; Currency: $ USD",
+    icon: "ri-pie-chart-line",
+    iconBg: "#10b981",
+    badge: "[ESG ANALYST]",
+    metrics: [
+      { label: "🌱 ESG Score", value: "98% (Index 95)", color: "#10b981" },
+      { label: "💵 Monthly Power", value: "$19.1K USD", color: "#0284c7" },
+      { label: "📉 Scope 1 Abatement", value: "-30 kg CO2 / leg", color: "#10b981" }
+    ],
+    actionBtn: { text: "Open Analytics", href: "analytics.html", icon: "ri-line-chart-line" },
+    welcome: "<strong>📊 Welcome, ESG & Operations Financial Analyst.</strong> Fleet sustainability score is at <strong>98%</strong> with <strong>$19.1K USD</strong> monthly power expense. EV parity reached 48%. Which carbon accounting, emissions trend, or TCO model should we analyze?",
+    chips: [
+      { label: "EV vs Diesel Emissions ROI ($ USD)", prompt: "Provide ESG multi-fuel emissions comparison for EV vs Diesel vs CNG for 450 km freight leg with all fuel and toll expenses in US Dollars ($ USD)." },
+      { label: "Emissions Trend Analysis (Jan-Dec)", prompt: "Analyze monthly fleet emissions trajectory from Jan through Dec and project Q4 ESG targets." },
+      { label: "Driver Safety Score Breakdown", prompt: "Audit driver safety compliance radar metrics (hard braking, speeding, rest periods) and calculate risk factor." }
+    ]
+  }
+};
+
+function detectPersonaFromEmail(email) {
+  const em = (email || "").toLowerCase().trim();
+  if (em.includes("driver") || em.includes("cab") || em.includes("hauler")) {
+    return "Driver In-Cab";
+  } else if (em.includes("officer") || em.includes("compliance") || em.includes("safety") || em.includes("audit")) {
+    return "Compliance Officer";
+  } else if (em.includes("analyst") || em.includes("esg") || em.includes("finance") || em.includes("roi")) {
+    return "ESG Analyst";
+  } else if (em.includes("fleet") || em.includes("manager")) {
+    return "Fleet Manager";
+  } else if (em.includes("dispatcher") || em.includes("dispatch")) {
+    return "Dispatcher Gate";
+  }
+  return "Driver In-Cab"; // Default friendly role
+}
+
+function renderPersonaExperience(personaName) {
+  const profile = PERSONA_PROFILES[personaName] || PERSONA_PROFILES["Driver In-Cab"];
+
+  // 1. Update Header Badges
+  if (headerPersonaBadge) headerPersonaBadge.innerText = profile.badge;
+  if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${personaName}</strong>`;
+
+  // 2. Render Live Operational HUD
+  const hudContainer = document.getElementById("personaLiveHUD");
+  if (hudContainer) {
+    const metricsHtml = profile.metrics.map(m => `
+      <div class="hud-metric-pill">
+        <span>${m.label}:</span>
+        <strong style="color: ${m.color};">${m.value}</strong>
+      </div>
+    `).join("");
+
+    hudContainer.innerHTML = `
+      <div class="hud-left">
+        <div class="hud-role-icon" style="background: ${profile.iconBg};">
+          <i class="${profile.icon}"></i>
+        </div>
+        <div>
+          <div class="hud-role-title">
+            <span>${profile.title}</span>
+            <span style="font-size: 0.7rem; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 999px; font-weight: 700;">ACTIVE</span>
+          </div>
+          <div class="hud-role-subtitle">${profile.subtitle}</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <div class="hud-metrics-row">
+          ${metricsHtml}
+        </div>
+        <a href="${profile.actionBtn.href}" class="hud-action-btn">
+          <i class="${profile.actionBtn.icon}"></i> ${profile.actionBtn.text} &rarr;
+        </a>
+      </div>
+    `;
+  }
+
+  // 3. Render Quick Action Scenario Chips
+  const chipsContainer = document.getElementById("personaQuickChips");
+  if (chipsContainer) {
+    chipsContainer.innerHTML = profile.chips.map(c => `
+      <button type="button" class="quick-chip-btn" onclick="openCopilotWithPrompt('${c.prompt.replace(/'/g, "\\'")}')">
+        <i class="ri-sparkling-fill" style="color: #6366f1;"></i> ${c.label}
+      </button>
+    `).join("");
+  }
+
+  // 4. Update Initial AI Welcome Bubble
+  const welcomeBubble = document.querySelector("#messages .msg.ai .msg-bubble");
+  if (welcomeBubble) {
+    welcomeBubble.innerHTML = `
+      <p>${profile.welcome}</p>
+      <p style="font-size: 0.8rem; color: #64748b; margin-top: 6px;">All financial logistics projections verified in <strong>$ USD</strong> via Azure AI Foundry.</p>
+    `;
+  }
+}
+
+// Wire up Role Pill buttons on login card
+document.querySelectorAll(".role-pill-btn").forEach(pill => {
+  pill.addEventListener("click", () => {
+    document.querySelectorAll(".role-pill-btn").forEach(p => {
+      p.classList.remove("active");
+      p.style.border = "1px solid #e2e8f0";
+      p.style.background = "#f8fafc";
+      p.style.color = "#334155";
+    });
+    pill.classList.add("active");
+    pill.style.border = "1.5px solid #2563eb";
+    pill.style.background = "#eff6ff";
+    pill.style.color = "#1d4ed8";
+
+    if (loginIdInput && pill.dataset.email) {
+      loginIdInput.value = pill.dataset.email;
+    }
+    if (loginPassword) {
+      loginPassword.value = "RIDO2026";
+    }
+  });
+});
+
 function checkAuth() {
   const savedToken = sessionStorage.getItem("rido_session_token");
   const savedPersona = sessionStorage.getItem("rido_persona");
   if (savedToken) {
     state.sessionToken = savedToken;
-    state.persona = savedPersona || "Dispatcher Gate";
+    state.persona = savedPersona || "Driver In-Cab";
     state.isAuthenticated = true;
     updateUIAuthState(true);
+    renderPersonaExperience(state.persona);
   } else {
-    // Default to Dispatcher Gate on first visit to display the clean Home interface immediately
+    // Default to Driver In-Cab to give immediate active driver cockpit view
     state.sessionToken = generateDemoSessionToken("RIDO-");
-    state.persona = "Dispatcher Gate";
+    state.persona = "Driver In-Cab";
     state.isAuthenticated = true;
     sessionStorage.setItem("rido_session_token", state.sessionToken);
     sessionStorage.setItem("rido_persona", state.persona);
     updateUIAuthState(true);
+    renderPersonaExperience(state.persona);
   }
 }
 
@@ -203,10 +411,13 @@ loginForm.addEventListener("submit", (e) => {
   loginSubmitBtn.disabled = true;
   loginSubmitBtn.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Signing in&hellip;`;
 
+  // Detect persona from email or role button
+  const detectedPersona = detectPersonaFromEmail(enteredId);
+
   setTimeout(() => {
     state.sessionToken = generateDemoSessionToken("RIDO-");
     state.isAuthenticated = true;
-    state.persona = "Dispatcher Gate";
+    state.persona = detectedPersona;
 
     sessionStorage.setItem("rido_session_token", state.sessionToken);
     sessionStorage.setItem("rido_persona", state.persona);
@@ -215,6 +426,7 @@ loginForm.addEventListener("submit", (e) => {
     loginSubmitBtn.innerHTML = `Sign In &rarr;`;
 
     unlockApp(true);
+    renderPersonaExperience(state.persona);
   }, 300);
 });
 
@@ -277,8 +489,7 @@ if (personaDropdownBtn && personaDropdownMenu) {
       if (chosen) {
         state.persona = chosen;
         sessionStorage.setItem("rido_persona", chosen);
-        if (headerPersonaBadge) headerPersonaBadge.innerText = `[${chosen.toUpperCase()}]`;
-        if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${chosen}</strong>`;
+        renderPersonaExperience(chosen);
         personaMenuItems.forEach(m => m.classList.remove("active"));
         item.classList.add("active");
         personaDropdownMenu.classList.remove("show");
