@@ -399,7 +399,9 @@ async function handleSend() {
     logThought("Foundry Orchestrator", "Routing query to RIDO-Copilot", `Protocol: Responses API v1`);
     const t0 = performance.now();
 
-    const body = { input: text };
+    // Mandatory instruction for the agent to calculate and display costs in USD ($)
+    const dollarDirective = `\n\n[MANDATORY SYSTEM DIRECTIVE]: State ALL financial numbers, fuel costs, toll charges, economic figures, and cost savings strictly in US Dollars ($ USD). Never use Indian Rupees or the ₹ symbol. If estimating for Indian routes, convert costs to realistic US Dollars (e.g. $1 USD ≈ 85 INR).`;
+    const body = { input: text + dollarDirective };
     if (previousResponseId) body.previous_response_id = previousResponseId;
 
     const res = await fetch(AGENT_ENDPOINT, {
@@ -438,6 +440,9 @@ async function handleSend() {
       responseText = data.choices[0].message.content;
     }
 
+    // Currency Normalizer: Ensure all output strictly uses $ USD
+    responseText = ensureUSD(responseText);
+
     // Token accounting ($ USD budget tracking)
     const tokens = (data.usage?.input_tokens || data.usage?.prompt_tokens || 420) +
                    (data.usage?.output_tokens || data.usage?.completion_tokens || 280);
@@ -452,6 +457,7 @@ async function handleSend() {
     appendMessage("ai", responseText || "_(Empty payload received from agent)_");
     speakText(responseText);
 
+
   } catch (err) {
     removeTyping(typingId);
     logThought("Agent Error", err.message, "Review endpoint credentials");
@@ -464,8 +470,40 @@ async function handleSend() {
 }
 
 /* ══════════════════════════════════════════════
+   6.5 CURRENCY CONVERTER & NORMALIZER (USD)
+   ══════════════════════════════════════════════ */
+function ensureUSD(text) {
+  if (!text) return text;
+  let out = text;
+
+  // 1. Convert headers and labels
+  out = out.replace(/Fuel Cost \(INR\)/gi, "Fuel Cost (USD)");
+  out = out.replace(/\(INR\)/gi, "($ USD)");
+  out = out.replace(/\binr\b/gi, "USD");
+
+  // 2. Convert explicit Rupee symbols to USD ($)
+  // E.g. ₹2,374 -> $27.93 (at ~85 INR/USD for Indian routes) or direct $ if small
+  out = out.replace(/₹\s*([0-9,]+(?:\.[0-9]+)?)/g, (match, valStr) => {
+    const rawNum = parseFloat(valStr.replace(/,/g, ''));
+    if (isNaN(rawNum)) return `$${valStr}`;
+    if (rawNum >= 100) {
+      const usdVal = (rawNum / 85).toFixed(2);
+      return `$${Number(usdVal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    } else {
+      return `$${rawNum.toFixed(2)}`;
+    }
+  });
+
+  // 3. Catch any isolated ₹
+  out = out.replace(/₹/g, "$");
+
+  return out;
+}
+
+/* ══════════════════════════════════════════════
    7. DOM RENDERING & MESSAGE ACTIONS
    ══════════════════════════════════════════════ */
+
 function appendMessage(role, text) {
   const div = document.createElement("div");
   div.className = `msg ${role}`;
