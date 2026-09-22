@@ -50,8 +50,8 @@
       overflow-y: auto;
     }
 
-        /* ══════════════════════════════════════════════
-       1. APPLE-INSPIRED ENTERPRISE LOGIN SCREEN
+    /* ══════════════════════════════════════════════
+       1. APPLE-INSPIRED ENTERPRISE LOGIN SCREEN (MODAL ON HOME PAGE)
        ══════════════════════════════════════════════ */
     #loginScreen {
       position: fixed;
@@ -61,65 +61,75 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #f5f5f7;
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(0, 113, 227, 0.02) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(0, 113, 227, 0.02) 0%, transparent 40%);
-      transition: opacity 0.35s ease, transform 0.35s ease;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       padding: 20px;
     }
 
     #loginScreen.hidden {
       opacity: 0;
-      transform: scale(1.02);
+      visibility: hidden;
       pointer-events: none;
-    }
-
-    /* Top Left RIDO Brand Logo */
-    .apple-login-nav {
-      position: absolute;
-      top: 24px;
-      left: 36px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .apple-login-brand {
-      font-size: 1.45rem;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      color: #1d1d1f;
-      text-decoration: none;
     }
 
     /* Minimal Apple Card */
     .apple-login-card {
       width: 100%;
-      max-width: 400px;
+      max-width: 410px;
       background: #ffffff;
-      border: 1px solid #d2d2d7;
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.02);
-      border-radius: 18px;
-      padding: 40px 36px 36px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18), 0 4px 16px rgba(0, 0, 0, 0.06);
+      border-radius: 22px;
+      padding: 38px 36px 32px;
       position: relative;
+      animation: modalCardIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalCardIn {
+      from { opacity: 0; transform: translateY(18px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .apple-login-close-btn {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: #f1f5f9;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 1.15rem;
+      transition: all 0.15s;
+    }
+
+    .apple-login-close-btn:hover {
+      background: #e2e8f0;
+      color: #0f172a;
     }
 
     .apple-card-header {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
 
     .apple-card-title {
-      font-size: 1.65rem;
+      font-size: 1.6rem;
       font-weight: 700;
       letter-spacing: -0.025em;
       color: #1d1d1f;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
     .apple-card-subtitle {
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       color: #86868b;
       font-weight: 400;
     }
@@ -160,8 +170,7 @@
       font-size: 0.78rem;
       color: #0071e3;
       text-decoration: none;
-      font-weight: 400;
-      transition: color 0.15s;
+      transition: opacity 0.15s;
     }
 
     .apple-forgot-link:hover {
@@ -176,24 +185,21 @@
 
     .apple-form-input {
       width: 100%;
-      background: #ffffff;
-      border: 1px solid #d2d2d7;
-      border-radius: 12px;
-      padding: 12px 14px;
-      color: #1d1d1f;
+      height: 44px;
+      padding: 0 14px;
       font-size: 0.94rem;
       font-family: inherit;
+      color: #1d1d1f;
+      background: #ffffff;
+      border: 1px solid #d2d2d7;
+      border-radius: 10px;
       outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-
-    .apple-form-input::placeholder {
-      color: #86868b;
+      transition: all 0.15s ease;
     }
 
     .apple-form-input:focus {
       border-color: #0071e3;
-      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.15);
+      box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.15);
     }
 
     .apple-btn-toggle-pw {
@@ -214,15 +220,14 @@
       color: #1d1d1f;
     }
 
-    /* Primary Apple Blue Button */
     .apple-btn-submit {
       width: 100%;
+      height: 44px;
       background: #0071e3;
-      border: none;
-      border-radius: 12px;
-      padding: 13px;
       color: #ffffff;
-      font-size: 0.94rem;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
       display: flex;
@@ -230,33 +235,28 @@
       justify-content: center;
       gap: 6px;
       margin-top: 24px;
-      transition: background 0.15s, transform 0.15s;
-      font-family: inherit;
+      transition: background 0.15s ease, transform 0.1s ease;
     }
 
     .apple-btn-submit:hover {
       background: #0077ed;
-      transform: translateY(-1px);
     }
 
-    .apple-btn-submit:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-      transform: none;
+    .apple-btn-submit:active {
+      transform: scale(0.99);
     }
 
-    /* Bottom Sign Up Link */
     .apple-signup-footer {
       text-align: center;
+      margin-top: 20px;
       font-size: 0.82rem;
       color: #86868b;
-      margin-top: 24px;
     }
 
     .apple-signup-link {
       color: #0071e3;
-      text-decoration: none;
       font-weight: 500;
+      text-decoration: none;
       margin-left: 4px;
     }
 
@@ -265,7 +265,7 @@
     }
 
     /* ══════════════════════════════════════════════
-       2. TOP CLEAN WHITE NAVBAR
+       2. TOP CLEAN NAVBAR (EXACT MATCH TO DESIGN)
        ══════════════════════════════════════════════ */
     .site-header {
       background: #ffffff;
@@ -283,7 +283,7 @@
     .nav-left {
       display: flex;
       align-items: center;
-      gap: 40px;
+      gap: 36px;
     }
 
     .site-logo {
@@ -300,7 +300,7 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 28px;
+      gap: 26px;
       list-style: none;
     }
 
@@ -340,88 +340,139 @@
       gap: 12px;
     }
 
-    .hud-chip {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.72rem;
-      font-family: 'JetBrains Mono', monospace;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #64748b;
-    }
-
-    .hud-chip strong {
-      color: #0f172a;
-    }
-
-    .hud-chip.auth-chip {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
-      color: #16a34a;
-      font-weight: 600;
-    }
-
-    .hud-chip.auth-chip .dot {
-      width: 7px; height: 7px;
-      background: #16a34a;
-      border-radius: 50%;
-      box-shadow: 0 0 6px #16a34a;
-    }
-
-    .user-profile-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    /* System Online Pill */
+    .system-online-pill {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      border-radius: 999px;
       padding: 6px 14px;
-      border-radius: 20px;
-      border: 1px solid #e2e8f0;
-      background: #ffffff;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: #0f172a;
-      cursor: pointer;
-      transition: all 0.15s;
+      font-size: 0.8rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 7px;
     }
 
-    .user-profile-badge:hover {
-      border-color: #cbd5e1;
-      background: #f8fafc;
+    .system-online-pill .dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
     }
 
-    .nav-action-btn {
+    /* Persona Selector */
+    .nav-persona-wrapper {
+      position: relative;
+    }
+
+    .nav-persona-btn {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      color: #475569;
+      border-radius: 8px;
       padding: 6px 12px;
       font-size: 0.78rem;
       font-weight: 600;
+      color: #1e293b;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       transition: all 0.15s;
       font-family: inherit;
     }
 
-    .nav-action-btn:hover {
-      background: #f8fafc;
+    .nav-persona-btn:hover {
       border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+
+    .persona-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      border-radius: 10px;
+      padding: 6px;
+      min-width: 170px;
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .persona-dropdown-menu.show {
+      display: flex;
+    }
+
+    .persona-menu-item {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #334155;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      background: none;
+      text-align: left;
+      width: 100%;
+      font-family: inherit;
+      transition: background 0.12s;
+    }
+
+    .persona-menu-item:hover, .persona-menu-item.active {
+      background: #f1f5f9;
       color: #0f172a;
+      font-weight: 600;
     }
 
-    .nav-action-btn.signout-btn {
-      color: #e11d48;
-      border-color: #fecdd3;
+    /* Sign Out Button */
+    .btn-signout {
       background: #fff1f2;
+      color: #e11d48;
+      border: 1px solid #fecdd3;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+      font-family: inherit;
     }
 
-    .nav-action-btn.signout-btn:hover {
+    .btn-signout:hover {
       background: #ffe4e6;
       border-color: #fda4af;
+    }
+
+    /* Sign In Button */
+    .btn-signin {
+      background: #0f172a;
+      color: #ffffff;
+      border: 1px solid #0f172a;
+      border-radius: 8px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .btn-signin:hover {
+      background: #1e293b;
     }
 
     /* ══════════════════════════════════════════════
@@ -437,10 +488,10 @@
     }
 
     /* ══════════════════════════════════════════════
-       4. HERO BANNER SECTION (TRUCK + LIVE TRACKING)
+       4. HERO BANNER SECTION (SCANIA TRUCK + LIVE TRACKING)
        ══════════════════════════════════════════════ */
     .hero-banner {
-      border-radius: 24px;
+      border-radius: 28px;
       position: relative;
       overflow: hidden;
       min-height: 380px;
@@ -448,17 +499,17 @@
       align-items: center;
       justify-content: space-between;
       padding: 44px 48px;
-      background-image: 
-        linear-gradient(to right, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.88) 45%, rgba(248, 250, 252, 0.25) 75%, rgba(248, 250, 252, 0.05) 100%),
-        url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1600&q=80');
+      background: linear-gradient(100deg, #091424 0%, #0d1e37 42%, rgba(13, 30, 55, 0.6) 68%, rgba(13, 30, 55, 0.15) 100%),
+                  url('images/hero-scania-truck.png');
       background-size: cover;
       background-position: center right;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      color: #ffffff;
     }
 
     .hero-content {
-      max-width: 580px;
+      max-width: 520px;
       z-index: 2;
     }
 
@@ -467,82 +518,116 @@
       align-items: center;
       gap: 6px;
       padding: 6px 14px;
-      border-radius: 20px;
-      background: rgba(238, 242, 255, 0.95);
-      border: 1px solid rgba(199, 210, 254, 0.9);
-      color: #4f46e5;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #0f172a;
       font-size: 0.74rem;
       font-weight: 700;
       letter-spacing: 0.02em;
       margin-bottom: 20px;
-      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     .hero-title {
-      font-size: 3.1rem;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      line-height: 1.1;
-      color: #0f172a;
+      font-size: 2.85rem;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.15;
+      color: #ffffff;
       margin-bottom: 14px;
     }
 
     .hero-title .highlight {
-      color: #4f46e5;
+      color: #38bdf8;
     }
 
     .hero-desc {
-      font-size: 1rem;
-      color: #475569;
+      font-size: 0.96rem;
+      color: #cbd5e1;
       line-height: 1.6;
       margin-bottom: 26px;
+      max-width: 480px;
     }
 
-    .btn-get-started {
-      background: #0f172a;
+    .btn-open-copilot {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       color: #ffffff;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.25);
       border-radius: 999px;
-      padding: 14px 28px;
+      padding: 13px 28px;
       font-size: 0.94rem;
       font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s;
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
     }
 
-    .btn-get-started:hover {
-      background: #1e293b;
+    .btn-open-copilot:hover {
+      background: rgba(15, 23, 42, 0.98);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.28);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     }
 
     /* Floating Live Tracking Card */
     .live-tracking-card {
-      background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12), 0 0 1px rgba(15, 23, 42, 0.1);
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
       border-radius: 20px;
       padding: 22px 24px;
-      width: 320px;
+      width: 310px;
       z-index: 2;
+      color: #0f172a;
     }
 
     .tracking-header {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #334155;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      justify-content: space-between;
       margin-bottom: 18px;
+    }
+
+    .tracking-header-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #1e293b;
+      letter-spacing: 0.05em;
+    }
+
+    .tracking-header-left i {
+      color: #0284c7;
+      font-size: 1rem;
+    }
+
+    .live-indicator-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .live-indicator-pill .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: #16a34a;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #16a34a;
     }
 
     .tracking-header i {
@@ -724,6 +809,41 @@
       align-items: center;
       justify-content: center;
       font-size: 13px;
+    }
+
+    /* ══════════════════════════════════════════════
+       IMAGE 2: PROCESS STRIP & COPILOT CONSOLE
+       (Revealed upon clicking "Open Copilot")
+       ══════════════════════════════════════════════ */
+    #copilotWorkspace {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #copilotWorkspace.copilot-workspace-hidden {
+      display: none;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    #copilotWorkspace.copilot-workspace-visible {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+      animation: copilotReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes copilotReveal {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* ══════════════════════════════════════════════
@@ -1225,22 +1345,20 @@
 <body>
 
   <!-- ══════════════════════════════════════════════
-       1. AUTHENTICATION & SECURITY GATE
+       1. APPLE-INSPIRED ENTERPRISE LOGIN SCREEN (MODAL ON HOME PAGE)
        ══════════════════════════════════════════════ -->
-    <!-- ══════════════════════════════════════════════
-       1. APPLE-INSPIRED ENTERPRISE LOGIN SCREEN
-       ══════════════════════════════════════════════ -->
-  <div id="loginScreen">
-    <!-- Top-Left RIDO Brand Logo -->
-    <div class="apple-login-nav">
-      <a href="#" style="display:inline-flex; align-items:center; text-decoration:none;">
-        <img src="images/rido-logo.png" alt="RIDO" style="height: 32px; object-fit: contain;" />
-      </a>
-    </div>
-
+  <div id="loginScreen" class="hidden">
     <!-- Centered Minimal Apple Login Card -->
     <div class="apple-login-card">
+      <!-- Close Button to return to Home Page -->
+      <button type="button" class="apple-login-close-btn" id="closeLoginModalBtn" title="Close and browse Home Page">
+        <i class="ri-close-line"></i>
+      </button>
+
       <div class="apple-card-header">
+        <div style="margin-bottom: 14px;">
+          <img src="images/rido-logo.png" alt="RIDO" style="height: 32px; object-fit: contain;" />
+        </div>
         <h1 class="apple-card-title">Welcome to RIDO</h1>
         <p class="apple-card-subtitle">Sign in to your RIDO account</p>
       </div>
@@ -1285,6 +1403,9 @@
         <div class="apple-signup-footer">
           Don't have an account?<a href="#" class="apple-signup-link" onclick="alert('Please contact your RIDO organization administrator for enterprise onboarding.'); return false;">Sign up</a>
         </div>
+        <div style="text-align: center; margin-top: 12px;">
+          <a href="#" id="browseGuestLink" style="font-size: 0.8rem; color: #64748b; text-decoration: none;">Continue browsing Home Page &rarr;</a>
+        </div>
       </form>
     </div>
   </div>
@@ -1307,38 +1428,40 @@
     </div>
 
     <div class="nav-right">
-      <!-- Live Status Chips -->
-      <div class="hud-chip auth-chip">
-        <div class="dot"></div>
-        <span>Azure Korea Central</span>
-      </div>
-      <div class="hud-chip">
-        <span>MODEL: <strong>gpt-6-astra</strong></span>
-      </div>
-      <div class="hud-chip">
-        <span>SESSION: <strong id="headerSessionToken">RIDO-882194</strong></span>
+      <!-- Live Status Pill (Image 1) -->
+      <div class="system-online-pill">
+        <span class="dot"></span>
+        <span>System: Online</span>
       </div>
 
-      <!-- Reasoning Toggle -->
-      <button class="nav-action-btn" id="toggleThoughtsBtn" title="View Azure Agent Reasoning Trace">
-        <i class="ri-mind-map text-indigo-600"></i> Reasoning
-      </button>
-
-      <!-- Audio TTS Toggle -->
-      <button class="nav-action-btn" id="ttsToggleBtn" title="Toggle AI Voice Readout">
-        <i class="ri-volume-up-line"></i> Voice: <span id="ttsStatusText">ON</span>
-      </button>
-
-      <!-- Profile Dropdown Badge -->
-      <div class="user-profile-badge" id="profileBadge" title="Current Persona">
-        <i class="ri-user-line"></i>
-        <span id="headerPersonaBadge">Fleet Manager</span>
-        <i class="ri-arrow-down-s-line"></i>
+      <!-- Persona Dropdown Selector (Image 1) -->
+      <div class="nav-persona-wrapper" id="personaWrapper">
+        <button type="button" class="nav-persona-btn" id="personaDropdownBtn" title="Switch Operational Persona">
+          <i class="ri-user-line"></i>
+          <span id="headerPersonaBadge">[DISPATCHER GATE]</span>
+          <i class="ri-arrow-down-s-line"></i>
+        </button>
+        <div class="persona-dropdown-menu" id="personaDropdownMenu">
+          <button type="button" class="persona-menu-item active" data-persona="Dispatcher Gate">
+            <i class="ri-shield-user-line"></i> Dispatcher Gate
+          </button>
+          <button type="button" class="persona-menu-item" data-persona="Fleet Manager">
+            <i class="ri-dashboard-line"></i> Fleet Manager
+          </button>
+          <button type="button" class="persona-menu-item" data-persona="Driver In-Cab">
+            <i class="ri-truck-line"></i> Driver In-Cab
+          </button>
+        </div>
       </div>
 
-      <!-- Sign Out -->
-      <button class="nav-action-btn signout-btn" id="logoutBtn" title="Sign Out of Mission Control">
+      <!-- Sign Out Button (Image 1) -->
+      <button class="btn-signout" id="logoutBtn" title="Sign Out of Mission Control">
         <i class="ri-logout-box-r-line"></i> Sign Out
+      </button>
+
+      <!-- Sign In Button (Shown when signed out) -->
+      <button class="btn-signin" id="navSignInBtn" title="Sign In to RIDO" style="display: none;">
+        <i class="ri-login-box-r-line"></i> Sign In
       </button>
     </div>
   </header>
@@ -1348,7 +1471,7 @@
        ══════════════════════════════════════════════ -->
   <div class="main-container">
 
-    <!-- HERO BANNER SECTION (EXACT DESIGN MATCH) -->
+    <!-- HERO BANNER SECTION (EXACT IMAGE 1 MATCH) -->
     <section class="hero-banner">
       <div class="hero-content">
         <div class="hero-powered-badge">
@@ -1356,20 +1479,25 @@
         </div>
         <h1 class="hero-title">
           RIDO<br>
-          Smarter Logistics. Better <span class="highlight">Tomorrow.</span>
+          Smarter Logistics. Better Tomorrow.
         </h1>
         <p class="hero-desc">
           AI-powered fleet intelligence for faster, safer and more efficient logistics operations.
         </p>
-        <button class="btn-get-started" id="heroGetStartedBtn">
-          Get Started <i class="ri-arrow-right-line"></i>
+        <button class="btn-open-copilot" id="heroOpenCopilotBtn">
+          Open Copilot &rarr;
         </button>
       </div>
 
-      <!-- Floating Live Tracking Card -->
+      <!-- Floating Live Tracking Card (Image 1) -->
       <div class="live-tracking-card">
         <div class="tracking-header">
-          <i class="ri-map-pin-line"></i> Live Tracking
+          <div class="tracking-header-left">
+            <i class="ri-map-pin-line"></i> LIVE TRACKING
+          </div>
+          <div class="live-indicator-pill">
+            <span class="pulse-dot"></span> ((•)) Live
+          </div>
         </div>
         <div class="tracking-body">
           <div class="route-milestones">
@@ -1393,18 +1521,18 @@
           <div class="route-metrics-box">
             <div>
               <div class="metric-item-label">ETA</div>
-              <div class="metric-item-value">2d 14h</div>
+              <div class="metric-item-value">2d 12h</div>
             </div>
             <div>
               <div class="metric-item-label">Distance</div>
-              <div class="metric-item-value">1,412 km</div>
+              <div class="metric-item-value">1,400 km</div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 4 ACTION FEATURE CARDS (EXACT DESIGN MATCH) -->
+    <!-- 4 ACTION FEATURE CARDS (EXACT IMAGE 1 MATCH) -->
     <section class="features-grid">
       <!-- Card 1: Cold-Chain Incident -->
       <div class="feature-card card-coldchain" data-prompt="Alert! Check vehicle V-104 for cold chain temperature breach and calculate emergency diversion steps with cargo loss risk in US Dollars ($ USD).">
@@ -1420,13 +1548,13 @@
         </div>
       </div>
 
-      <!-- Card 2: Green Route Optimization -->
+      <!-- Card 2: Green Route -->
       <div class="feature-card card-greenroute" data-prompt="Optimize logistics corridor from Ludhiana to Jaipur for Commercial EV Truck with 8500 kg payload. Provide full fuel, toll, and cost comparison in US Dollars ($ USD).">
         <div>
           <div class="card-icon-box">
             <i class="ri-leaf-line"></i>
           </div>
-          <h2 class="card-title">Green Route Optimization</h2>
+          <h2 class="card-title">Green Route</h2>
           <p class="card-desc">Lower fuel costs. Smaller carbon footprint.</p>
         </div>
         <div>
@@ -1434,13 +1562,13 @@
         </div>
       </div>
 
-      <!-- Card 3: Safety & Shift Compliance -->
+      <!-- Card 3: Safety & Shift -->
       <div class="feature-card card-safety" data-prompt="Run Hours-of-Service driver compliance audit across active shifts and enforce mandatory 45-min rest halts with driver cost impact in US Dollars ($ USD).">
         <div>
           <div class="card-icon-box">
             <i class="ri-shield-check-line"></i>
           </div>
-          <h2 class="card-title">Safety & Shift Compliance</h2>
+          <h2 class="card-title">Safety & Shift</h2>
           <p class="card-desc">Safer drivers. Higher uptime.</p>
         </div>
         <div>
@@ -1463,95 +1591,104 @@
       </div>
     </section>
 
-    <!-- PROCESS WORKFLOW STRIP (EXACT DESIGN MATCH) -->
-    <section class="process-strip">
-      <div class="process-left">
-        <span class="process-tag">REAL-TIME INTELLIGENCE</span>
-        <h3 class="process-headline">Complete control. End to end.</h3>
-      </div>
-      <div class="process-steps">
-        <div class="process-step">
-          <i class="ri-map-pin-line text-indigo-600"></i> Set Route
-        </div>
-        <i class="ri-arrow-right-s-line process-arrow"></i>
-        <div class="process-step">
-          <i class="ri-truck-line text-cyan-600"></i> Compare Fleets
-        </div>
-        <i class="ri-arrow-right-s-line process-arrow"></i>
-        <div class="process-step">
-          <i class="ri-settings-4-line text-amber-600"></i> Optimize
-        </div>
-        <i class="ri-arrow-right-s-line process-arrow"></i>
-        <div class="process-step">
-          <i class="ri-line-chart-line text-emerald-600"></i> Monitor
-        </div>
-      </div>
-      <div class="process-badge">
-        <i class="ri-flashlight-line"></i> Smarter decisions. Greater efficiency.
-      </div>
-    </section>
-
     <!-- ══════════════════════════════════════════════
-         7. AI COPILOT INTERACTIVE CONSOLE
+         IMAGE 2: PROCESS STRIP & COPILOT CONSOLE
+         (Comes AFTER clicking "Open Copilot" or a Card)
          ══════════════════════════════════════════════ -->
-    <section id="copilotSection">
-      <div class="copilot-header">
-        <div class="copilot-brand">
-          <div class="copilot-icon">🚛</div>
-          <div class="copilot-title-group">
-            <h3>RIDO AI Copilot Console</h3>
-            <span>Responses Protocol &middot; gpt-6-astra &middot; Currency: US Dollars ($ USD)</span>
+    <div id="copilotWorkspace" class="copilot-workspace-hidden">
+
+      <!-- PROCESS WORKFLOW STRIP (EXACT IMAGE 2 MATCH) -->
+      <section class="process-strip">
+        <div class="process-left">
+          <span class="process-tag">REAL-TIME INTELLIGENCE</span>
+          <h3 class="process-headline">Complete control. End to end.</h3>
+        </div>
+        <div class="process-steps">
+          <div class="process-step">
+            <i class="ri-map-pin-line text-indigo-600"></i> Set Route
+          </div>
+          <i class="ri-arrow-right-s-line process-arrow"></i>
+          <div class="process-step">
+            <i class="ri-truck-line text-cyan-600"></i> Compare Fleets
+          </div>
+          <i class="ri-arrow-right-s-line process-arrow"></i>
+          <div class="process-step">
+            <i class="ri-settings-4-line text-amber-600"></i> Optimize
+          </div>
+          <i class="ri-arrow-right-s-line process-arrow"></i>
+          <div class="process-step">
+            <i class="ri-line-chart-line text-emerald-600"></i> Monitor
+          </div>
+        </div>
+        <div class="process-badge">
+          <i class="ri-flashlight-line"></i> Smarter decisions. Greater efficiency.
+        </div>
+      </section>
+
+      <!-- AI COPILOT INTERACTIVE CONSOLE (EXACT IMAGE 2 MATCH) -->
+      <section id="copilotSection">
+        <div class="copilot-header">
+          <div class="copilot-brand">
+            <div class="copilot-icon">🚛</div>
+            <div class="copilot-title-group">
+              <h3>RIDO AI Copilot Console</h3>
+              <span>Responses Protocol &middot; gpt-6-astra &middot; Currency: US Dollars ($ USD)</span>
+            </div>
+          </div>
+
+          <div class="copilot-actions">
+            <div class="hud-chip">
+              <i class="ri-timer-line"></i> PING: <strong id="hudPing">380ms</strong>
+            </div>
+            <div class="hud-chip">
+              <i class="ri-money-dollar-circle-line"></i> SPENT: <strong id="hudSpent">$0.0024</strong>
+            </div>
+            <button class="nav-action-btn" id="clearBtn" title="Reset Chat Conversation">
+              <i class="ri-refresh-line"></i> Reset Chat
+            </button>
+            <button class="nav-action-btn" id="closeCopilotBtn" title="Close Copilot Workspace">
+              <i class="ri-arrow-up-s-line"></i> Close
+            </button>
           </div>
         </div>
 
-        <div class="copilot-actions">
-          <div class="hud-chip">
-            <i class="ri-timer-line"></i> PING: <strong id="hudPing">380ms</strong>
-          </div>
-          <div class="hud-chip">
-            <i class="ri-money-dollar-circle-line"></i> SPENT: <strong id="hudSpent">$0.0024</strong>
-          </div>
-          <button class="nav-action-btn" id="clearBtn">
-            <i class="ri-refresh-line"></i> Reset Chat
-          </button>
-        </div>
-      </div>
-
-      <!-- Messages Stream -->
-      <div id="messages">
-        <div class="msg ai">
-          <div class="msg-avatar">🤖</div>
-          <div class="msg-bubble-wrap">
-            <div class="msg-bubble">
-              <p><strong>Welcome to RIDO Mission Control.</strong> I am your enterprise fleet intelligence assistant powered by <strong>Azure AI Foundry</strong> and <strong>gpt-6-astra</strong>.</p>
-              <p>Click any feature card above or ask me to optimize green EV freight corridors, monitor cold-chain reefer breaches, or audit driver Hours-of-Service. All financial metrics are quoted in <strong>$ USD</strong>.</p>
+        <!-- Messages Stream -->
+        <div id="messages">
+          <div class="msg ai">
+            <div class="msg-avatar">🤖</div>
+            <div class="msg-bubble-wrap">
+              <div class="msg-bubble">
+                <p><strong>Welcome to RIDO Mission Control.</strong> I am your enterprise fleet intelligence assistant powered by <strong>Azure AI Foundry</strong> and <strong>gpt-6-astra</strong>.</p>
+                <p>Click any feature card above or ask me to optimize green EV freight corridors, monitor cold-chain reefer breaches, or audit driver Hours-of-Service. All financial metrics are quoted in <strong>$ USD</strong>.</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Input Dock -->
-      <div class="input-dock">
-        <div class="input-row">
-          <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
-          
-          <!-- Mic Dictation -->
-          <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
-            <i class="ri-mic-line"></i>
-          </button>
+        <!-- Input Dock -->
+        <div class="input-dock">
+          <div class="input-row">
+            <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
+            
+            <!-- Mic Dictation -->
+            <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
+              <i class="ri-mic-line"></i>
+            </button>
 
-          <!-- Send Button -->
-          <button type="button" id="sendBtn" title="Send to Azure Foundry">
-            <i class="ri-send-plane-2-fill"></i>
-          </button>
+            <!-- Send Button -->
+            <button type="button" id="sendBtn" title="Send to Azure Foundry">
+              <i class="ri-send-plane-2-fill"></i>
+            </button>
+          </div>
+
+          <div class="input-meta-bar">
+            <span>Microsoft Azure AI Foundry &middot; <kbd>Enter</kbd> to Dispatch &middot; Shift+Enter for new line</span>
+            <span id="dispatcherNameBadge">Persona: <strong>Fleet Manager</strong></span>
+          </div>
         </div>
+      </section>
 
-        <div class="input-meta-bar">
-          <span>Microsoft Azure AI Foundry &middot; <kbd>Enter</kbd> to Dispatch &middot; Shift+Enter for new line</span>
-          <span id="dispatcherNameBadge">Role: <strong>Fleet Manager</strong></span>
-        </div>
-      </div>
-    </section>
+    </div>
 
   </div>
 

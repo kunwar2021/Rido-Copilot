@@ -7,26 +7,35 @@ const AGENT_ENDPOINT = "https://kunwar2954beai24-5740-resource.services.ai.azure
 const API_KEY = atob("RDVHbktVOEwzSWRreTc1QmluejBjWnlENFc1VXJRWHNQVm5FTzhvS1JqcFEzQWZJb0tESEpRUUo5OUNJQUNObnM3UlhKM3czQUFBQUFDT0dMRUY0");
 
 // DOM Elements
-const loginScreen     = document.getElementById("loginScreen");
-const loginForm       = document.getElementById("loginForm");
-const evaluatorDemoBtn= document.getElementById("evaluatorDemoBtn");
-const logoutBtn       = document.getElementById("logoutBtn");
-const welcome         = document.getElementById("welcome");
-const messages        = document.getElementById("messages");
-const userInput       = document.getElementById("userInput");
-const sendBtn         = document.getElementById("sendBtn");
-const clearBtn        = document.getElementById("clearBtn");
-const thoughtLog      = document.getElementById("thoughtLog");
-const reasoningDrawer = document.getElementById("reasoningDrawer");
-const toggleBtn       = document.getElementById("toggleThoughtsBtn");
-const closeDrawerBtn  = document.getElementById("closeDrawerBtn");
-const heroGetStartedBtn = document.getElementById("heroGetStartedBtn");
-const voiceMicBtn     = document.getElementById("voiceMicBtn");
-const ttsToggleBtn    = document.getElementById("ttsToggleBtn");
-const ttsStatusText   = document.getElementById("ttsStatusText");
-const hudPing         = document.getElementById("hudPing");
-const hudSpent        = document.getElementById("hudSpent");
-const dispatcherBadge = document.getElementById("dispatcherNameBadge");
+const loginScreen       = document.getElementById("loginScreen");
+const closeLoginModalBtn= document.getElementById("closeLoginModalBtn");
+const browseGuestLink   = document.getElementById("browseGuestLink");
+const navSignInBtn      = document.getElementById("navSignInBtn");
+const logoutBtn         = document.getElementById("logoutBtn");
+const personaWrapper    = document.getElementById("personaWrapper");
+const personaDropdownBtn= document.getElementById("personaDropdownBtn");
+const personaDropdownMenu=document.getElementById("personaDropdownMenu");
+const personaMenuItems  = document.querySelectorAll(".persona-menu-item");
+const heroOpenCopilotBtn= document.getElementById("heroOpenCopilotBtn");
+const closeCopilotBtn   = document.getElementById("closeCopilotBtn");
+const copilotWorkspace  = document.getElementById("copilotWorkspace");
+const loginForm         = document.getElementById("loginForm");
+const evaluatorDemoBtn  = document.getElementById("evaluatorDemoBtn");
+const welcome           = document.getElementById("welcome");
+const messages          = document.getElementById("messages");
+const userInput         = document.getElementById("userInput");
+const sendBtn           = document.getElementById("sendBtn");
+const clearBtn          = document.getElementById("clearBtn");
+const thoughtLog        = document.getElementById("thoughtLog");
+const reasoningDrawer   = document.getElementById("reasoningDrawer");
+const toggleBtn         = document.getElementById("toggleThoughtsBtn");
+const closeDrawerBtn    = document.getElementById("closeDrawerBtn");
+const voiceMicBtn       = document.getElementById("voiceMicBtn");
+const ttsToggleBtn      = document.getElementById("ttsToggleBtn");
+const ttsStatusText     = document.getElementById("ttsStatusText");
+const hudPing           = document.getElementById("hudPing");
+const hudSpent          = document.getElementById("hudSpent");
+const dispatcherBadge   = document.getElementById("dispatcherNameBadge");
 
 
 // App State
@@ -129,15 +138,6 @@ if (togglePasswordBtn && loginPassword) {
   });
 }
 
-/* ── Persona Selection Toggle ── */
-personaButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    personaButtons.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    state.persona = btn.dataset.persona || "Dispatcher Gate";
-  });
-});
-
 /* ══════════════════════════════════════════════
    2. AUTHENTICATION & SECURITY GATE CONTROLLER
    ══════════════════════════════════════════════ */
@@ -148,6 +148,21 @@ function generateDemoSessionToken(prefix = "RIDO-") {
   return `${prefix}${rand}`;
 }
 
+function updateUIAuthState(isLoggedIn) {
+  if (isLoggedIn) {
+    if (headerPersonaBadge) headerPersonaBadge.innerText = `[${state.persona.toUpperCase()}]`;
+    if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${state.persona}</strong>`;
+    if (navSignInBtn) navSignInBtn.style.display = "none";
+    if (logoutBtn) logoutBtn.style.display = "flex";
+    if (personaWrapper) personaWrapper.style.display = "block";
+    loginScreen.classList.add("hidden");
+  } else {
+    if (navSignInBtn) navSignInBtn.style.display = "flex";
+    if (logoutBtn) logoutBtn.style.display = "none";
+    if (personaWrapper) personaWrapper.style.display = "none";
+  }
+}
+
 function checkAuth() {
   const savedToken = sessionStorage.getItem("rido_session_token");
   const savedPersona = sessionStorage.getItem("rido_persona");
@@ -155,23 +170,22 @@ function checkAuth() {
     state.sessionToken = savedToken;
     state.persona = savedPersona || "Dispatcher Gate";
     state.isAuthenticated = true;
-    unlockApp(false);
+    updateUIAuthState(true);
   } else {
-    loginScreen.classList.remove("hidden");
+    // Default to Dispatcher Gate on first visit to display the clean Home interface immediately
+    state.sessionToken = generateDemoSessionToken("RIDO-");
+    state.persona = "Dispatcher Gate";
+    state.isAuthenticated = true;
+    sessionStorage.setItem("rido_session_token", state.sessionToken);
+    sessionStorage.setItem("rido_persona", state.persona);
+    updateUIAuthState(true);
   }
 }
 
 function unlockApp(playChime = true) {
   if (playChime) sfx.playGrant();
-  
-  // Update Header Telemetry HUD
-  if (headerSessionToken) headerSessionToken.innerText = state.sessionToken;
-  if (headerPersonaBadge) headerPersonaBadge.innerText = `[${state.persona.toUpperCase()}]`;
-  if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${state.persona}</strong>`;
-
-  // Hide Login Gate
-  loginScreen.classList.add("hidden");
-  setTimeout(() => userInput.focus(), 300);
+  state.isAuthenticated = true;
+  updateUIAuthState(true);
 }
 
 loginForm.addEventListener("submit", (e) => {
@@ -185,67 +199,132 @@ loginForm.addEventListener("submit", (e) => {
     return;
   }
 
-  // Hide error banner
   loginError.style.display = "none";
-
-  // Subtle Loading State
   loginSubmitBtn.disabled = true;
   loginSubmitBtn.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Signing in&hellip;`;
 
   setTimeout(() => {
-    // Generate simulated session token
     state.sessionToken = generateDemoSessionToken("RIDO-");
     state.isAuthenticated = true;
+    state.persona = "Dispatcher Gate";
 
-    // Persist session
     sessionStorage.setItem("rido_session_token", state.sessionToken);
-    sessionStorage.setItem("rido_persona", "Fleet Manager");
+    sessionStorage.setItem("rido_persona", state.persona);
 
-    // Reset button state
     loginSubmitBtn.disabled = false;
     loginSubmitBtn.innerHTML = `Sign In &rarr;`;
 
     unlockApp(true);
-  }, 350);
+  }, 300);
 });
 
-/* ── Evaluator Demo Bypass (if present) ── */
-if (evaluatorDemoBtn) {
-  evaluatorDemoBtn.addEventListener("click", () => {
-    loginError.style.display = "none";
-    state.sessionToken = generateDemoSessionToken("RIDO-");
-    state.isAuthenticated = true;
-    sessionStorage.setItem("rido_session_token", state.sessionToken);
-    sessionStorage.setItem("rido_persona", "Fleet Manager");
-    unlockApp(true);
+/* ── Modal Close & Guest Links (Login on Home Page) ── */
+if (closeLoginModalBtn) {
+  closeLoginModalBtn.addEventListener("click", () => {
+    loginScreen.classList.add("hidden");
   });
 }
 
+if (browseGuestLink) {
+  browseGuestLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    loginScreen.classList.add("hidden");
+  });
+}
+
+if (navSignInBtn) {
+  navSignInBtn.addEventListener("click", () => {
+    loginScreen.classList.remove("hidden");
+    if (loginPassword) loginPassword.focus();
+  });
+}
 
 /* ── Sign Out Handler ── */
 logoutBtn.addEventListener("click", () => {
-  // 1. Clear simulated session token
   state.sessionToken = null;
   state.isAuthenticated = false;
   sessionStorage.removeItem("rido_session_token");
   sessionStorage.removeItem("rido_persona");
 
-  // 2. Stop speech recognition if active
   if (isListening && speechRecognizer) {
     speechRecognizer.stop();
     stopListening();
   }
-
-  // 3. Stop speech synthesis
   if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
   }
 
-  // 4. Return to Login ID + Password screen and clear sensitive inputs
+  updateUIAuthState(false);
   loginPassword.value = "";
   loginError.style.display = "none";
   loginScreen.classList.remove("hidden");
 });
+
+/* ── Persona Dropdown Toggle ── */
+if (personaDropdownBtn && personaDropdownMenu) {
+  personaDropdownBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    personaDropdownMenu.classList.toggle("show");
+  });
+
+  document.addEventListener("click", () => {
+    personaDropdownMenu.classList.remove("show");
+  });
+
+  personaMenuItems.forEach(item => {
+    item.addEventListener("click", () => {
+      const chosen = item.dataset.persona;
+      if (chosen) {
+        state.persona = chosen;
+        sessionStorage.setItem("rido_persona", chosen);
+        if (headerPersonaBadge) headerPersonaBadge.innerText = `[${chosen.toUpperCase()}]`;
+        if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${chosen}</strong>`;
+        personaMenuItems.forEach(m => m.classList.remove("active"));
+        item.classList.add("active");
+        personaDropdownMenu.classList.remove("show");
+      }
+    });
+  });
+}
+
+/* ── Copilot Workspace (Image 2) Open / Close Controller ── */
+function openCopilotWorkspace(focusInput = true) {
+  if (copilotWorkspace) {
+    copilotWorkspace.classList.remove("copilot-workspace-hidden");
+    copilotWorkspace.classList.add("copilot-workspace-visible");
+    if (heroOpenCopilotBtn) {
+      heroOpenCopilotBtn.innerHTML = `Copilot Active &darr;`;
+    }
+    setTimeout(() => {
+      copilotWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (focusInput && userInput) userInput.focus();
+    }, 120);
+  }
+}
+
+function closeCopilotWorkspace() {
+  if (copilotWorkspace) {
+    copilotWorkspace.classList.remove("copilot-workspace-visible");
+    copilotWorkspace.classList.add("copilot-workspace-hidden");
+    if (heroOpenCopilotBtn) {
+      heroOpenCopilotBtn.innerHTML = `Open Copilot &rarr;`;
+    }
+    const hero = document.querySelector(".hero-banner");
+    if (hero) hero.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+}
+
+if (heroOpenCopilotBtn) {
+  heroOpenCopilotBtn.addEventListener("click", () => {
+    openCopilotWorkspace(true);
+  });
+}
+
+if (closeCopilotBtn) {
+  closeCopilotBtn.addEventListener("click", () => {
+    closeCopilotWorkspace();
+  });
+}
 
 /* ══════════════════════════════════════════════
    3. SPEECH-TO-TEXT (VOICE DICTATION)
@@ -341,21 +420,12 @@ document.querySelectorAll(".feature-card").forEach(card => {
   card.addEventListener("click", () => {
     const prompt = card.dataset.prompt;
     if (prompt) {
+      openCopilotWorkspace(false);
       userInput.value = prompt;
-      const copilotSec = document.getElementById("copilotSection");
-      if (copilotSec) copilotSec.scrollIntoView({ behavior: "smooth", block: "start" });
-      handleSend();
+      setTimeout(() => handleSend(), 200);
     }
   });
 });
-
-if (heroGetStartedBtn) {
-  heroGetStartedBtn.addEventListener("click", () => {
-    const copilotSec = document.getElementById("copilotSection");
-    if (copilotSec) copilotSec.scrollIntoView({ behavior: "smooth", block: "start" });
-    userInput.focus();
-  });
-}
 
 /* ── Reasoning Drawer Toggle ── */
 if (toggleBtn && reasoningDrawer) {
