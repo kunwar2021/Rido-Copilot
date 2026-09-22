@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RIDO — Audit Trail & Generation Hub</title>
+  <link rel="icon" type="image/png" href="images/rido-logo.png" />
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:             #f1f5f9;
+      --card-bg:        #ffffff;
+      --border:         #e2e8f0;
+      --text:           #0f172a;
+      --text-muted:     #64748b;
+      --accent:         #4f46e5;
+      --accent-light:   #eff2fe;
+      --emerald:        #16a34a;
+      --cyan:           #0284c7;
+      --rose:           #e11d48;
+      --font-mono:      'JetBrains Mono', monospace;
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    /* ══════════════════════════════════════════════
+       TOP CLEAN NAVBAR
+       ══════════════════════════════════════════════ */
+    .site-header {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .site-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 999px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: #f1f5f9;
+    }
+
+    .nav-link.active {
+      color: var(--accent);
+      background: var(--accent-light);
+      font-weight: 700;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .system-online-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+
+    .system-online-pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 2px rgba(34,197,94,0.3);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    .nav-persona-wrapper {
+      position: relative;
+    }
+
+    .nav-persona-btn {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .nav-logout-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-logout-btn:hover {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fca5a5;
+    }
+
+    /* ══════════════════════════════════════════════
+       MAIN CONTENT CONTAINER
+       ══════════════════════════════════════════════ */
+    .main-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 28px 60px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .page-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .page-title {
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+      text-transform: uppercase;
+    }
+
+    .page-controls-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-select-btn {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .filter-select-btn:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+
+    /* REPORTS PAGE STYLES */
+    .reports-hub-grid {
+      display: grid;
+      grid-template-columns: 240px 1fr 280px;
+      gap: 20px;
+    }
+
+    .reports-sidebar-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .folder-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .folder-item:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .folder-item.active {
+      background: #eff2fe;
+      color: #4f46e5;
+      font-weight: 700;
+    }
+
+    .folder-count-badge {
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    .folder-item.active .folder-count-badge {
+      background: #c7d2fe;
+      color: #3730a3;
+    }
+
+    .reports-center-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .reports-search-bar {
+      padding: 14px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8fafc;
+    }
+
+    .reports-search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: 0.82rem;
+      font-family: inherit;
+      color: #0f172a;
+    }
+
+    .enterprise-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .enterprise-table th {
+      background: #f8fafc;
+      color: #64748b;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.72rem;
+      padding: 12px 20px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .enterprise-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b;
+      vertical-align: middle;
+    }
+
+    .enterprise-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    .action-icon-btn {
+      background: transparent;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .action-icon-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #cbd5e1;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .badge-status.blue { background: #e0f2fe; color: #0369a1; }
+
+    .reports-gen-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .gen-section-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-generate-report {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      width: 100%;
+      text-align: left;
+    }
+
+    .btn-generate-report:hover {
+      border-color: #4f46e5;
+      color: #4f46e5;
+      background: #eff2fe;
+    }
+
+    @media (max-width: 1024px) {
+      .reports-hub-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       TOP NAVIGATION BAR
+       ══════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="nav-left">
+      <a href="index.html" class="site-logo">
+        <img src="images/rido-logo.png" alt="RIDO" style="height: 34px; object-fit: contain; vertical-align: middle;" />
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="fleet.html" class="nav-link">Fleet</a></li>
+        <li><a href="routes.html" class="nav-link">Routes</a></li>
+        <li><a href="analytics.html" class="nav-link">Analytics</a></li>
+        <li><a href="reports.html" class="nav-link active">Reports</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-right">
+      <div class="system-online-pill">
+        <span class="dot"></span>
+        <span>System: Online</span>
+      </div>
+
+      <div class="nav-persona-wrapper">
+        <button type="button" class="nav-persona-btn" title="Operational Persona">
+          <i class="ri-shield-check-line"></i>
+          <span>[COMPLIANCE OFFICER]</span>
+        </button>
+      </div>
+
+      <a href="index.html" class="nav-logout-btn">
+        <i class="ri-arrow-left-line"></i> Main Mission Control
+      </a>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       MAIN CONTENT: AUDIT TRAIL & GENERATION HUB
+       ══════════════════════════════════════════════ -->
+  <main class="main-container">
+    <!-- Title Bar -->
+    <div class="page-title-row">
+      <h1 class="page-title">AUDIT TRAIL &amp; GENERATION HUB</h1>
+      <div class="page-controls-row">
+        <button class="filter-select-btn" onclick="alert('Compiling executive ESG and HOS compliance audit summary docket...')">
+          <i class="ri-sparkling-fill text-indigo-600"></i> Copilot Summary
+        </button>
+      </div>
+    </div>
+
+    <!-- 3-Column Hub Grid -->
+    <div class="reports-hub-grid">
+      <!-- Left Sidebar: Folder Tree -->
+      <div class="reports-sidebar-card">
+        <div style="font-size: 0.72rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; padding: 4px 8px; letter-spacing: 0.04em;">Folders</div>
+        <div class="folder-item active" onclick="filterReports('coldchain', this)">
+          <span><i class="ri-folder-3-fill text-indigo-600"></i> Cold-Chain</span>
+          <span class="folder-count-badge">14</span>
+        </div>
+        <div class="folder-item" onclick="filterReports('safety', this)">
+          <span><i class="ri-folder-3-line"></i> Safety Audit</span>
+          <span class="folder-count-badge">8</span>
+        </div>
+        <div class="folder-item" onclick="filterReports('hos', this)">
+          <span><i class="ri-folder-3-line"></i> Driver HOS</span>
+          <span class="folder-count-badge">10</span>
+        </div>
+        <div class="folder-item" onclick="filterReports('financial', this)">
+          <span><i class="ri-folder-3-line"></i> Financial ($ USD)</span>
+          <span class="folder-count-badge">15</span>
+        </div>
+        <div class="folder-item" onclick="filterReports('esg', this)">
+          <span><i class="ri-folder-3-line"></i> ESG &amp; Carbon</span>
+          <span class="folder-count-badge">29</span>
+        </div>
+      </div>
+
+      <!-- Center: Audit Reports Table -->
+      <div class="reports-center-card">
+        <div class="reports-search-bar">
+          <i class="ri-search-line text-slate-400"></i>
+          <input type="text" class="reports-search-input" id="reportSearchInput" placeholder="Search compliance dockets, vehicle audit IDs, dates..." oninput="handleReportSearch(this.value)" />
+        </div>
+
+        <table class="enterprise-table" id="reportsTable">
+          <thead>
+            <tr>
+              <th>Report Name</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Size</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-cat="coldchain">
+              <td><i class="ri-file-pdf-2-fill text-red-500"></i> <strong>Cold-Chain Compliance V-104</strong></td>
+              <td><span class="badge-status blue">PDF</span></td>
+              <td>23rd Sep 2026</td>
+              <td>15 KB</td>
+              <td>
+                <button class="action-icon-btn" title="View Report" onclick="previewReport('Cold-Chain Compliance V-104')"><i class="ri-eye-line"></i></button>
+                <button class="action-icon-btn" title="Download PDF" onclick="downloadSampleReport('Cold-Chain-Compliance-V104.txt')"><i class="ri-download-2-line"></i></button>
+                <button class="action-icon-btn" title="Send Docket" onclick="alert('Docket dispatched to enterprise auditor email.')"><i class="ri-mail-send-line"></i></button>
+              </td>
+            </tr>
+            <tr data-cat="safety">
+              <td><i class="ri-file-pdf-2-fill text-red-500"></i> <strong>Driver Safety Audit - Fleet Northern</strong></td>
+              <td><span class="badge-status blue">PDF</span></td>
+              <td>23rd Sep 2026</td>
+              <td>36 KB</td>
+              <td>
+                <button class="action-icon-btn" title="View Report" onclick="previewReport('Driver Safety Audit - Fleet Northern')"><i class="ri-eye-line"></i></button>
+                <button class="action-icon-btn" title="Download PDF" onclick="downloadSampleReport('Driver-Safety-Audit.txt')"><i class="ri-download-2-line"></i></button>
+                <button class="action-icon-btn" title="Send Docket" onclick="alert('Docket dispatched to enterprise auditor email.')"><i class="ri-mail-send-line"></i></button>
+              </td>
+            </tr>
+            <tr data-cat="coldchain">
+              <td><i class="ri-file-pdf-2-fill text-red-500"></i> <strong>Cold-Chain Reefer Audit Log V-108</strong></td>
+              <td><span class="badge-status blue">PDF</span></td>
+              <td>23rd Sep 2026</td>
+              <td>25 KB</td>
+              <td>
+                <button class="action-icon-btn" title="View Report" onclick="previewReport('Cold-Chain Reefer Audit Log V-108')"><i class="ri-eye-line"></i></button>
+                <button class="action-icon-btn" title="Download PDF" onclick="downloadSampleReport('Reefer-Audit-Log-V108.txt')"><i class="ri-download-2-line"></i></button>
+                <button class="action-icon-btn" title="Send Docket" onclick="alert('Docket dispatched to enterprise auditor email.')"><i class="ri-mail-send-line"></i></button>
+              </td>
+            </tr>
+            <tr data-cat="safety">
+              <td><i class="ri-file-pdf-2-fill text-red-500"></i> <strong>Driver Hours-of-Service Shift Audit</strong></td>
+              <td><span class="badge-status blue">PDF</span></td>
+              <td>23rd Sep 2026</td>
+              <td>35 KB</td>
+              <td>
+                <button class="action-icon-btn" title="View Report" onclick="previewReport('Driver Hours-of-Service Shift Audit')"><i class="ri-eye-line"></i></button>
+                <button class="action-icon-btn" title="Download PDF" onclick="downloadSampleReport('HOS-Shift-Audit.txt')"><i class="ri-download-2-line"></i></button>
+                <button class="action-icon-btn" title="Send Docket" onclick="alert('Docket dispatched to enterprise auditor email.')"><i class="ri-mail-send-line"></i></button>
+              </td>
+            </tr>
+            <tr data-cat="hos">
+              <td><i class="ri-file-pdf-2-fill text-red-500"></i> <strong>Monthly HOS Mandatory Rest Audit</strong></td>
+              <td><span class="badge-status blue">PDF</span></td>
+              <td>23rd Sep 2026</td>
+              <td>15 KB</td>
+              <td>
+                <button class="action-icon-btn" title="View Report" onclick="previewReport('Monthly HOS Mandatory Rest Audit')"><i class="ri-eye-line"></i></button>
+                <button class="action-icon-btn" title="Download PDF" onclick="downloadSampleReport('Monthly-Rest-Audit.txt')"><i class="ri-download-2-line"></i></button>
+                <button class="action-icon-btn" title="Send Docket" onclick="alert('Docket dispatched to enterprise auditor email.')"><i class="ri-mail-send-line"></i></button>
+              </td>
+            </tr>
+            <tr data-cat="esg">
+              <td><i class="ri-file-pdf-2-fill text-red-500"></i> <strong>Safety ESG Carbon Accounting Audit</strong></td>
+              <td><span class="badge-status blue">PDF</span></td>
+              <td>23rd Sep 2026</td>
+              <td>15 KB</td>
+              <td>
+                <button class="action-icon-btn" title="View Report" onclick="previewReport('Safety ESG Carbon Accounting Audit')"><i class="ri-eye-line"></i></button>
+                <button class="action-icon-btn" title="Download PDF" onclick="downloadSampleReport('Safety-ESG-Audit.txt')"><i class="ri-download-2-line"></i></button>
+                <button class="action-icon-btn" title="Send Docket" onclick="alert('Docket dispatched to enterprise auditor email.')"><i class="ri-mail-send-line"></i></button>
+              </td>
+            </tr>
+            <tr data-cat="financial">
+              <td><i class="ri-file-pdf-2-fill text-red-500"></i> <strong>Fleet TCO Financial Audit ($ USD)</strong></td>
+              <td><span class="badge-status blue">PDF</span></td>
+              <td>23rd Sep 2026</td>
+              <td>50 KB</td>
+              <td>
+                <button class="action-icon-btn" title="View Report" onclick="previewReport('Fleet TCO Financial Audit')"><i class="ri-eye-line"></i></button>
+                <button class="action-icon-btn" title="Download PDF" onclick="downloadSampleReport('Fleet-TCO-Audit.txt')"><i class="ri-download-2-line"></i></button>
+                <button class="action-icon-btn" title="Send Docket" onclick="alert('Docket dispatched to enterprise auditor email.')"><i class="ri-mail-send-line"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Right Sidebar: Generation Actions -->
+      <div class="reports-gen-card">
+        <div class="gen-section-title">Report Generation</div>
+
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px;">
+          <div style="font-size: 0.74rem; font-weight: 700; color: #15803d; display: flex; align-items: center; gap: 5px;">
+            <i class="ri-checkbox-circle-fill"></i> Carbon Generating
+          </div>
+          <div style="font-size: 0.72rem; color: #166534; margin-top: 4px;">
+            Status: Carbon Accounting Scopes 1 &amp; 2 active.
+          </div>
+        </div>
+
+        <button class="btn-generate-report" onclick="generateReport('TCO Audit ($ USD)')">
+          <span><i class="ri-file-chart-line text-indigo-600"></i> TCO Audit ($ USD)</span>
+          <i class="ri-arrow-right-s-line"></i>
+        </button>
+
+        <button class="btn-generate-report" onclick="generateReport('Regulatory HOS Audit')">
+          <span><i class="ri-shield-check-line text-emerald-600"></i> Regulatory HOS Audit</span>
+          <i class="ri-arrow-right-s-line"></i>
+        </button>
+
+        <button class="btn-generate-report" onclick="generateReport('Cold-Chain Integrity Audit')">
+          <span><i class="ri-temp-cold-line text-cyan-600"></i> Cold-Chain Integrity Audit</span>
+          <i class="ri-arrow-right-s-line"></i>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function filterReports(category, element) {
+      document.querySelectorAll(".folder-item").forEach(f => f.classList.remove("active"));
+      if (element) element.classList.add("active");
+
+      const rows = document.querySelectorAll("#reportsTable tbody tr");
+      rows.forEach(row => {
+        if (category === "all" || row.dataset.cat === category) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+
+    function handleReportSearch(query) {
+      const q = query.toLowerCase().trim();
+      const rows = document.querySelectorAll("#reportsTable tbody tr");
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(q) ? "" : "none";
+      });
+    }
+
+    function previewReport(title) {
+      alert(`RIDO Enterprise Audit Docket:\n\nDocument: ${title}\nAudit Authority: Azure AI Foundry & Scania Fleet Operations\nStatus: Certified & Signed\nAll financial values verified in $ USD.`);
+    }
+
+    function downloadSampleReport(filename) {
+      const docketText = `=====================================================
+RIDO ENTERPRISE AUDIT & COMPLIANCE DOCKET
+File: ${filename}
+Generated: ${new Date().toISOString()}
+System: Azure AI Foundry (gpt-6-astra)
+Corridor: Western Dedicated Freight Corridor
+Currency Protocol: US Dollars ($ USD)
+=====================================================
+
+1. EXECUTIVE AUDIT SUMMARY
+All cold-chain telematics, EV battery lifecycle telemetry, and Hours-of-Service
+logs have been audited under autonomous AI surveillance protocols.
+
+2. COMPLIANCE METRICS
+- Cold Chain SLA: 99.1% Compliance (No critical cargo loss)
+- Driver Rest Compliance: 45-min mandatory halts verified
+- Electric Corridor TCO: $85 Saved per 450 km compared to diesel baseline
+- Carbon Emissions: Scope 1 reduction verified
+
+Certified by: RIDO Operational AI Controller
+=====================================================`;
+      const blob = new Blob([docketText], { type: "text/plain;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+
+    function generateReport(reportName) {
+      alert(`Generating ${reportName} with real-time telematics from 250 assets... Certified docket ready for download.`);
+    }
+  </script>
+</body>
+</html>

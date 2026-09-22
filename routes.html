@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RIDO — Real-Time Heavy Freight Vectorization</title>
+  <title>RIDO — AI Optimized Green Route & Corridor Map</title>
   <link rel="icon" type="image/png" href="images/rido-logo.png" />
 
   <!-- Google Fonts: Inter & JetBrains Mono -->
@@ -14,791 +14,553 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:             #faf9f5;
+      --bg:             #f1f5f9;
       --card-bg:        #ffffff;
       --border:         #e2e8f0;
       --text:           #0f172a;
       --text-muted:     #64748b;
-      --text-subtle:    #94a3b8;
+      --accent:         #4f46e5;
+      --accent-light:   #eff2fe;
+      --emerald:        #16a34a;
+      --emerald-light:  #f0fdf4;
+      --cyan:           #0284c7;
+      --cyan-light:     #f0f9ff;
       --orange:         #ea580c;
       --orange-light:   #fff7ed;
-      --orange-border:  #ffedd5;
-      --green:          #10b981;
-      --green-light:    #ecfdf5;
-      --green-border:   #a7f3d0;
-      --amber:          #d97706;
-      --amber-light:    #fffbeb;
       --font-mono:      'JetBrains Mono', monospace;
     }
 
-    body {
+    html, body {
+      min-height: 100%;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
       overflow-x: hidden;
+      overflow-y: auto;
     }
 
     /* ══════════════════════════════════════════════
-       1. TOP TELEMETRY HEADER
+       TOP CLEAN NAVBAR
        ══════════════════════════════════════════════ */
-    .telemetry-header {
-      background: #ffffff;
+    .site-header {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      height: 70px;
-      padding: 0 36px;
+      height: 64px;
+      padding: 0 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 50;
+      z-index: 100;
     }
 
-    .header-left-group {
+    .nav-left {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 32px;
     }
 
-    .header-logo-link {
+    .site-logo {
       display: flex;
       align-items: center;
       text-decoration: none;
     }
 
-    .header-logo-img {
-      height: 32px;
-      object-fit: contain;
-    }
-
-    .header-ledger-tag {
+    .nav-links {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .ledger-badge {
-      display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--orange-light);
-      border: 1px solid var(--orange-border);
-      color: var(--orange);
-      font-size: 0.7rem;
-      font-weight: 700;
-      font-family: var(--font-mono);
-      padding: 3px 8px;
-      border-radius: 999px;
-      letter-spacing: 0.04em;
+      list-style: none;
     }
 
-    .badge-sub {
-      color: #9a3412;
-      font-size: 0.65rem;
+    .nav-link {
+      color: var(--text-muted);
+      font-size: 0.88rem;
       font-weight: 600;
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 999px;
+      transition: all 0.15s ease;
+      cursor: pointer;
     }
 
-    .ledger-subtitle {
-      font-size: 0.72rem;
-      color: var(--text-subtle);
-      font-family: var(--font-mono);
+    .nav-link:hover {
+      color: var(--text);
+      background: #f1f5f9;
     }
 
-    /* Center Fleet Status Pill */
-    .header-center-pill {
+    .nav-link.active {
+      color: var(--accent);
+      background: var(--accent-light);
+      font-weight: 700;
+    }
+
+    .nav-right {
       display: flex;
       align-items: center;
-      gap: 10px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 6px 18px;
-      font-size: 0.75rem;
-      font-family: var(--font-mono);
-      color: #334155;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+      gap: 14px;
     }
 
-    .dot-pulse {
+    .system-online-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+
+    .system-online-pill .dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      display: inline-block;
+      background: #22c55e;
+      box-shadow: 0 0 0 2px rgba(34,197,94,0.3);
+      animation: pulseDot 2s infinite;
     }
 
-    .dot-green {
-      background: var(--green);
-      box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
     }
 
-    .dot-orange {
-      background: var(--orange);
-      box-shadow: 0 0 6px rgba(234, 88, 12, 0.6);
-    }
-
-    .dot-yellow {
-      background: #eab308;
-      box-shadow: 0 0 6px rgba(234, 179, 8, 0.6);
-    }
-
-    .pill-divider {
-      color: #cbd5e1;
-      font-weight: 300;
-    }
-
-    /* Header Right */
-    .header-right-group {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .gateway-chip {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 0.75rem;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .btn-enter-portal {
-      background: #0f172a;
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 10px;
-      padding: 9px 18px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
-    }
-
-    .btn-enter-portal:hover {
-      background: #1e293b;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.22);
-    }
-
-    /* ══════════════════════════════════════════════
-       2. MAIN WORKSPACE CONTAINER
-       ══════════════════════════════════════════════ */
-    .main-telemetry-container {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 36px 20px 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
-
-    /* Hero Heading */
-    .corridor-active-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      background: var(--orange-light);
-      border: 1px solid var(--orange-border);
-      color: #9a3412;
-      border-radius: 999px;
-      padding: 6px 16px;
-      font-size: 0.74rem;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
-
-    .corridor-active-pill strong {
-      color: var(--orange);
-    }
-
-    .corridor-ver {
-      color: #b45309;
-      opacity: 0.85;
-    }
-
-    .telemetry-title {
-      font-size: 3rem;
-      font-weight: 800;
-      letter-spacing: -0.035em;
-      line-height: 1.15;
-      color: #0f172a;
-      text-align: center;
-      margin-bottom: 14px;
-    }
-
-    .telemetry-desc {
-      font-size: 0.96rem;
-      color: var(--text-muted);
-      text-align: center;
-      line-height: 1.6;
-      max-width: 640px;
-      margin-bottom: 34px;
-    }
-
-    /* ══════════════════════════════════════════════
-       3. CENTRAL KINETIC TELEMETRY CARD
-       ══════════════════════════════════════════════ */
-    .visualizer-wrapper {
+    .nav-persona-wrapper {
       position: relative;
-      width: 100%;
-      margin-bottom: 24px;
     }
 
-    /* Orange Corner Crop Marks */
-    .crop-bracket {
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      pointer-events: none;
-      z-index: 10;
+    .nav-persona-btn {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: inherit;
     }
 
-    .crop-tl { top: -4px; left: -4px; border-top: 2px solid #f97316; border-left: 2px solid #f97316; }
-    .crop-tr { top: -4px; right: -4px; border-top: 2px solid #f97316; border-right: 2px solid #f97316; }
-    .crop-bl { bottom: -4px; left: -4px; border-bottom: 2px solid #f97316; border-left: 2px solid #f97316; }
-    .crop-br { bottom: -4px; right: -4px; border-bottom: 2px solid #f97316; border-right: 2px solid #f97316; }
+    .nav-logout-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
 
-    .visualizer-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+    .nav-logout-btn:hover {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fca5a5;
+    }
+
+    /* ══════════════════════════════════════════════
+       MAIN CONTENT CONTAINER
+       ══════════════════════════════════════════════ */
+    .main-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 28px 60px 28px;
       display: flex;
       flex-direction: column;
+      gap: 22px;
     }
 
-    /* Card Top Bar */
-    .card-top-bar {
-      padding: 12px 20px;
-      border-bottom: 1px solid #edf2f7;
+    .page-title-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: #ffffff;
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
+      margin-bottom: 2px;
     }
 
-    .dispatch-info {
+    .page-title {
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+      text-transform: uppercase;
+    }
+
+    .page-controls-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-weight: 700;
-      color: #1e293b;
     }
 
-    .chassis-tag {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      color: #64748b;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.68rem;
-      font-weight: 600;
-    }
-
-    .coord-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--text-muted);
-    }
-
-    .overload-tag {
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-      color: #ea580c;
-      padding: 3px 10px;
-      border-radius: 6px;
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-
-    /* Card Canvas Stage */
-    .visualizer-stage {
-      position: relative;
-      background-color: #fdfcf9;
-      background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
-      background-size: 24px 24px;
-      min-height: 380px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      overflow: hidden;
-    }
-
-    .truck-vector-art {
-      max-width: 100%;
-      height: auto;
-      max-height: 340px;
-      object-fit: contain;
-      user-select: none;
-      filter: drop-shadow(0 4px 12px rgba(15, 23, 42, 0.05));
-      transition: transform 0.3s ease;
-    }
-
-    .visualizer-stage:hover .truck-vector-art {
-      transform: scale(1.015);
-    }
-
-    /* Floating Velocity Badge */
-    .floating-velocity-pill {
-      position: absolute;
-      bottom: 26px;
-      right: 32px;
+    .filter-select-btn {
       background: #ffffff;
-      border: 1px solid #ffedd5;
-      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.12), 0 1px 3px rgba(0,0,0,0.04);
-      border-radius: 999px;
-      padding: 6px 16px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #334155;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.76rem;
-      font-family: var(--font-mono);
-      font-weight: 700;
-      color: #9a3412;
-      z-index: 5;
-      animation: pulseFloat 3s ease-in-out infinite;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
     }
 
-    @keyframes pulseFloat {
-      0%, 100% { transform: translateY(0); }
-      50%      { transform: translateY(-4px); }
+    .filter-select-btn:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
     }
 
-    .velocity-highlight {
-      color: #ea580c;
-    }
-
-    /* Card Bottom Bar */
-    .card-bottom-bar {
-      padding: 12px 20px;
-      border-top: 1px solid #edf2f7;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    /* ROUTES PAGE STYLES */
+    .routes-map-card {
       background: #ffffff;
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--text-muted);
-    }
-
-    .geofence-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .sync-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .sync-status strong {
-      color: #0f172a;
-    }
-
-    /* ══════════════════════════════════════════════
-       4. FOUR TELEMETRY METRIC CARDS
-       ══════════════════════════════════════════════ */
-    .telemetry-metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      width: 100%;
-      margin-bottom: 40px;
-    }
-
-    .metric-card {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 20px 22px;
+      border: 1px solid #e2e8f0;
+      border-radius: 24px;
+      overflow: hidden;
+      position: relative;
+      min-height: 640px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 150px;
-      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.02);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .metric-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
-      border-color: #cbd5e1;
+    .map-canvas-background {
+      position: absolute;
+      inset: 0;
+      background: #e5edf5 url('images/route-map-corridor.png') center center/cover no-repeat;
+      z-index: 1;
     }
 
-    .metric-card-header {
+    /* Interactive overlay corridor pins */
+    .map-corridor-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .map-top-bar {
+      position: relative;
+      z-index: 5;
+      padding: 20px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
     }
 
-    .metric-card-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .metric-tag {
-      font-size: 0.65rem;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      padding: 2px 7px;
-      border-radius: 5px;
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
-      color: #64748b;
-    }
-
-    .metric-tag.orange {
-      background: #fff7ed;
-      border-color: #fed7aa;
-      color: #ea580c;
-    }
-
-    .metric-tag.blue {
-      background: #eff6ff;
-      border-color: #bfdbfe;
-      color: #2563eb;
-    }
-
-    .metric-main-value {
-      font-size: 1.85rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: #0f172a;
+    .map-zoom-controls {
       display: flex;
-      align-items: baseline;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-
-    .metric-unit {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .metric-status-footer {
-      font-size: 0.74rem;
-      font-family: var(--font-mono);
-      color: #475569;
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 6px;
     }
 
-    .badge-high-stack {
-      background: #fff7ed;
-      color: #c2410c;
-      border: 1px solid #ffedd5;
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* Card 4 Custom Emerald Style */
-    .metric-card.card-chassis-optimal {
-      border-left: 3px solid var(--green);
-    }
-
-    .metric-main-value.optimal-green {
-      color: #059669;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .metric-main-value.optimal-green i {
-      font-size: 1.4rem;
-    }
-
-    /* ══════════════════════════════════════════════
-       5. FOOTER LEDGER
-       ══════════════════════════════════════════════ */
-    .telemetry-footer {
-      width: 100%;
-      border-top: 1px solid #edf2f7;
-      padding: 24px 36px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-family: var(--font-mono);
-      font-size: 0.74rem;
-      color: var(--text-subtle);
-      margin-top: auto;
+    .map-zoom-btn {
+      width: 38px;
+      height: 38px;
       background: #ffffff;
-    }
-
-    .footer-left {
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #0f172a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
-    .footer-links {
+    .map-zoom-btn:hover {
+      background: #f1f5f9;
+      transform: scale(1.05);
+    }
+
+    .map-legend-pill {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 18px;
       display: flex;
       align-items: center;
       gap: 20px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      font-size: 0.78rem;
+      font-weight: 700;
     }
 
-    .footer-link {
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color 0.15s;
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1e293b;
     }
 
-    .footer-link:hover {
+    .legend-line {
+      width: 24px;
+      height: 4px;
+      border-radius: 999px;
+    }
+
+    .legend-line.green  { background: #16a34a; box-shadow: 0 0 6px rgba(22, 163, 74, 0.5); }
+    .legend-line.blue   { background: #0284c7; }
+    .legend-line.orange { background: #ea580c; }
+
+    /* Bottom Floating Comparison Card */
+    .route-floating-comparison-card {
+      position: relative;
+      z-index: 5;
+      margin: 24px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 20px;
+      padding: 22px 28px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .route-comp-title {
+      font-size: 0.95rem;
+      font-weight: 800;
       color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
-    /* Responsive */
-    @media (max-width: 900px) {
-      .telemetry-metrics-grid { grid-template-columns: repeat(2, 1fr); }
-      .header-center-pill { display: none; }
-      .telemetry-title { font-size: 2.2rem; }
+    .comp-metric-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 140px;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 9px;
+      font-size: 0.8rem;
+      font-weight: 600;
     }
-    @media (max-width: 600px) {
-      .telemetry-metrics-grid { grid-template-columns: 1fr; }
-      .telemetry-header { padding: 0 16px; }
-      .card-top-bar, .card-bottom-bar { flex-direction: column; gap: 8px; align-items: flex-start; }
-      .floating-velocity-pill { bottom: 12px; right: 12px; font-size: 0.7rem; }
+
+    .comp-metric-label {
+      color: #64748b;
+    }
+
+    .comp-bar-container {
+      background: #e2e8f0;
+      height: 9px;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .comp-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .comp-bar-fill.green { background: #16a34a; }
+    .comp-bar-fill.blue  { background: #0284c7; }
+    .comp-bar-fill.gold  { background: #d97706; }
+    .comp-bar-fill.teal  { background: #0d9488; }
+
+    .comp-metric-diff {
+      text-align: right;
+      font-weight: 700;
+      color: #0f172a;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+
+    .route-comp-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-left: 1px solid #e2e8f0;
+      padding-left: 24px;
+      text-align: center;
+    }
+
+    .route-comp-badge .big-percent {
+      font-size: 2.7rem;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .route-comp-badge .badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #16a34a;
+      font-weight: 800;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 900px) {
+      .route-floating-comparison-card {
+        grid-template-columns: 1fr;
+      }
+      .route-comp-badge {
+        border-left: none;
+        border-top: 1px solid #e2e8f0;
+        padding-left: 0;
+        padding-top: 16px;
+      }
     }
   </style>
 </head>
 <body>
 
   <!-- ══════════════════════════════════════════════
-       1. TOP TELEMETRY HEADER
+       TOP NAVIGATION BAR
        ══════════════════════════════════════════════ -->
-  <header class="telemetry-header">
-    <div class="header-left-group">
-      <a href="index.html" class="header-logo-link" title="Return to RIDO Mission Control Portal">
-        <img src="images/rido-logo.png" alt="RIDO" class="header-logo-img" />
+  <header class="site-header">
+    <div class="nav-left">
+      <a href="index.html" class="site-logo">
+        <img src="images/rido-logo.png" alt="RIDO" style="height: 34px; object-fit: contain; vertical-align: middle;" />
       </a>
-      <div class="header-ledger-tag">
-        <span class="ledger-badge">
-          FREIGHT TELEMETRY <span class="badge-sub">V3.42-PRO</span>
-        </span>
-        <span class="ledger-subtitle">Live Transcontinental Logistics Ledger</span>
-      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="fleet.html" class="nav-link">Fleet</a></li>
+        <li><a href="routes.html" class="nav-link active">Routes</a></li>
+        <li><a href="analytics.html" class="nav-link">Analytics</a></li>
+        <li><a href="reports.html" class="nav-link">Reports</a></li>
+      </ul>
     </div>
 
-    <div class="header-center-pill">
-      <span class="dot-pulse dot-green"></span>
-      <span><strong>ALL CORRIDORS OPERATIONAL</strong></span>
-      <span class="pill-divider">|</span>
-      <span>ACTIVE FLEET: <strong>1,492 TRUCKS</strong></span>
-    </div>
-
-    <div class="header-right-group">
-      <div class="gateway-chip">
-        <span class="dot-pulse dot-orange"></span>
-        <span>GATEWAY // 08</span>
+    <div class="nav-right">
+      <div class="system-online-pill">
+        <span class="dot"></span>
+        <span>System: Online</span>
       </div>
-      <a href="index.html" class="btn-enter-portal" title="Enter RIDO Operational Copilot Portal">
-        Enter Portal &rarr;
+
+      <div class="nav-persona-wrapper">
+        <button type="button" class="nav-persona-btn" title="Operational Persona">
+          <i class="ri-compass-3-line"></i>
+          <span>[ROUTE PLANNER]</span>
+        </button>
+      </div>
+
+      <a href="index.html" class="nav-logout-btn">
+        <i class="ri-arrow-left-line"></i> Main Mission Control
       </a>
     </div>
   </header>
 
   <!-- ══════════════════════════════════════════════
-       2. MAIN WORKSPACE CONTAINER
+       MAIN CONTENT: AI OPTIMIZED GREEN ROUTE
        ══════════════════════════════════════════════ -->
-  <main class="main-telemetry-container">
-
-    <!-- Corridor Tag -->
-    <div class="corridor-active-pill">
-      <span class="dot-pulse dot-orange"></span>
-      Corridor Active: <strong>Central Highway Freight Link</strong> <span class="corridor-ver">/ RT-VECTOR v2.9</span>
-    </div>
-
-    <!-- Main Title -->
-    <h1 class="telemetry-title">
-      Real–Time Heavy Freight<br>Vectorization
-    </h1>
-
-    <!-- Subtitle -->
-    <p class="telemetry-desc">
-      Hand-crafted kinetic telemetry tracking oversized payloads across nationwide transits with zero packet loss.
-    </p>
-
-    <!-- ══════════════════════════════════════════════
-         3. CENTRAL KINETIC TELEMETRY CARD
-         ══════════════════════════════════════════════ -->
-    <div class="visualizer-wrapper">
-      <!-- Orange Corner Crop Brackets -->
-      <div class="crop-bracket crop-tl"></div>
-      <div class="crop-bracket crop-tr"></div>
-      <div class="crop-bracket crop-bl"></div>
-      <div class="crop-bracket crop-br"></div>
-
-      <div class="visualizer-card">
-        <!-- Top Bar -->
-        <div class="card-top-bar">
-          <div class="dispatch-info">
-            <span class="dot-pulse dot-orange"></span>
-            <span>DISPATCH-ID // RD-88402-NH</span>
-            <span class="chassis-tag">CHASSIS 6x4</span>
-          </div>
-          <div class="coord-info">
-            <span>LAT: 28.6139&deg; N</span>
-            <span class="overload-badge">OVERLOAD_MAX (118%)</span>
-          </div>
-        </div>
-
-        <!-- Canvas Stage -->
-        <div class="visualizer-stage">
-          <img src="images/telemetry-stage.png" alt="Heavy Freight Traversal Kinetic Illustration" class="truck-vector-art" />
-          
-          <!-- Floating Live Velocity Indicator -->
-          <div class="floating-velocity-pill">
-            <span class="dot-pulse dot-orange"></span>
-            <span class="velocity-highlight" id="liveVelocityIndicator">64 km/h</span> &bull; <span>NH-44 Freight Traversal</span>
-          </div>
-        </div>
-
-        <!-- Bottom Bar -->
-        <div class="card-bottom-bar">
-          <div class="geofence-status">
-            <span class="dot-pulse dot-yellow"></span>
-            <span>GPS Geo-Fence Locked: Waypoint 19 of 34</span>
-            <span class="pill-divider">|</span>
-            <span>HDOP: 0.81 (OPTIMAL)</span>
-          </div>
-          <div class="sync-status">
-            <span class="dot-pulse dot-green"></span>
-            <span>SYNC LATENCY: <strong id="telemetryLatency">24ms</strong></span>
-            <span>&bull;</span>
-            <span>HARVEST RATE: 100Hz</span>
-          </div>
-        </div>
+  <main class="main-container">
+    <!-- Title Bar -->
+    <div class="page-title-row">
+      <h1 class="page-title">AI OPTIMIZED GREEN ROUTE &amp; CORRIDOR MAP</h1>
+      <div class="page-controls-row">
+        <button class="filter-select-btn" onclick="recalculateRoutes()"><i class="ri-route-line"></i> Re-Calculate Optimal Route</button>
+        <button class="filter-select-btn" onclick="alert('Querying Copilot: Evaluating Delhi-Mumbai multi-modal corridor for high-speed EV chargers.')"><i class="ri-sparkling-fill text-indigo-600"></i> Ask Copilot</button>
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════════════
-         4. FOUR TELEMETRY METRIC CARDS
-         ══════════════════════════════════════════════ -->
-    <section class="telemetry-metrics-grid">
-      <!-- Card 1: Payload Weight -->
-      <div class="metric-card">
-        <div class="metric-card-header">
-          <span class="metric-card-label">Payload Weight</span>
-          <span class="metric-tag">GWV SPEC</span>
+    <!-- Route Interactive Map Card -->
+    <div class="routes-map-card">
+      <div class="map-canvas-background"></div>
+
+      <!-- Top Map Header -->
+      <div class="map-top-bar">
+        <div class="map-zoom-controls">
+          <button class="map-zoom-btn" title="Zoom in" onclick="zoomMap(1.1)">+</button>
+          <button class="map-zoom-btn" title="Zoom out" onclick="zoomMap(0.9)">&minus;</button>
         </div>
-        <div class="metric-main-value">
-          14.8 <span class="metric-unit">MT</span>
-        </div>
-        <div class="metric-status-footer">
-          <span class="badge-high-stack">
-            <i class="ri-arrow-up-s-fill"></i> +1.2 MT High-Cubic Stack
-          </span>
+
+        <div class="map-legend-pill">
+          <div class="legend-item"><div class="legend-line green"></div> Path-1 (Green EV Corridor)</div>
+          <div class="legend-item"><div class="legend-line blue"></div> Path-2 (Diesel Tollway)</div>
+          <div class="legend-item"><div class="legend-line orange"></div> Path-3 (Expressway)</div>
         </div>
       </div>
 
-      <!-- Card 2: Current Velocity -->
-      <div class="metric-card">
-        <div class="metric-card-header">
-          <span class="metric-card-label">Current Velocity</span>
-          <span class="metric-tag orange">RADAR LOCK</span>
+      <!-- Floating Comparison Card (Bottom) -->
+      <div class="route-floating-comparison-card">
+        <div class="route-comp-left">
+          <div class="route-comp-title">
+            <span>Current Route</span>
+            <span style="color:#64748b; font-weight: 500;">vs</span>
+            <span style="color:#16a34a;">AI Optimized Green Route</span>
+          </div>
+
+          <!-- Time Metric -->
+          <div class="comp-metric-row">
+            <span class="comp-metric-label">Time</span>
+            <div class="comp-bar-container"><div class="comp-bar-fill green" style="width: 78%;"></div></div>
+            <span class="comp-metric-diff" style="color: #16a34a;">Saved 1h 45m</span>
+          </div>
+
+          <!-- Distance Metric -->
+          <div class="comp-metric-row">
+            <span class="comp-metric-label">Distance</span>
+            <div class="comp-bar-container"><div class="comp-bar-fill blue" style="width: 88%;"></div></div>
+            <span class="comp-metric-diff">2.14 km shorter</span>
+          </div>
+
+          <!-- Cost Metric -->
+          <div class="comp-metric-row">
+            <span class="comp-metric-label">Cost</span>
+            <div class="comp-bar-container"><div class="comp-bar-fill gold" style="width: 65%;"></div></div>
+            <span class="comp-metric-diff" style="color: #d97706;">$85 saved USD</span>
+          </div>
+
+          <!-- Emissions Metric -->
+          <div class="comp-metric-row">
+            <span class="comp-metric-label">Emissions</span>
+            <div class="comp-bar-container"><div class="comp-bar-fill teal" style="width: 45%;"></div></div>
+            <span class="comp-metric-diff" style="color: #0d9488;">30 kg CO2 cut</span>
+          </div>
         </div>
-        <div class="metric-main-value" id="cardVelocityVal">
-          64 <span class="metric-unit">km/h</span>
-        </div>
-        <div class="metric-status-footer">
-          <span class="dot-pulse dot-green"></span>
-          <span>Cruise Limiter: <strong>ENGAGED</strong></span>
+
+        <div class="route-comp-badge">
+          <span class="big-percent">100%</span>
+          <span class="badge-tag"><i class="ri-checkbox-circle-fill"></i> EV Corridor</span>
+          <button class="filter-select-btn" style="margin-top: 10px; background: #ffffff; border-color: #16a34a; color: #15803d;" onclick="deployToInCab()">
+            Deploy to In-Cab &rarr;
+          </button>
         </div>
       </div>
-
-      <!-- Card 3: Corridor Route -->
-      <div class="metric-card">
-        <div class="metric-card-header">
-          <span class="metric-card-label">Corridor Route</span>
-          <span class="metric-tag blue">NAV // GPS</span>
-        </div>
-        <div class="metric-main-value" style="font-size: 1.55rem;">
-          NH-44 Traversal
-        </div>
-        <div class="metric-status-footer">
-          <span>Sector 8 &rarr; North Terminal</span>
-        </div>
-      </div>
-
-      <!-- Card 4: Chassis Status -->
-      <div class="metric-card card-chassis-optimal">
-        <div class="metric-card-header">
-          <span class="metric-card-label">Chassis Status</span>
-          <span class="dot-pulse dot-green"></span>
-        </div>
-        <div class="metric-main-value optimal-green">
-          Optimal <i class="ri-checkbox-circle-fill"></i>
-        </div>
-        <div class="metric-status-footer">
-          <span class="dot-pulse dot-green"></span>
-          <span>Rope Tension: <strong>SECURE</strong></span>
-        </div>
-      </div>
-    </section>
-
+    </div>
   </main>
 
-  <!-- ══════════════════════════════════════════════
-       5. FOOTER
-       ══════════════════════════════════════════════ -->
-  <footer class="telemetry-footer">
-    <div class="footer-left">
-      <span class="dot-pulse dot-green"></span>
-      <span>&copy; 2025 RIDO Telemetry Engine &bull; Handcrafted Vector Logistics</span>
-    </div>
-    <div class="footer-links">
-      <a href="index.html" class="footer-link"># Sensor Bus</a>
-      <a href="index.html" class="footer-link"># Manifest Spec</a>
-      <a href="index.html" class="footer-link"># NH-44 API Docs</a>
-    </div>
-  </footer>
-
-  <!-- Micro-Telemetry Simulator Script -->
   <script>
-    // Live subtle latency jitter (22ms - 27ms)
-    const latencyEl = document.getElementById("telemetryLatency");
-    if (latencyEl) {
-      setInterval(() => {
-        const jitter = Math.floor(Math.random() * 6) + 22;
-        latencyEl.innerText = `${jitter}ms`;
-      }, 3500);
+    let currentZoom = 1.0;
+    function zoomMap(factor) {
+      currentZoom = Math.max(0.8, Math.min(2.0, currentZoom * factor));
+      const bg = document.querySelector('.map-canvas-background');
+      if (bg) {
+        bg.style.transform = `scale(${currentZoom})`;
+        bg.style.transition = 'transform 0.25s ease';
+      }
     }
 
-    // Micro speed variations (63 - 65 km/h)
-    const velIndicator = document.getElementById("liveVelocityIndicator");
-    const cardVel = document.getElementById("cardVelocityVal");
-    if (velIndicator && cardVel) {
-      setInterval(() => {
-        const speed = Math.floor(Math.random() * 3) + 63;
-        velIndicator.innerText = `${speed} km/h`;
-        cardVel.innerHTML = `${speed} <span class="metric-unit">km/h</span>`;
-      }, 6000);
+    function recalculateRoutes() {
+      alert('AI Route Solver: Recalculating live corridor with real-time toll prices and wind resistance factors. Optimal Path-1 Green EV reaffirmed.');
+    }
+
+    function deployToInCab() {
+      alert('Path-1 Green EV Corridor parameters deployed to In-Cab telematics units! Driver turn-by-turn navigation synced with 350kW DC fast-charger reservation.');
     }
   </script>
 </body>

@@ -685,3 +685,127 @@ function exportDocket(text) {
 // Init on load
 checkAuth();
 setupSpeechRecognition();
+
+/* ══════════════════════════════════════════════
+   6. SPA VIEW ROUTER (Home, Fleet, Routes, Analytics, Reports)
+   ══════════════════════════════════════════════ */
+const navLinks = document.querySelectorAll(".nav-links .nav-link");
+const allViews = document.querySelectorAll(".app-page-view");
+
+function switchView(viewId) {
+  allViews.forEach(v => v.style.display = "none");
+  const targetView = document.getElementById(viewId);
+  if (targetView) {
+    targetView.style.display = "flex";
+  }
+
+  navLinks.forEach(link => {
+    link.classList.toggle("active", link.dataset.view === viewId);
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+navLinks.forEach(link => {
+  link.addEventListener("click", (e) => {
+    const target = link.dataset.view;
+    if (target && document.getElementById(target)) {
+      e.preventDefault();
+      switchView(target);
+      const hashName = target.replace("view", "").toLowerCase();
+      history.pushState(null, "", `#${hashName}`);
+    }
+  });
+});
+
+// Logo clicks return to Home
+document.querySelectorAll(".site-logo").forEach(logo => {
+  logo.addEventListener("click", (e) => {
+    e.preventDefault();
+    switchView("viewHome");
+    history.pushState(null, "", "#home");
+  });
+});
+
+// Handle initial URL hash on page load
+function handleHashRoute() {
+  const hash = window.location.hash.toLowerCase().replace("#", "");
+  if (hash === "fleet") switchView("viewFleet");
+  else if (hash === "routes") switchView("viewRoutes");
+  else if (hash === "analytics") switchView("viewAnalytics");
+  else if (hash === "reports") switchView("viewReports");
+  else switchView("viewHome");
+}
+
+window.addEventListener("popstate", handleHashRoute);
+handleHashRoute();
+
+/* ══════════════════════════════════════════════
+   7. INTERACTIVE REPORT & PROMPT HELPERS
+   ══════════════════════════════════════════════ */
+window.openCopilotWithPrompt = function(promptText) {
+  switchView("viewHome");
+  openCopilotWorkspace(false);
+  userInput.value = promptText;
+  setTimeout(() => handleSend(), 200);
+};
+
+window.filterReports = function(category, element) {
+  document.querySelectorAll(".folder-item").forEach(f => f.classList.remove("active"));
+  if (element) element.classList.add("active");
+
+  const rows = document.querySelectorAll("#reportsTable tbody tr");
+  rows.forEach(row => {
+    if (category === "all" || row.dataset.cat === category) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+};
+
+window.handleReportSearch = function(query) {
+  const q = query.toLowerCase().trim();
+  const rows = document.querySelectorAll("#reportsTable tbody tr");
+  rows.forEach(row => {
+    const text = row.innerText.toLowerCase();
+    row.style.display = text.includes(q) ? "" : "none";
+  });
+};
+
+window.previewReport = function(title) {
+  alert(`RIDO Enterprise Audit Docket:\n\nDocument: ${title}\nAudit Authority: Azure AI Foundry & Scania Fleet Operations\nStatus: Certified & Signed\nAll financial values verified in $ USD.`);
+};
+
+window.downloadSampleReport = function(filename) {
+  const docketText = `=====================================================
+RIDO ENTERPRISE AUDIT & COMPLIANCE DOCKET
+File: ${filename}
+Generated: ${new Date().toISOString()}
+System: Azure AI Foundry (gpt-6-astra)
+Corridor: Western Dedicated Freight Corridor
+Currency Protocol: US Dollars ($ USD)
+=====================================================
+
+1. EXECUTIVE AUDIT SUMMARY
+All cold-chain telematics, EV battery lifecycle telemetry, and Hours-of-Service
+logs have been audited under autonomous AI surveillance protocols.
+
+2. COMPLIANCE METRICS
+- Cold Chain SLA: 99.1% Compliance (No critical cargo loss)
+- Driver Rest Compliance: 45-min mandatory halts verified
+- Electric Corridor TCO: $85 Saved per 450 km compared to diesel baseline
+- Carbon Emissions: Scope 1 reduction verified
+
+Certified by: RIDO Operational AI Controller
+=====================================================`;
+  const blob = new Blob([docketText], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+};
+
+window.triggerReportGen = function(reportName) {
+  openCopilotWithPrompt(`Generate and certify formal ${reportName} docket with full line-item costs in US Dollars ($ USD) and driver telematics.`);
+};

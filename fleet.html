@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RIDO — Fleet IQ & Asset Health</title>
+  <link rel="icon" type="image/png" href="images/rido-logo.png" />
+
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:             #f1f5f9;
+      --bg-alt:         #f8fafc;
+      --card-bg:        #ffffff;
+      --border:         #e2e8f0;
+      --text:           #0f172a;
+      --text-muted:     #64748b;
+      --primary:        #0f172a;
+      --accent:         #4f46e5;
+      --accent-light:   #eff2fe;
+      --cyan:           #0284c7;
+      --cyan-light:     #f0f9ff;
+      --emerald:        #16a34a;
+      --emerald-light:  #f0fdf4;
+      --rose:           #e11d48;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md:      0 4px 14px rgba(0,0,0,0.06);
+      --shadow-lg:      0 10px 30px rgba(0,0,0,0.08);
+      --font-mono:      'JetBrains Mono', monospace;
+    }
+
+    html, body {
+      min-height: 100%;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    /* ══════════════════════════════════════════════
+       TOP CLEAN NAVBAR
+       ══════════════════════════════════════════════ */
+    .site-header {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .site-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 7px 16px;
+      border-radius: 999px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+      background: #f1f5f9;
+    }
+
+    .nav-link.active {
+      color: var(--accent);
+      background: var(--accent-light);
+      font-weight: 700;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .system-online-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+    }
+
+    .system-online-pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 2px rgba(34,197,94,0.3);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.85); }
+    }
+
+    .nav-persona-wrapper {
+      position: relative;
+    }
+
+    .nav-persona-btn {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .nav-logout-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-logout-btn:hover {
+      background: #fee2e2;
+      color: #b91c1c;
+      border-color: #fca5a5;
+    }
+
+    /* ══════════════════════════════════════════════
+       MAIN CONTENT CONTAINER
+       ══════════════════════════════════════════════ */
+    .main-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 28px 60px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .page-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .page-title {
+      font-size: 1.55rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #0f172a;
+      text-transform: uppercase;
+    }
+
+    .page-controls-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-select-btn {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .filter-select-btn:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+    }
+
+    /* KPI Cards 4-Grid */
+    .kpi-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 20px 22px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      position: relative;
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kpi-value {
+      font-size: 1.95rem;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .kpi-subtext {
+      font-size: 0.76rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 7px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .progress-fill.green {
+      background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .progress-fill.ev-mix {
+      background: linear-gradient(90deg, #0284c7 48%, #475569 48%);
+    }
+
+    /* FLEET PAGE STYLES */
+    .fleet-middle-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 20px;
+    }
+
+    .fleet-3d-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fleet-3d-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.76rem;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .fleet-3d-graphic-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 220px;
+      background: radial-gradient(circle at center, #f0fdf4 0%, #ffffff 70%);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .fleet-3d-graphic-wrap img {
+      max-height: 170px;
+      object-fit: contain;
+      filter: drop-shadow(0 14px 24px rgba(16, 185, 129, 0.28));
+      transition: transform 0.3s ease;
+    }
+
+    .fleet-3d-graphic-wrap:hover img {
+      transform: scale(1.03);
+    }
+
+    .telemetry-chip-tag {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #0f172a;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .fleet-truck-detail-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .truck-detail-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .truck-thumb-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #ffffff;
+    }
+
+    .sparkline-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .sparkline-box-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    /* Table */
+    .table-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .table-toolbar {
+      padding: 16px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .enterprise-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .enterprise-table th {
+      background: #f8fafc;
+      color: #64748b;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.72rem;
+      padding: 12px 20px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .enterprise-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #1e293b;
+      vertical-align: middle;
+    }
+
+    .enterprise-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .badge-status.active-green { background: #dcfce7; color: #15803d; }
+    .badge-status.alert-red    { background: #fee2e2; color: #b91c1c; }
+    .badge-status.warning-amber{ background: #fef3c7; color: #b45309; }
+    .badge-status.blue         { background: #e0f2fe; color: #0369a1; }
+
+    @media (max-width: 1024px) {
+      .kpi-cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .fleet-middle-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       TOP NAVIGATION BAR
+       ══════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="nav-left">
+      <a href="index.html" class="site-logo">
+        <img src="images/rido-logo.png" alt="RIDO" style="height: 34px; object-fit: contain; vertical-align: middle;" />
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="fleet.html" class="nav-link active">Fleet</a></li>
+        <li><a href="routes.html" class="nav-link">Routes</a></li>
+        <li><a href="analytics.html" class="nav-link">Analytics</a></li>
+        <li><a href="reports.html" class="nav-link">Reports</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-right">
+      <div class="system-online-pill">
+        <span class="dot"></span>
+        <span>System: Online</span>
+      </div>
+
+      <div class="nav-persona-wrapper">
+        <button type="button" class="nav-persona-btn" title="Operational Persona">
+          <i class="ri-user-line"></i>
+          <span>[FLEET DISPATCHER]</span>
+        </button>
+      </div>
+
+      <a href="index.html" class="nav-logout-btn">
+        <i class="ri-arrow-left-line"></i> Main Mission Control
+      </a>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       MAIN CONTENT: FLEET IQ & ASSET HEALTH
+       ══════════════════════════════════════════════ -->
+  <main class="main-container">
+    <!-- Title Bar -->
+    <div class="page-title-row">
+      <h1 class="page-title">FLEET IQ &amp; ASSET HEALTH</h1>
+      <div class="page-controls-row">
+        <button class="filter-select-btn" onclick="alert('Filtering telematics by high-priority sensors...')"><i class="ri-filter-3-line"></i> Filter Telematics</button>
+        <button class="filter-select-btn" onclick="window.location.href='index.html#copilot'"><i class="ri-sparkling-fill text-indigo-600"></i> Fleet AI Audit</button>
+      </div>
+    </div>
+
+    <!-- Top KPI Cards -->
+    <div class="kpi-cards-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">ACTIVE ASSETS <i class="ri-information-line"></i></div>
+        <div class="kpi-value">242/250</div>
+        <div class="kpi-subtext">Active fleet deployed online</div>
+        <div class="progress-track"><div class="progress-fill green" style="width: 96.8%;"></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">ENERGY MIX <i class="ri-information-line"></i></div>
+        <div class="kpi-value" style="font-size: 1.65rem;">48% <span style="font-size: 0.9rem; color: #64748b; font-weight: 600;">EV / 52% Diesel</span></div>
+        <div class="kpi-subtext">Commercial clean fleet parity</div>
+        <div class="progress-track"><div class="progress-fill ev-mix" style="width: 100%;"></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">AVERAGE BATTERY SOC <i class="ri-information-line"></i></div>
+        <div class="kpi-value">76%</div>
+        <div class="kpi-subtext">Optimal battery life band</div>
+        <div class="progress-track"><div class="progress-fill green" style="width: 76%;"></div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">LIVE TEMPS COMPLIANCE <i class="ri-information-line"></i></div>
+        <div class="kpi-value">99.1%</div>
+        <div class="kpi-subtext">Active cold-chain reefer integrity</div>
+        <div class="progress-track"><div class="progress-fill green" style="width: 99.1%;"></div></div>
+      </div>
+    </div>
+
+    <!-- Middle 2-Column: 3D Model & Truck Details -->
+    <div class="fleet-middle-grid">
+      <!-- Interactive 3D Model Card -->
+      <div class="fleet-3d-card">
+        <div>
+          <div class="fleet-3d-header">
+            <span>Interactive 3D model</span>
+            <span><i class="ri-compass-3-line"></i> Live Region: <strong>Delhi-Mumbai EV Corridor</strong></span>
+          </div>
+          <div style="display: flex; gap: 16px; margin-bottom: 12px; font-size: 0.78rem;">
+            <span>Time: <strong style="color: #16a34a;">● Active EV</strong></span>
+            <span>Cost: <strong>23,144 km</strong></span>
+            <span>Station: <strong>Mumbai Hub</strong></span>
+          </div>
+        </div>
+
+        <div class="fleet-3d-graphic-wrap">
+          <img src="images/truck-chassis-ev.png" alt="EV Truck Chassis" />
+          <div class="telemetry-chip-tag" style="top: 14px; left: 16px;">
+            <span style="color: #16a34a;">●</span> Temp: <strong>3.6°C</strong>
+          </div>
+          <div class="telemetry-chip-tag" style="bottom: 14px; left: 16px;">
+            <span style="color: #0284c7;">⚡</span> SOC: <strong>75%</strong>
+          </div>
+          <div class="telemetry-chip-tag" style="top: 14px; right: 16px;">
+            <span>⛽</span> Fuel: <strong>90%</strong>
+          </div>
+        </div>
+
+        <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.76rem; color: #64748b;">Autonomous sensor telemetry streaming via Azure IoT Hub</span>
+          <button class="filter-select-btn" onclick="alert('Running 48-point powertrain diagnostic on Scania 45R. All cell voltage differentials within 8mV nominal limits.')">
+            <i class="ri-sparkling-fill text-indigo-600"></i> Run Diagnostic
+          </button>
+        </div>
+      </div>
+
+      <!-- Truck-A Scania 45R Details Card -->
+      <div class="fleet-truck-detail-card">
+        <div class="truck-detail-header">
+          <div class="truck-thumb-icon">🚛</div>
+          <div>
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">Truck-A</h3>
+            <span style="font-size: 0.76rem; color: #64748b; font-family: 'JetBrains Mono', monospace;">Scania 45R Heavy Hauler</span>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px;">
+            <div style="font-size: 0.68rem; color: #64748b; font-weight: 700;">REEFER TEMP</div>
+            <div style="font-size: 0.96rem; font-weight: 800; color: #0f172a;">3.6°C</div>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px;">
+            <div style="font-size: 0.68rem; color: #64748b; font-weight: 700;">BATTERY SOC</div>
+            <div style="font-size: 0.96rem; font-weight: 800; color: #16a34a;">75%</div>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px;">
+            <div style="font-size: 0.68rem; color: #64748b; font-weight: 700;">DIESEL AUX</div>
+            <div style="font-size: 0.96rem; font-weight: 800; color: #475569;">60%</div>
+          </div>
+        </div>
+
+        <!-- Sparkline 1: Telemetry -->
+        <div class="sparkline-box">
+          <div class="sparkline-box-header">
+            <span>Telemetry Frequency (Hz)</span>
+            <span style="color: #16a34a;">● Live 100ms</span>
+          </div>
+          <svg viewBox="0 0 300 40" style="width: 100%; height: 35px; stroke: #10b981; fill: none; stroke-width: 2;">
+            <path d="M0,25 Q30,10 60,22 T120,18 T180,28 T240,15 T300,20" />
+          </svg>
+        </div>
+
+        <!-- Sparkline 2: SOC Trend -->
+        <div class="sparkline-box">
+          <div class="sparkline-box-header">
+            <span>State of Charge (Jan - Sep)</span>
+            <span style="color: #0284c7;">Avg 76%</span>
+          </div>
+          <svg viewBox="0 0 300 40" style="width: 100%; height: 35px; stroke: #0284c7; fill: none; stroke-width: 2;">
+            <path d="M0,30 Q40,15 80,20 T160,25 T220,10 T300,18" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Assets Table -->
+    <div class="table-card">
+      <div class="table-toolbar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-weight: 800; font-size: 0.88rem; color: #0f172a;">Active Fleet Telematics</span>
+          <select class="filter-select-btn" id="fleetFilter" onchange="filterFleetTable(this.value)">
+            <option value="all">All Fleet Assets (250)</option>
+            <option value="ev">EV Corridors Only</option>
+            <option value="reefer">Reefer Cold-Chain Only</option>
+            <option value="alert">Warning &amp; Alert Status</option>
+          </select>
+        </div>
+        <div>
+          <button class="filter-select-btn" onclick="exportFleetCSV()"><i class="ri-download-line"></i> Export Fleet CSV</button>
+        </div>
+      </div>
+
+      <table class="enterprise-table" id="fleetTable">
+        <thead>
+          <tr>
+            <th>Vehicle</th>
+            <th>Status</th>
+            <th>Live Location &amp; Alerts</th>
+            <th>Temp</th>
+            <th>SOC</th>
+            <th>Fuel</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-type="alert reefer">
+            <td><strong>TRK-A</strong> <span style="color:#64748b;">Scania 45R</span></td>
+            <td><span class="badge-status active-green">● Active - En Route</span></td>
+            <td><span class="badge-status alert-red"><i class="ri-alarm-warning-line"></i> Temp Breach - RED (Alert)</span> Jaipur Sector 4</td>
+            <td><strong style="color:#e11d48;">3.8°C</strong></td>
+            <td>75%</td>
+            <td>90%</td>
+            <td>
+              <button class="filter-select-btn" onclick="alert('Auditing TRK-A: Temperature warning flagged. Secondary chiller engaged. Projected cargo safety score: 99.4%.')">
+                <i class="ri-sparkling-fill text-indigo-600"></i> Copilot Audit
+              </button>
+            </td>
+          </tr>
+          <tr data-type="alert ev">
+            <td><strong>Recek-B</strong> <span style="color:#64748b;">Scania 45R</span></td>
+            <td><span class="badge-status warning-amber">⚠ Low SOC</span></td>
+            <td><span class="badge-status warning-amber">AMBER (Warning)</span> Ajmer Bypass</td>
+            <td>3.8°C</td>
+            <td><strong style="color:#d97706;">24%</strong></td>
+            <td>90%</td>
+            <td>
+              <button class="filter-select-btn" onclick="alert('Routing Recek-B to nearest 350kW DC Fast Charger at Kishangarh Highway Oasis (6.2 km).')">
+                <i class="ri-sparkling-fill text-indigo-600"></i> Route Charge
+              </button>
+            </td>
+          </tr>
+          <tr data-type="ev">
+            <td><strong>EV-Hauler-03</strong> <span style="color:#64748b;">Volvo FH Electric</span></td>
+            <td><span class="badge-status active-green">● Optimal En Route</span></td>
+            <td>Delhi NCR Arterial - Normal Green</td>
+            <td>3.2°C</td>
+            <td>88%</td>
+            <td>100% EV</td>
+            <td>
+              <button class="filter-select-btn" onclick="alert('EV-Hauler-03 is running on 100% green solar grid charging. Projected emissions: 0 g CO2/t-km.')">
+                <i class="ri-sparkling-fill text-indigo-600"></i> Analyze
+              </button>
+            </td>
+          </tr>
+          <tr data-type="ev">
+            <td><strong>Interstate-07</strong> <span style="color:#64748b;">Scania 45R</span></td>
+            <td><span class="badge-status blue">⚡ Depot Charging</span></td>
+            <td>Ahmedabad Mega Depot Bay 4</td>
+            <td>4.0°C</td>
+            <td>92%</td>
+            <td>82%</td>
+            <td>
+              <button class="filter-select-btn" onclick="alert('Interstate-07 scheduled for departure at 16:30 IST on Western Dedicated Freight Corridor.')">
+                <i class="ri-sparkling-fill text-indigo-600"></i> Dispatch
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    function filterFleetTable(filterVal) {
+      const rows = document.querySelectorAll("#fleetTable tbody tr");
+      rows.forEach(r => {
+        if (filterVal === 'all') {
+          r.style.display = '';
+        } else {
+          const types = r.getAttribute('data-type') || '';
+          r.style.display = types.includes(filterVal) ? '' : 'none';
+        }
+      });
+    }
+
+    function exportFleetCSV() {
+      const csv = `Vehicle,Model,Status,Location,Temp,SOC,Fuel,Currency
+TRK-A,Scania 45R,Active - En Route,Jaipur Sector 4,3.8C,75%,90%,USD
+Recek-B,Scania 45R,Low SOC,Ajmer Bypass,3.8C,24%,90%,USD
+EV-Hauler-03,Volvo FH Electric,Optimal En Route,Delhi NCR Arterial,3.2C,88%,100% EV,USD
+Interstate-07,Scania 45R,Depot Charging,Ahmedabad Mega Depot,4.0C,92%,82%,USD`;
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'RIDO_Fleet_Telemetry_Export.csv';
+      a.click();
+    }
+  </script>
+</body>
+</html>
