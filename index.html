@@ -3176,6 +3176,13 @@
               <span class="text-xs ml-0.5">🔒</span>
             </a>
           </li>
+          <li>
+            <a href="#copilot" class="nav-link nav-tab locked inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-500 hover:text-slate-800 transition-all" id="navCopilot" data-view="viewCopilot" data-tab="copilot" title="AI Copilot" onclick="switchView('viewCopilot'); return false;">
+              <i class="ri-robot-2-line text-orange-500"></i>
+              <span class="nav-label">AI Copilot</span>
+              <span class="text-xs ml-0.5">🔒</span>
+            </a>
+          </li>
         </ul>
       </nav>
 
@@ -3810,9 +3817,63 @@
         <!-- Role-Specific Operational Deck Container (Dynamically Mounted) -->
         <div id="roleOperationalDeck" class="role-operational-deck mb-6"></div>
 
+        <!-- Launch Copilot Quick Banner -->
+        <div class="mt-4 p-4 rounded-xl border border-orange-200 bg-orange-50/60 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-orange-500 text-white flex items-center justify-center text-lg shadow-sm">
+              <i class="ri-robot-2-line"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-zinc-900">RIDO AI Copilot Console Active</h4>
+              <p class="text-xs text-zinc-600">Access your role-tailored autonomous assistant, route solvers, and live telemetry audits.</p>
+            </div>
+          </div>
+          <button type="button" onclick="switchTab('copilot')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-black hover:bg-zinc-800 text-white text-xs font-semibold shadow-sm transition">
+            <span>Open AI Copilot</span>
+            <i class="ri-arrow-right-line"></i>
+          </button>
+        </div>
+      </div>
+    </div> <!-- /#viewHome -->
+
+    <!-- ══════════════════════════════════════════════
+         PAGE VIEW: DEDICATED AI COPILOT CONSOLE (Adaptive Role Contexts)
+         ══════════════════════════════════════════════ -->
+    <div id="viewCopilot" class="app-page-view" style="display: none;">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex flex-col gap-6">
+        <!-- Copilot Adaptive Header -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-200 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-600 flex items-center justify-center text-xl shadow-sm">
+              <i class="ri-robot-2-line"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-xl sm:text-2xl font-extrabold text-zinc-900 tracking-tight" id="copilotConsoleTitle">In-Cab Copilot Dispatch</h1>
+                <span class="text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-orange-100 text-orange-800" id="copilotRoleBadge">In-Cab Active Assistant</span>
+              </div>
+              <p class="text-xs text-zinc-500 mt-0.5" id="copilotConsoleSubtitle">Autonomous Fleet Intelligence &middot; Azure AI Foundry &middot; Responses Protocol</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="hud-chip">
+              <i class="ri-timer-line"></i> PING: <strong id="hudPing">380ms</strong>
+            </div>
+            <div class="hud-chip">
+              <i class="ri-money-dollar-circle-line"></i> SPENT: <strong id="hudSpent">$0.0024</strong>
+            </div>
+            <button class="nav-action-btn" id="clearBtn" title="Reset Chat Conversation">
+              <i class="ri-refresh-line"></i> Reset
+            </button>
+            <button class="nav-action-btn" onclick="window.location.reload()" title="Start New AI Session">
+              <i class="ri-add-line"></i> New Session
+            </button>
+          </div>
+        </div>
+
         <!-- Copilot Interactive Console Section -->
         <div id="copilotWorkspace" class="copilot-workspace-visible w-full">
-          <!-- PROCESS WORKFLOW STRIP (Fleet Manager & Dispatcher Gate only) -->
+          <!-- PROCESS WORKFLOW STRIP (Conditional) -->
           <section class="process-strip" id="processStrip">
             <div class="process-left">
               <span class="process-tag">REAL-TIME INTELLIGENCE</span>
@@ -3840,75 +3901,46 @@
             </div>
           </section>
 
-          <!-- OPERATIONAL ROLE LIVE HUD & QUICK ACTIONS -->
-          <div id="personaLiveHUD" class="persona-live-hud"></div>
+          <!-- Suggested Action Chips (Role Adapted) -->
           <div id="personaQuickChips" class="persona-quick-chips"></div>
 
-          <!-- AI COPILOT INTERACTIVE CONSOLE -->
-          <section id="copilotSection">
-            <div class="copilot-header">
-              <div class="copilot-brand">
-                <div class="copilot-icon">🚛</div>
-                <div class="copilot-title-group">
-                  <h3>RIDO AI Copilot Console</h3>
-                  <span>Responses Protocol &middot; gpt-6-astra &middot; Currency: US Dollars ($ USD)</span>
-                </div>
-              </div>
-
-              <div class="copilot-actions">
-                <div class="hud-chip">
-                  <i class="ri-timer-line"></i> PING: <strong id="hudPing">380ms</strong>
-                </div>
-                <div class="hud-chip">
-                  <i class="ri-money-dollar-circle-line"></i> SPENT: <strong id="hudSpent">$0.0024</strong>
-                </div>
-                <button class="nav-action-btn" id="clearBtn" title="Reset Chat Conversation">
-                  <i class="ri-refresh-line"></i> Reset Chat
-                </button>
-                <button class="nav-action-btn" onclick="window.location.reload()" title="Start New AI Session">
-                  <i class="ri-add-line"></i> New Session
-                </button>
-              </div>
-            </div>
-
-            <!-- Messages Stream -->
-            <div id="messages">
-              <div class="msg ai">
-                <div class="msg-avatar">🤖</div>
-                <div class="msg-bubble-wrap">
-                  <div class="msg-bubble">
-                    <p><strong>Welcome to RIDO Mission Control.</strong> I am your enterprise fleet intelligence assistant powered by <strong>Azure AI Foundry</strong> and <strong>gpt-6-astra</strong>.</p>
-                    <p>Click any feature card above or ask me to optimize green EV freight corridors, monitor cold-chain reefer breaches, or audit driver Hours-of-Service. All financial metrics are quoted in <strong>$ USD</strong>.</p>
-                  </div>
+          <!-- Messages Stream -->
+          <div id="messages">
+            <div class="msg ai">
+              <div class="msg-avatar">🤖</div>
+              <div class="msg-bubble-wrap">
+                <div class="msg-bubble">
+                  <p><strong id="copilotWelcomeHeading">In-Cab Copilot Dispatch</strong></p>
+                  <p id="copilotWelcomeBody" style="margin-top: 6px;">Welcome Driver Alex (TRK-A Scania 45R). I can help you monitor high-voltage battery range, locate highway fast-chargers, check reefer temperatures, or calculate your next mandatory rest halt.</p>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Input Dock -->
-            <div class="input-dock" id="copilotInputDock">
-              <div class="input-row">
-                <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
-                
-                <!-- Mic Dictation -->
-                <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
-                  <i class="ri-mic-line"></i>
-                </button>
+          <!-- Input Dock -->
+          <div class="input-dock" id="copilotInputDock">
+            <div class="input-row">
+              <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
+              
+              <!-- Mic Dictation -->
+              <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
+                <i class="ri-mic-line"></i>
+              </button>
 
-                <!-- Send Button -->
-                <button type="button" id="sendBtn" title="Send to Azure Foundry">
-                  <i class="ri-send-plane-2-fill"></i>
-                </button>
-              </div>
-
-              <div class="input-meta-bar">
-                <span>Microsoft Azure AI Foundry &middot; <kbd>Enter</kbd> to Dispatch &middot; Shift+Enter for new line</span>
-                <span id="dispatcherNameBadge">Persona: <strong>Fleet Manager</strong></span>
-              </div>
+              <!-- Send Button -->
+              <button type="button" id="sendBtn" title="Send to Azure Foundry">
+                <i class="ri-send-plane-2-fill"></i>
+              </button>
             </div>
-          </section>
+
+            <div class="input-meta-bar">
+              <span>Microsoft Azure AI Foundry &middot; <kbd>Enter</kbd> to Dispatch &middot; Shift+Enter for new line</span>
+              <span id="dispatcherNameBadge">Persona: <strong>Driver In-Cab</strong></span>
+            </div>
+          </div>
         </div>
       </div>
-    </div> <!-- /#viewHome -->
+    </div> <!-- /#viewCopilot -->
 
     <div id="viewFleet" class="app-page-view" style="display: none;">
       <!-- Title Bar -->

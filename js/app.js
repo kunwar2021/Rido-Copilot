@@ -179,14 +179,15 @@ function generateDemoSessionToken(prefix = "RIDO-") {
   return `${prefix}${rand}`;
 }
 
-const PROTECTED_TABS = ['fleet', 'routes', 'analytics', 'reports'];
+const PROTECTED_TABS = ['fleet', 'routes', 'analytics', 'reports', 'copilot'];
 
 const VIEW_MAP = {
   home: 'viewHome',
   fleet: 'viewFleet',
   routes: 'viewRoutes',
   analytics: 'viewAnalytics',
-  reports: 'viewReports'
+  reports: 'viewReports',
+  copilot: 'viewCopilot'
 };
 
 function normalizeTabKey(input) {
@@ -212,6 +213,9 @@ function normalizeTabKey(input) {
   }
   if (s === 'reports' || s === 'regulatory dockets' || s === 'sustainability dockets') {
     return 'reports';
+  }
+  if (s === 'copilot' || s === 'ai copilot' || s === 'assistant' || s === 'ai assistant' || s === 'in cab copilot' || s === 'audit copilot' || s === 'gate copilot' || s === 'esg copilot') {
+    return 'copilot';
   }
   return s;
 }
@@ -459,10 +463,10 @@ const ROLE_CONFIG = {
   "Driver In-Cab": {
     badge: "[DRIVER IN-CAB]",
     defaultTab: "home",
-    allowedTabs: ["home", "routes"],
-    allowedViews: ["viewHome", "viewRoutes"],
-    tabLabels: { home: "In-Cab Cockpit", routes: "My Active Route" },
-    tabIcons: { home: "ri-dashboard-3-line", routes: "ri-route-line" },
+    allowedTabs: ["home", "routes", "copilot"],
+    allowedViews: ["viewHome", "viewRoutes", "viewCopilot"],
+    tabLabels: { home: "In-Cab Cockpit", routes: "My Active Route", copilot: "In-Cab Copilot" },
+    tabIcons: { home: "ri-dashboard-3-line", routes: "ri-route-line", copilot: "ri-robot-2-line text-orange-500" },
     title: "In-Cab Instrument Cluster & Telematics",
     subtitle: "Live Unit TRK-A (Scania 45R) In-Cab Telemetry, HOS Rest Countdown & Active Route",
     icon: "ri-truck-line",
@@ -472,10 +476,10 @@ const ROLE_CONFIG = {
   "Compliance Officer": {
     badge: "[COMPLIANCE OFFICER]",
     defaultTab: "home",
-    allowedTabs: ["home", "reports"],
-    allowedViews: ["viewHome", "viewReports"],
-    tabLabels: { home: "Safety & Audit Hub", reports: "Regulatory Dockets" },
-    tabIcons: { home: "ri-shield-check-line", reports: "ri-file-shield-2-line" },
+    allowedTabs: ["home", "reports", "copilot"],
+    allowedViews: ["viewHome", "viewReports", "viewCopilot"],
+    tabLabels: { home: "Safety & Audit Hub", reports: "Regulatory Dockets", copilot: "Audit Copilot" },
+    tabIcons: { home: "ri-shield-check-line", reports: "ri-file-shield-2-line", copilot: "ri-robot-2-line text-orange-500" },
     title: "Regulatory Compliance & Safety Surveillance Deck",
     subtitle: "Cold-Chain Integrity SLA (99.1%), HOS Shift Logs & ESG Certified Audit Dockets",
     icon: "ri-shield-check-line",
@@ -485,10 +489,10 @@ const ROLE_CONFIG = {
   "Dispatcher Gate": {
     badge: "[DISPATCHER GATE]",
     defaultTab: "home",
-    allowedTabs: ["home", "fleet", "routes"],
-    allowedViews: ["viewHome", "viewFleet", "viewRoutes"],
-    tabLabels: { home: "Gate Operations", fleet: "Fleet Tracking", routes: "Corridor Dispatch" },
-    tabIcons: { home: "ri-building-2-line", fleet: "ri-truck-line", routes: "ri-road-map-line" },
+    allowedTabs: ["home", "fleet", "routes", "copilot"],
+    allowedViews: ["viewHome", "viewFleet", "viewRoutes", "viewCopilot"],
+    tabLabels: { home: "Gate Operations", fleet: "Fleet Tracking", routes: "Corridor Dispatch", copilot: "Gate Copilot" },
+    tabIcons: { home: "ri-building-2-line", fleet: "ri-truck-line", routes: "ri-road-map-line", copilot: "ri-robot-2-line text-orange-500" },
     title: "Dispatcher Gate & Yard Management Deck",
     subtitle: "Active Inbound Gate Queue, Loading Bay Capacity & Corridor Departure Manifests",
     icon: "ri-shield-user-line",
@@ -498,10 +502,10 @@ const ROLE_CONFIG = {
   "ESG Analyst": {
     badge: "[ESG ANALYST]",
     defaultTab: "home",
-    allowedTabs: ["home", "analytics", "reports"],
-    allowedViews: ["viewHome", "viewAnalytics", "viewReports"],
-    tabLabels: { home: "Financial Overview", analytics: "ESG Analytics", reports: "Sustainability Dockets" },
-    tabIcons: { home: "ri-line-chart-line", analytics: "ri-pie-chart-line", reports: "ri-file-list-3-line" },
+    allowedTabs: ["home", "analytics", "reports", "copilot"],
+    allowedViews: ["viewHome", "viewAnalytics", "viewReports", "viewCopilot"],
+    tabLabels: { home: "Financial Overview", analytics: "ESG Analytics", reports: "Sustainability Dockets", copilot: "ESG Copilot" },
+    tabIcons: { home: "ri-line-chart-line", analytics: "ri-pie-chart-line", reports: "ri-file-list-3-line", copilot: "ri-robot-2-line text-orange-500" },
     title: "Corporate ESG & Financial Overview Deck",
     subtitle: "Scope 1 Emissions Abatement, Fleet Fuel Parity & TCO Dollar Cost Modeling",
     icon: "ri-pie-chart-line",
@@ -511,10 +515,10 @@ const ROLE_CONFIG = {
   "Fleet Manager": {
     badge: "[FLEET MANAGER]",
     defaultTab: "fleet",
-    allowedTabs: ["home", "fleet", "routes", "analytics", "reports"],
-    allowedViews: ["viewHome", "viewFleet", "viewRoutes", "viewAnalytics", "viewReports"],
-    tabLabels: { home: "Mission Control", fleet: "Fleet IQ", routes: "Corridor Routes", analytics: "Analytics", reports: "Reports" },
-    tabIcons: { home: "ri-home-4-line", fleet: "ri-truck-line", routes: "ri-road-map-line", analytics: "ri-line-chart-line", reports: "ri-file-shield-2-line" },
+    allowedTabs: ["home", "fleet", "routes", "analytics", "reports", "copilot"],
+    allowedViews: ["viewHome", "viewFleet", "viewRoutes", "viewAnalytics", "viewReports", "viewCopilot"],
+    tabLabels: { home: "Mission Control", fleet: "Fleet IQ", routes: "Corridor Routes", analytics: "Analytics", reports: "Reports", copilot: "AI Copilot" },
+    tabIcons: { home: "ri-home-4-line", fleet: "ri-truck-line", routes: "ri-road-map-line", analytics: "ri-line-chart-line", reports: "ri-file-shield-2-line", copilot: "ri-robot-2-line text-orange-500" },
     title: "Enterprise Fleet IQ Executive Deck",
     subtitle: "242/250 Active Commercial Assets • Western & Northern Freight Corridors",
     icon: "ri-dashboard-line",
@@ -522,9 +526,130 @@ const ROLE_CONFIG = {
     showProcessStrip: true
   }
 };
+
+ROLE_CONFIG["DRIVER IN-CAB"] = ROLE_CONFIG["Driver In-Cab"];
+ROLE_CONFIG["COMPLIANCE OFFICER"] = ROLE_CONFIG["Compliance Officer"];
+ROLE_CONFIG["DISPATCHER GATE"] = ROLE_CONFIG["Dispatcher Gate"];
+ROLE_CONFIG["ESG ANALYST"] = ROLE_CONFIG["ESG Analyst"];
+ROLE_CONFIG["FLEET MANAGER"] = ROLE_CONFIG["Fleet Manager"];
+
 const ROLE_PERMISSIONS = ROLE_CONFIG;
 window.ROLE_CONFIG = ROLE_CONFIG;
 window.ROLE_PERMISSIONS = ROLE_PERMISSIONS;
+
+/* ══════════════════════════════════════════════
+   PERSONA-ADAPTIVE COPILOT CONFIGURATION MATRIX
+   Dynamic role adaptation for AI Copilot tab
+   ══════════════════════════════════════════════ */
+const COPILOT_PERSONAS = {
+  'DRIVER IN-CAB': {
+    title: 'In-Cab Copilot Dispatch',
+    greeting: 'Welcome Driver Alex (TRK-A Scania 45R). I can help you monitor high-voltage battery range, locate highway fast-chargers, check reefer temperatures, or calculate your next mandatory rest halt.',
+    suggestions: [
+      'Nearest 350kW Fast Charger',
+      'Reefer Temperature Check',
+      'Check Shift Mandatory Rest',
+      'Report Highway Hazard'
+    ],
+    badge: 'In-Cab Active Assistant',
+    systemPrompt: 'You are an intelligent in-cab co-driver assistant for long-haul freight drivers. Focus on navigation, HOS rest compliance, Reefer chiller temps, and high-voltage charging stops.'
+  },
+  'COMPLIANCE OFFICER': {
+    title: 'Regulatory & Audit Intelligence',
+    greeting: 'Compliance console online. Scopes 1 & 2 carbon accounting, HOS mandatory rest logbooks, and cold-chain temperature audit logs are synchronized.',
+    suggestions: [
+      'Generate Reefer SLA Report',
+      'Audit Driver Shift Rest Logs',
+      'Run Scope 1 & 2 Carbon Check',
+      'Verify Electronic Log Docket'
+    ],
+    badge: 'Audit & Compliance Guard',
+    systemPrompt: 'You are an enterprise compliance auditor for commercial freight logistics. Focus on cold-chain breach detection, regulatory driver HOS rest mandates, and carbon emissions auditing.'
+  },
+  'DISPATCHER GATE': {
+    title: 'Gate & Corridor Dispatch Assistant',
+    greeting: 'Dispatch gateway active. 242/250 assets deployed across Delhi-Mumbai corridors. I can re-route shipments, calculate ETA impact, and manage gate appointments.',
+    suggestions: [
+      'Check Gate Bay Congestion',
+      'Optimize Corridor Path-1',
+      'Active EV vs Diesel Split',
+      'Dispatch Emergency Relief Unit'
+    ],
+    badge: 'Gate Operations Copilot',
+    systemPrompt: 'You are a freight gateway dispatcher. Focus on corridor traffic, gate slot allocation, asset availability, and turn-around times.'
+  },
+  'ESG ANALYST': {
+    title: 'ESG & Sustainability Intelligence',
+    greeting: 'ESG Portfolio Analytics online. Scope 1 & 2 emissions, TCO cost modeling, and fleet fuel parity are synchronized.',
+    suggestions: [
+      'EV vs Diesel Emissions ROI ($ USD)',
+      'Forecast Q4 Carbon Trajectory',
+      'Recalculate Fuel Parity ($ USD)',
+      'Scope 1 & 2 ESG Carbon Report'
+    ],
+    badge: 'ESG Financial Copilot',
+    systemPrompt: 'You are an ESG and sustainable logistics intelligence assistant. Focus on carbon accounting, fuel parity modeling in USD, and corporate emissions abatement.'
+  },
+  'FLEET MANAGER': {
+    title: 'Mission Control Enterprise Copilot',
+    greeting: 'Welcome to RIDO Mission Control. I can optimize green EV freight corridors, audit cross-fleet operational expenses, or run predictive maintenance diagnostics.',
+    suggestions: [
+      'Full Fleet TCO Analysis',
+      'Asset Health Critical Alerts',
+      'Optimize Multi-Corridor Paths',
+      'Run EV Transition Modeling'
+    ],
+    badge: 'Fleet Intelligence AI',
+    systemPrompt: 'You are an executive fleet management AI. Provide macro-level operational metrics, financial TCO insights, fleet asset health, and strategic routing summaries.'
+  }
+};
+
+COPILOT_PERSONAS['Driver In-Cab'] = COPILOT_PERSONAS['DRIVER IN-CAB'];
+COPILOT_PERSONAS['Compliance Officer'] = COPILOT_PERSONAS['COMPLIANCE OFFICER'];
+COPILOT_PERSONAS['Dispatcher Gate'] = COPILOT_PERSONAS['DISPATCHER GATE'];
+COPILOT_PERSONAS['ESG Analyst'] = COPILOT_PERSONAS['ESG ANALYST'];
+COPILOT_PERSONAS['Fleet Manager'] = COPILOT_PERSONAS['FLEET MANAGER'];
+window.COPILOT_PERSONAS = COPILOT_PERSONAS;
+
+function renderCopilotForPersona(personaName) {
+  const norm = (personaName || "Fleet Manager").replace(/^\[|\]$/g, '').trim();
+  const config = COPILOT_PERSONAS[norm] ||
+                 COPILOT_PERSONAS[norm.toUpperCase()] ||
+                 COPILOT_PERSONAS['FLEET MANAGER'];
+
+  // 1. Update Title, Badges & Subtitles
+  const titleEl = document.getElementById("copilotConsoleTitle");
+  if (titleEl) titleEl.textContent = config.title;
+
+  const badgeEl = document.getElementById("copilotRoleBadge");
+  if (badgeEl) badgeEl.textContent = config.badge;
+
+  const dispBadge = document.getElementById("dispatcherNameBadge");
+  if (dispBadge) dispBadge.innerHTML = `Persona: <strong>${norm}</strong>`;
+
+  // 2. Render Role-Adaptive Quick Action Suggestion Chips
+  const chipsContainer = document.getElementById("personaQuickChips");
+  if (chipsContainer && Array.isArray(config.suggestions)) {
+    chipsContainer.innerHTML = config.suggestions.map(s => `
+      <button type="button" class="quick-chip-btn" onclick="openCopilotWithPrompt('${s.replace(/'/g, "\\'")}')">
+        <i class="ri-sparkling-fill text-orange-500"></i> ${s}
+      </button>
+    `).join("");
+  }
+
+  // 3. Update Welcome AI Message Bubble
+  const welcomeHeading = document.getElementById("copilotWelcomeHeading");
+  if (welcomeHeading) welcomeHeading.textContent = config.title;
+
+  const welcomeBody = document.getElementById("copilotWelcomeBody");
+  if (welcomeBody) welcomeBody.textContent = config.greeting;
+
+  // 4. Update Foundry Agent Dynamic System Prompt
+  if (window.foundryAgent) {
+    window.foundryAgent.systemPrompt = config.systemPrompt;
+  }
+}
+window.renderCopilotForPersona = renderCopilotForPersona;
 
 function renderNavForRole(personaName = null) {
   const navContainer = document.querySelector(".site-header nav ul.nav-links") || document.querySelector("header nav ul") || document.querySelector("header nav");
@@ -534,13 +659,14 @@ function renderNavForRole(personaName = null) {
   const activeTabKey = normalizeTabKey(currentHash);
 
   if (!personaName || !isAuthenticated()) {
-    // Guest Mode: all 5 tabs rendered, first tab is "Home", protected tabs are locked with 🔒
+    // Guest Mode: all 6 tabs rendered, first tab is "Home", protected tabs are locked with 🔒
     const guestTabs = [
       { key: "home", label: "Home", locked: false },
       { key: "fleet", label: "Fleet", locked: true },
       { key: "routes", label: "Routes", locked: true },
       { key: "analytics", label: "Analytics", locked: true },
-      { key: "reports", label: "Reports", locked: true }
+      { key: "reports", label: "Reports", locked: true },
+      { key: "copilot", label: "AI Copilot", locked: true, icon: "ri-robot-2-line text-orange-500" }
     ];
 
     const html = guestTabs.map(t => {
@@ -552,6 +678,7 @@ function renderNavForRole(personaName = null) {
       return `
         <li>
           <a href="#${t.key}" class="nav-link nav-tab ${isActive ? 'active' : ''} ${t.locked ? 'locked' : ''} inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs ${activeClass} transition-all" id="nav${t.key.charAt(0).toUpperCase() + t.key.slice(1)}" data-view="${targetView}" data-tab="${t.key}" title="${t.label}" onclick="switchView('${targetView}'); return false;">
+            ${t.icon ? `<i class="${t.icon}"></i>` : ''}
             <span class="nav-label">${t.label}</span>
             ${t.locked ? '<span class="text-xs ml-0.5">🔒</span>' : ''}
           </a>
@@ -573,12 +700,12 @@ function renderNavForRole(personaName = null) {
   }
 
   // Authenticated Role: dynamically rebuild navigation strictly for allowedTabs
-  const config = ROLE_CONFIG[personaName] || ROLE_CONFIG["Driver In-Cab"];
+  const config = ROLE_CONFIG[personaName] || ROLE_CONFIG[personaName.toUpperCase()] || ROLE_CONFIG["Driver In-Cab"];
   const allowed = config.allowedTabs || ["home"];
 
   const html = allowed.map(tabKey => {
-    const label = (config.tabLabels && config.tabLabels[tabKey]) || tabKey;
-    const icon = (config.tabIcons && config.tabIcons[tabKey]) || "ri-circle-line";
+    const label = (config.tabLabels && config.tabLabels[tabKey]) || (tabKey === 'copilot' ? 'AI Copilot' : tabKey);
+    const icon = (config.tabIcons && config.tabIcons[tabKey]) || (tabKey === 'copilot' ? 'ri-robot-2-line text-orange-500' : 'ri-circle-line');
     const isActive = activeTabKey === tabKey;
     const activeClass = isActive 
       ? "bg-white text-zinc-900 font-semibold shadow-sm" 
@@ -588,7 +715,7 @@ function renderNavForRole(personaName = null) {
     return `
       <li>
         <a href="#${tabKey}" class="nav-link nav-tab ${isActive ? 'active' : ''} inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs ${activeClass} transition-all" id="nav${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}" data-view="${targetView}" data-tab="${tabKey}" title="${label}" onclick="switchView('${targetView}'); return false;">
-          <i class="${icon} text-[13px] text-zinc-500"></i>
+          <i class="${icon} text-[13px]"></i>
           <span class="nav-label font-semibold">${label}</span>
         </a>
       </li>
@@ -907,14 +1034,8 @@ function renderPersonaExperience(personaName) {
   // 6. Render Role-Isolated Operational Deck
   renderRoleOperationalDeck(personaName);
 
-  // 7. Update Initial AI Welcome Bubble
-  const welcomeBubble = document.querySelector("#messages .msg.ai .msg-bubble");
-  if (welcomeBubble) {
-    welcomeBubble.innerHTML = `
-      <p>${profile.welcome}</p>
-      <p style="font-size: 0.8rem; color: #64748b; margin-top: 6px;">All financial logistics projections verified in <strong>$ USD</strong> via Azure AI Foundry.</p>
-    `;
-  }
+  // 7. Adapt Copilot Console for active persona
+  renderCopilotForPersona(personaName);
 }
 
 // Wire up Role Pill buttons on login card
@@ -1844,6 +1965,13 @@ function switchView(viewId) {
     }
   }
 
+  // 4b. Handle Copilot view persona adaptation
+  if (targetViewId === "viewCopilot") {
+    const activePersona = isAuthenticated() ? (state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab") : "Fleet Manager";
+    renderCopilotForPersona(activePersona);
+    openCopilotWorkspace(true);
+  }
+
   // 5. Dynamic Header Navigation Re-render for the active role & active tab state
   const currentPersona = isAuthenticated() ? (state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab") : null;
   renderNavForRole(currentPersona);
@@ -2027,11 +2155,22 @@ window.focusHomeRoute = (r) => {
    7. INTERACTIVE REPORT & PROMPT HELPERS
    ══════════════════════════════════════════════ */
 window.openCopilotWithPrompt = function(promptText) {
-  switchTab("fleet");
-  openCopilotWorkspace(true);
-  if (userInput) {
-    userInput.value = promptText;
-    setTimeout(() => handleSend(), 200);
+  if (!isAuthenticated()) {
+    openSignInModal('viewCopilot');
+    return;
+  }
+  switchView("viewCopilot");
+  if (typeof openCopilotWorkspace === "function") {
+    openCopilotWorkspace(true);
+  }
+  const input = document.getElementById("userInput");
+  if (input) {
+    input.value = promptText;
+    setTimeout(() => {
+      if (typeof handleSend === "function") {
+        handleSend();
+      }
+    }, 250);
   }
 };
 

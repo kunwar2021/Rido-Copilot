@@ -42,6 +42,7 @@ export class FoundryAgent {
     this.azureSettings = azureSettingsManager;
     this.rag = new RAGEngine();
     this.tools = AI_TOOLS;
+    this.systemPrompt = RIDO_SYSTEM_PROMPT;
   }
 
   /**
@@ -537,7 +538,7 @@ How can I assist your fleet operations today?`;
       payload = {
         model: account.deployment,
         messages: [
-          { role: "system", content: RIDO_SYSTEM_PROMPT },
+          { role: "system", content: this.systemPrompt || RIDO_SYSTEM_PROMPT },
           { role: "user",   content: promptText }
         ]
       };
