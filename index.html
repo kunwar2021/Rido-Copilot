@@ -1040,6 +1040,154 @@
     }
 
     /* ══════════════════════════════════════════════
+       ROLE-ISOLATED OPERATIONAL DECK
+       ══════════════════════════════════════════════ */
+    .role-operational-deck {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .role-deck-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+    }
+
+    .role-deck-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .role-deck-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .role-deck-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .role-deck-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+
+    .role-deck-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+    }
+
+    .role-deck-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .role-deck-card-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .role-deck-card-val {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .role-deck-card-desc {
+      font-size: 0.76rem;
+      color: #64748b;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .role-deck-actions-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      align-items: center;
+    }
+
+    .role-action-pill {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #1e293b;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .role-action-pill:hover {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    .role-action-pill.danger {
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+
+    .role-action-pill.danger:hover {
+      background: #dc2626;
+      color: #ffffff;
+      border-color: #dc2626;
+    }
+
+    .role-action-pill.primary {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+
+    .role-action-pill.primary:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+    }
+
+    /* ══════════════════════════════════════════════
        7. AI COPILOT INTERACTIVE CONSOLE
        ══════════════════════════════════════════════ */
     #copilotSection {
@@ -2217,29 +2365,12 @@
         <span>System: Online</span>
       </div>
 
-      <!-- Persona Dropdown Selector (Image 1) -->
+      <!-- Authenticated Security Context (Role Isolated) -->
       <div class="nav-persona-wrapper" id="personaWrapper">
-        <button type="button" class="nav-persona-btn" id="personaDropdownBtn" title="Switch Operational Persona">
-          <i class="ri-user-line"></i>
-          <span id="headerPersonaBadge">[DISPATCHER GATE]</span>
-          <i class="ri-arrow-down-s-line"></i>
-        </button>
-        <div class="persona-dropdown-menu" id="personaDropdownMenu">
-          <button type="button" class="persona-menu-item" data-persona="Driver In-Cab">
-            <i class="ri-truck-line"></i> Driver In-Cab
-          </button>
-          <button type="button" class="persona-menu-item" data-persona="Compliance Officer">
-            <i class="ri-shield-check-line"></i> Compliance Officer
-          </button>
-          <button type="button" class="persona-menu-item active" data-persona="Dispatcher Gate">
-            <i class="ri-shield-user-line"></i> Dispatcher Gate
-          </button>
-          <button type="button" class="persona-menu-item" data-persona="Fleet Manager">
-            <i class="ri-dashboard-line"></i> Fleet Manager
-          </button>
-          <button type="button" class="persona-menu-item" data-persona="ESG Analyst">
-            <i class="ri-pie-chart-line"></i> ESG &amp; Financial Analyst
-          </button>
+        <div class="nav-persona-btn static-badge" id="personaDropdownBtn" title="Authenticated Operational Role (Enforced by RBAC)" style="cursor: default; display: inline-flex; align-items: center; gap: 6px;">
+          <i class="ri-shield-check-line" style="color: #16a34a;"></i>
+          <span id="headerPersonaBadge">[DRIVER IN-CAB]</span>
+          <span style="font-size: 0.66rem; background: #e2e8f0; color: #334155; padding: 2px 6px; border-radius: 4px; font-weight: 700;">VERIFIED</span>
         </div>
       </div>
 
@@ -2267,7 +2398,7 @@
     <div id="copilotWorkspace" class="copilot-workspace-visible">
 
       <!-- PROCESS WORKFLOW STRIP (EXACT IMAGE 2 MATCH) -->
-      <section class="process-strip">
+      <section class="process-strip" id="processStrip">
         <div class="process-left">
           <span class="process-tag">REAL-TIME INTELLIGENCE</span>
           <h3 class="process-headline">Complete control. End to end.</h3>
@@ -2297,6 +2428,9 @@
       <!-- OPERATIONAL ROLE LIVE HUD & QUICK ACTIONS -->
       <div id="personaLiveHUD" class="persona-live-hud"></div>
       <div id="personaQuickChips" class="persona-quick-chips"></div>
+
+      <!-- ROLE-ISOLATED OPERATIONAL DECK (Visible ONLY to the authenticated role) -->
+      <div id="roleOperationalDeck" class="role-operational-deck"></div>
 
       <!-- AI COPILOT INTERACTIVE CONSOLE (EXACT IMAGE 2 MATCH) -->
       <section id="copilotSection">

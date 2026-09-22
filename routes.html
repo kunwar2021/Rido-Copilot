@@ -920,11 +920,58 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      initMap();
-      const activePersona = sessionStorage.getItem("rido_persona");
-      if (activePersona) {
-        const pBtn = document.querySelector(".nav-persona-btn span");
-        if (pBtn) pBtn.textContent = `[${activePersona.toUpperCase()}]`;
+      // ══════════════════════════════════════════════
+      // ROLE-BASED ACCESS CONTROL (RBAC) ENFORCEMENT
+      // ══════════════════════════════════════════════
+      const activePersona = sessionStorage.getItem("rido_persona") || "Driver In-Cab";
+      const pBtn = document.querySelector(".nav-persona-btn span");
+      if (pBtn) pBtn.textContent = `[${activePersona.toUpperCase()}]`;
+
+      // Filter navbar links for active role
+      const roleNavMap = {
+        "Driver In-Cab": ["index.html", "routes.html"],
+        "Compliance Officer": ["index.html", "reports.html"],
+        "Dispatcher Gate": ["index.html", "fleet.html", "routes.html"],
+        "ESG Analyst": ["index.html", "analytics.html", "reports.html"],
+        "Fleet Manager": ["index.html", "fleet.html", "routes.html", "analytics.html", "reports.html"]
+      };
+      const allowedUrls = roleNavMap[activePersona] || ["index.html"];
+      document.querySelectorAll(".nav-links li").forEach(li => {
+        const a = li.querySelector("a");
+        if (!a) return;
+        const cleanHref = (a.getAttribute("href") || "").split("#")[0];
+        if (!allowedUrls.includes(cleanHref)) {
+          li.style.display = "none";
+        }
+      });
+
+      // Check page authorization (Driver, Dispatcher, Fleet Manager)
+      const pageAllowedRoles = ["Driver In-Cab", "Dispatcher Gate", "Fleet Manager"];
+      if (!pageAllowedRoles.includes(activePersona)) {
+        const main = document.querySelector("main");
+        if (main) {
+          main.innerHTML = `
+            <div style="max-width: 560px; margin: 80px auto; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 24px; padding: 44px 32px; text-align: center; box-shadow: 0 20px 40px -15px rgba(0,0,0,0.06);">
+              <div style="width: 64px; height: 64px; border-radius: 50%; background: #fee2e2; color: #dc2626; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 18px;">
+                <i class="ri-lock-2-line"></i>
+              </div>
+              <h2 style="font-size: 1.45rem; font-weight: 800; color: #0f172a; margin-bottom: 8px; letter-spacing: -0.02em;">Access Restricted</h2>
+              <p style="font-size: 0.9rem; color: #475569; line-height: 1.5; margin-bottom: 6px;">
+                You are signed in as <strong style="color: #0f172a;">[${activePersona.toUpperCase()}]</strong>.
+              </p>
+              <p style="font-size: 0.82rem; color: #64748b; line-height: 1.5; margin-bottom: 24px;">
+                Route Corridor Dispatch &amp; Highway Telematics is restricted to <strong>Drivers</strong>, <strong>Dispatchers</strong>, and <strong>Fleet Managers</strong>.
+              </p>
+              <div style="display: flex; gap: 12px; justify-content: center;">
+                <a href="index.html" style="background: #0f172a; color: #ffffff; padding: 11px 22px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                  <i class="ri-arrow-left-line"></i> Return to Authorized Hub
+                </a>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        initMap();
       }
     });
   </script>

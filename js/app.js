@@ -269,6 +269,73 @@ const PERSONA_PROFILES = {
   }
 };
 
+/* ══════════════════════════════════════════════
+   ROLE-BASED ACCESS CONTROL (RBAC) POLICY
+   Strict isolation: one role's features cannot be seen or accessed by another
+   ══════════════════════════════════════════════ */
+const ROLE_PERMISSIONS = {
+  "Driver In-Cab": {
+    badge: "[DRIVER IN-CAB]",
+    allowedNavs: ["navHome", "navRoutes"],
+    navLabels: {
+      "navHome": "In-Cab Cockpit",
+      "navRoutes": "My Active Route"
+    },
+    allowedViews: ["viewHome", "viewRoutes"],
+    allowedPages: ["index.html", "routes.html"],
+    showProcessStrip: false
+  },
+  "Compliance Officer": {
+    badge: "[COMPLIANCE OFFICER]",
+    allowedNavs: ["navHome", "navReports"],
+    navLabels: {
+      "navHome": "Safety & Audit Hub",
+      "navReports": "Regulatory Dockets"
+    },
+    allowedViews: ["viewHome", "viewReports"],
+    allowedPages: ["index.html", "reports.html"],
+    showProcessStrip: false
+  },
+  "Dispatcher Gate": {
+    badge: "[DISPATCHER GATE]",
+    allowedNavs: ["navHome", "navFleet", "navRoutes"],
+    navLabels: {
+      "navHome": "Gate Operations",
+      "navFleet": "Fleet Tracking",
+      "navRoutes": "Corridor Dispatch"
+    },
+    allowedViews: ["viewHome", "viewFleet", "viewRoutes"],
+    allowedPages: ["index.html", "fleet.html", "routes.html"],
+    showProcessStrip: true
+  },
+  "ESG Analyst": {
+    badge: "[ESG ANALYST]",
+    allowedNavs: ["navHome", "navAnalytics", "navReports"],
+    navLabels: {
+      "navHome": "Financial Overview",
+      "navAnalytics": "ESG Analytics",
+      "navReports": "Sustainability Dockets"
+    },
+    allowedViews: ["viewHome", "viewAnalytics", "viewReports"],
+    allowedPages: ["index.html", "analytics.html", "reports.html"],
+    showProcessStrip: false
+  },
+  "Fleet Manager": {
+    badge: "[FLEET MANAGER]",
+    allowedNavs: ["navHome", "navFleet", "navRoutes", "navAnalytics", "navReports"],
+    navLabels: {
+      "navHome": "Mission Control",
+      "navFleet": "Fleet IQ",
+      "navRoutes": "Corridor Routes",
+      "navAnalytics": "Analytics",
+      "navReports": "Reports"
+    },
+    allowedViews: ["viewHome", "viewFleet", "viewRoutes", "viewAnalytics", "viewReports"],
+    allowedPages: ["index.html", "fleet.html", "routes.html", "analytics.html", "reports.html"],
+    showProcessStrip: true
+  }
+};
+
 function detectPersonaFromEmail(email) {
   const em = (email || "").toLowerCase().trim();
   if (em.includes("driver") || em.includes("cab") || em.includes("hauler")) {
@@ -285,14 +352,242 @@ function detectPersonaFromEmail(email) {
   return "Driver In-Cab"; // Default friendly role
 }
 
+function renderRoleOperationalDeck(personaName) {
+  const deck = document.getElementById("roleOperationalDeck");
+  if (!deck) return;
+
+  if (personaName === "Driver In-Cab") {
+    deck.innerHTML = `
+      <div class="role-deck-header">
+        <div class="role-deck-title"><i class="ri-truck-line" style="color: #16a34a;"></i> In-Cab Instrument Cluster &amp; Telematics</div>
+        <span class="role-deck-badge" style="background: #dcfce7; color: #166534;"><i class="ri-wifi-line"></i> In-Cab Telematics Live</span>
+      </div>
+      <div class="role-deck-grid">
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-dashboard-3-line"></i> Vehicle Dynamics</span>
+            <span style="font-size: 0.72rem; color: #16a34a; font-weight: 700;">● CRUISE READY</span>
+          </div>
+          <div class="role-deck-card-val">72 <span style="font-size: 0.9rem; color: #64748b;">km/h</span></div>
+          <div class="role-deck-card-desc">Connected to <strong>Unit TRK-A (Scania 45R)</strong>. High-voltage battery: 75% SOC (310 km range remaining).</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-temp-cold-line"></i> Reefer Cargo Chiller</span>
+            <span style="font-size: 0.72rem; color: #0284c7; font-weight: 700;">● PHARMA SAFE</span>
+          </div>
+          <div class="role-deck-card-val">+3.6 <span style="font-size: 0.9rem; color: #64748b;">°C</span></div>
+          <div class="role-deck-card-desc">Continuous cold-chain lock. Secondary backup compressor standing by on auxiliary inverter.</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-timer-line"></i> HOS Shift Window</span>
+            <span style="font-size: 0.72rem; color: #ea580c; font-weight: 700;">● REST DUE SOON</span>
+          </div>
+          <div class="role-deck-card-val">3h 15m <span style="font-size: 0.9rem; color: #64748b;">left</span></div>
+          <div class="role-deck-card-desc">Next mandatory 45-min rest halt at <strong>Jaipur Supercharger Oasis</strong> (42 km ahead on Path-1).</div>
+        </div>
+      </div>
+      <div class="role-deck-actions-strip">
+        <span style="font-size: 0.76rem; font-weight: 700; color: #475569; margin-right: 6px;">In-Cab Actions:</span>
+        <button type="button" class="role-action-pill primary" onclick="openCopilotWithPrompt('Driver Assistant: Reserve a 350kW DC fast-charging bay at Jaipur Supercharger for TRK-A.')"><i class="ri-flashlight-line"></i> Reserve 350kW Fast-Charger</button>
+        <button type="button" class="role-action-pill" onclick="openCopilotWithPrompt('Driver Assistant: Log mandatory 45-minute rest break at Jaipur Oasis into electronic logging device.')"><i class="ri-cup-line"></i> Log 45-Min Rest Halt</button>
+        <button type="button" class="role-action-pill" onclick="openCopilotWithPrompt('Driver Assistant: Inspect real-time reefer temperature integrity and compressor telemetry.')"><i class="ri-temp-cold-line"></i> Check Reefer Chiller</button>
+        <button type="button" class="role-action-pill danger" onclick="alert('🚨 EMERGENCY ALERT SENT: In-cab distress beacon transmitted to Western Corridor Dispatch with live GPS coordinates.')"><i class="ri-alarm-warning-line"></i> In-Cab SOS Emergency</button>
+      </div>
+    `;
+  } else if (personaName === "Compliance Officer") {
+    deck.innerHTML = `
+      <div class="role-deck-header">
+        <div class="role-deck-title"><i class="ri-shield-check-line" style="color: #4f46e5;"></i> Regulatory Compliance &amp; Safety Surveillance Deck</div>
+        <span class="role-deck-badge" style="background: #e0e7ff; color: #3730a3;"><i class="ri-lock-line"></i> Audit Surveillance Active</span>
+      </div>
+      <div class="role-deck-grid">
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-shield-keyhole-line"></i> Cold-Chain Integrity</span>
+            <span style="font-size: 0.72rem; color: #16a34a; font-weight: 700;">● 99.1% COMPLIANT</span>
+          </div>
+          <div class="role-deck-card-val">0 <span style="font-size: 0.9rem; color: #64748b;">Spoilage Losses</span></div>
+          <div class="role-deck-card-desc">All 250 refrigerated freight shipments maintained pharmaceutical &amp; food safety thermal margins.</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-file-user-line"></i> HOS Logbook Audit</span>
+            <span style="font-size: 0.72rem; color: #16a34a; font-weight: 700;">● CERTIFIED</span>
+          </div>
+          <div class="role-deck-card-val">100% <span style="font-size: 0.9rem; color: #64748b;">ELD Compliance</span></div>
+          <div class="role-deck-card-desc">Zero hours-of-service fatigue infractions detected across active interstate hauler shifts.</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-error-warning-line"></i> Audit Exception</span>
+            <span style="font-size: 0.72rem; color: #e11d48; font-weight: 700;">● RESOLVED</span>
+          </div>
+          <div class="role-deck-card-val">Jaipur <span style="font-size: 0.9rem; color: #64748b;">Telemetry Event</span></div>
+          <div class="role-deck-card-desc">Brief +4.8°C spike auto-stabilized in 8 minutes by backup dual-compressor. Non-critical.</div>
+        </div>
+      </div>
+      <div class="role-deck-actions-strip">
+        <span style="font-size: 0.76rem; font-weight: 700; color: #475569; margin-right: 6px;">Compliance Actions:</span>
+        <button type="button" class="role-action-pill primary" onclick="openCopilotWithPrompt('Compliance Audit: Compile and certify TCO Financial Audit in US Dollars ($ USD) with Scope 1 & 2 fuel breakdown.')"><i class="ri-file-shield-2-line"></i> Generate Regulatory Docket</button>
+        <button type="button" class="role-action-pill" onclick="openCopilotWithPrompt('Compliance Audit: Generate certified Hours-of-Service shift docket across active drivers.')"><i class="ri-file-user-line"></i> Audit HOS Shift Logs</button>
+        <button type="button" class="role-action-pill" onclick="openCopilotWithPrompt('Compliance Alert: Inspect TRK-A Jaipur sector temperature breach log and verify secondary chiller engagement.')"><i class="ri-alert-line"></i> Review Anomaly Log</button>
+        <a href="reports.html" class="role-action-pill"><i class="ri-download-2-line"></i> Download Certified PDF</a>
+      </div>
+    `;
+  } else if (personaName === "Dispatcher Gate") {
+    deck.innerHTML = `
+      <div class="role-deck-header">
+        <div class="role-deck-title"><i class="ri-shield-user-line" style="color: #0f172a;"></i> Dispatcher Gate &amp; Yard Management Deck</div>
+        <span class="role-deck-badge" style="background: #f1f5f9; color: #0f172a;"><i class="ri-building-2-line"></i> Mega Depot Active</span>
+      </div>
+      <div class="role-deck-grid">
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-truck-line"></i> Inbound Gate Queue</span>
+            <span style="font-size: 0.72rem; color: #2563eb; font-weight: 700;">● AUTO-STAGING</span>
+          </div>
+          <div class="role-deck-card-val">8 <span style="font-size: 0.9rem; color: #64748b;">Trucks Queued</span></div>
+          <div class="role-deck-card-desc">Average gate dwell time: 4.2 minutes. RFID and telematics auto-verified.</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-road-map-line"></i> Outbound Freight</span>
+            <span style="font-size: 0.72rem; color: #16a34a; font-weight: 700;">● ON SCHEDULE</span>
+          </div>
+          <div class="role-deck-card-val">12 <span style="font-size: 0.9rem; color: #64748b;">Scheduled</span></div>
+          <div class="role-deck-card-desc">Western Dedicated Freight Corridor staging on track. All fast-charging reservations confirmed.</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-parking-box-line"></i> Dock Bay Capacity</span>
+            <span style="font-size: 0.72rem; color: #0284c7; font-weight: 700;">● 92% CAPACITY</span>
+          </div>
+          <div class="role-deck-card-val">14 / 16 <span style="font-size: 0.9rem; color: #64748b;">Bays Busy</span></div>
+          <div class="role-deck-card-desc">Bay 4 and Bay 9 clearing in 12 minutes. Fast turn-around protocol engaged.</div>
+        </div>
+      </div>
+      <div class="role-deck-actions-strip">
+        <span style="font-size: 0.76rem; font-weight: 700; color: #475569; margin-right: 6px;">Yard Controls:</span>
+        <button type="button" class="role-action-pill primary" onclick="alert('Loading Bay Reallocated: Bay 4 assigned to Unit TRK-A for rapid cold-chain unloading.')"><i class="ri-exchange-line"></i> Reallocate Loading Bay</button>
+        <button type="button" class="role-action-pill" onclick="openCopilotWithPrompt('Schedule departure docket and driver assignment for Interstate-07 departing Ahmedabad for Mumbai in $ USD.')"><i class="ri-calendar-check-line"></i> Schedule Departure</button>
+        <a href="fleet.html" class="role-action-pill"><i class="ri-dashboard-line"></i> Open Live Fleet Tracking</a>
+      </div>
+    `;
+  } else if (personaName === "ESG Analyst") {
+    deck.innerHTML = `
+      <div class="role-deck-header">
+        <div class="role-deck-title"><i class="ri-pie-chart-line" style="color: #10b981;"></i> Corporate ESG &amp; Financial Portfolio Deck</div>
+        <span class="role-deck-badge" style="background: #ecfdf5; color: #065f46;"><i class="ri-line-chart-line"></i> Currency: $ USD</span>
+      </div>
+      <div class="role-deck-grid">
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-leaf-line"></i> Scope 1 Emissions Abated</span>
+            <span style="font-size: 0.72rem; color: #16a34a; font-weight: 700;">● VERIFIED</span>
+          </div>
+          <div class="role-deck-card-val">142.6 <span style="font-size: 0.9rem; color: #64748b;">MT CO₂e</span></div>
+          <div class="role-deck-card-desc">Commercial EV electric corridors reduced diesel carbon footprint by 38.4% month-to-date.</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-money-dollar-circle-line"></i> TCO Net Savings</span>
+            <span style="font-size: 0.72rem; color: #16a34a; font-weight: 700;">● $85 / LEG</span>
+          </div>
+          <div class="role-deck-card-val">$21,250 <span style="font-size: 0.9rem; color: #64748b;">USD Total</span></div>
+          <div class="role-deck-card-desc">Aggregate fuel and toll savings across 250 corridor dispatches compared to diesel baseline.</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-award-line"></i> Sustainability Rating</span>
+            <span style="font-size: 0.72rem; color: #0284c7; font-weight: 700;">● TOP 5%</span>
+          </div>
+          <div class="role-deck-card-val">98 / 100 <span style="font-size: 0.9rem; color: #64748b;">Score</span></div>
+          <div class="role-deck-card-desc">Top decile commercial ESG benchmark compliant with global freight decarbonization standards.</div>
+        </div>
+      </div>
+      <div class="role-deck-actions-strip">
+        <span style="font-size: 0.76rem; font-weight: 700; color: #475569; margin-right: 6px;">Financial &amp; ESG Actions:</span>
+        <button type="button" class="role-action-pill primary" onclick="openCopilotWithPrompt('Provide ESG multi-fuel emissions comparison for EV vs Diesel vs CNG for 450 km freight leg with all fuel and toll expenses in US Dollars ($ USD).')"><i class="ri-funds-line"></i> Recalculate Fuel Parity ($ USD)</button>
+        <button type="button" class="role-action-pill" onclick="openCopilotWithPrompt('Analyze monthly fleet emissions trajectory from Jan through Dec and project Q4 ESG targets.')"><i class="ri-line-chart-line"></i> Forecast Q4 Carbon Trajectory</button>
+        <a href="analytics.html" class="role-action-pill"><i class="ri-bar-chart-2-line"></i> Open Analytics Dashboard</a>
+      </div>
+    `;
+  } else {
+    // Fleet Manager
+    deck.innerHTML = `
+      <div class="role-deck-header">
+        <div class="role-deck-title"><i class="ri-dashboard-line" style="color: #0284c7;"></i> Fleet IQ Executive Operations Deck</div>
+        <span class="role-deck-badge" style="background: #eff6ff; color: #1e40af;"><i class="ri-check-double-line"></i> Full Authority</span>
+      </div>
+      <div class="role-deck-grid">
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-truck-line"></i> Active Commercial Fleet</span>
+            <span style="font-size: 0.72rem; color: #16a34a; font-weight: 700;">● 96.8% ONLINE</span>
+          </div>
+          <div class="role-deck-card-val">242 / 250 <span style="font-size: 0.9rem; color: #64748b;">Assets</span></div>
+          <div class="role-deck-card-desc">Commercial haulers active on Western &amp; Northern Freight Corridors with live IoT telemetry.</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-battery-charge-line"></i> EV High-Voltage Health</span>
+            <span style="font-size: 0.72rem; color: #0284c7; font-weight: 700;">● OPTIMAL</span>
+          </div>
+          <div class="role-deck-card-val">76% <span style="font-size: 0.9rem; color: #64748b;">Avg SOC</span></div>
+          <div class="role-deck-card-desc">Cell balancing telemetry normal across all Scania 45R and Volvo FH Electric powertrains.</div>
+        </div>
+        <div class="role-deck-card">
+          <div class="role-deck-card-top">
+            <span class="role-deck-card-label"><i class="ri-tools-line"></i> Preventive Maintenance</span>
+            <span style="font-size: 0.72rem; color: #ea580c; font-weight: 700;">● SCHEDULED</span>
+          </div>
+          <div class="role-deck-card-val">3 <span style="font-size: 0.9rem; color: #64748b;">Due at Hub</span></div>
+          <div class="role-deck-card-desc">Brake lining and coolant service scheduled at Mumbai Central Mega Depot. Zero downtime.</div>
+        </div>
+      </div>
+      <div class="role-deck-actions-strip">
+        <span style="font-size: 0.76rem; font-weight: 700; color: #475569; margin-right: 6px;">Fleet Operations:</span>
+        <button type="button" class="role-action-pill primary" onclick="openCopilotWithPrompt('Perform telematics asset health audit across 250 commercial vehicles in $ USD.')"><i class="ri-stethoscope-line"></i> Run Fleet Diagnostic</button>
+        <a href="fleet.html" class="role-action-pill"><i class="ri-truck-line"></i> Fleet IQ Dashboard</a>
+        <a href="routes.html" class="role-action-pill"><i class="ri-route-line"></i> Corridor Optimization</a>
+        <a href="analytics.html" class="role-action-pill"><i class="ri-line-chart-line"></i> Analytics</a>
+      </div>
+    `;
+  }
+}
+
 function renderPersonaExperience(personaName) {
   const profile = PERSONA_PROFILES[personaName] || PERSONA_PROFILES["Driver In-Cab"];
+  const perms = ROLE_PERMISSIONS[personaName] || ROLE_PERMISSIONS["Driver In-Cab"];
 
   // 1. Update Header Badges
   if (headerPersonaBadge) headerPersonaBadge.innerText = profile.badge;
   if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${personaName}</strong>`;
 
-  // 2. Render Live Operational HUD
+  // 2. Strict Navigation Bar Filtering (Role Isolation)
+  const navItems = document.querySelectorAll(".nav-links li");
+  navItems.forEach(li => {
+    const a = li.querySelector("a.nav-link");
+    if (!a) return;
+    if (perms.allowedNavs.includes(a.id)) {
+      li.style.display = "";
+      if (perms.navLabels && perms.navLabels[a.id]) {
+        a.textContent = perms.navLabels[a.id];
+      }
+    } else {
+      li.style.display = "none";
+    }
+  });
+
+  // 3. Process Strip Visibility (Fleet Manager / Dispatcher only)
+  const processStrip = document.getElementById("processStrip");
+  if (processStrip) {
+    processStrip.style.display = perms.showProcessStrip ? "flex" : "none";
+  }
+
+  // 4. Render Live Operational HUD
   const hudContainer = document.getElementById("personaLiveHUD");
   if (hudContainer) {
     const metricsHtml = profile.metrics.map(m => `
@@ -326,7 +621,7 @@ function renderPersonaExperience(personaName) {
     `;
   }
 
-  // 3. Render Quick Action Scenario Chips
+  // 5. Render Quick Action Scenario Chips
   const chipsContainer = document.getElementById("personaQuickChips");
   if (chipsContainer) {
     chipsContainer.innerHTML = profile.chips.map(c => `
@@ -336,7 +631,10 @@ function renderPersonaExperience(personaName) {
     `).join("");
   }
 
-  // 4. Update Initial AI Welcome Bubble
+  // 6. Render Role-Isolated Operational Deck
+  renderRoleOperationalDeck(personaName);
+
+  // 7. Update Initial AI Welcome Bubble
   const welcomeBubble = document.querySelector("#messages .msg.ai .msg-bubble");
   if (welcomeBubble) {
     welcomeBubble.innerHTML = `
@@ -683,7 +981,9 @@ async function handleSend() {
 
     // Mandatory instruction for the agent to calculate and display costs in USD ($)
     const dollarDirective = `\n\n[MANDATORY SYSTEM DIRECTIVE]: State ALL financial numbers, fuel costs, toll charges, economic figures, and cost savings strictly in US Dollars ($ USD). Never use Indian Rupees or the ₹ symbol. If estimating for Indian routes, convert costs to realistic US Dollars (e.g. $1 USD ≈ 85 INR).`;
-    const body = { input: text + dollarDirective };
+    const activeRole = state.persona || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
+    const roleDirective = `\n\n[AUTHENTICATED OPERATIONAL ROLE]: You are communicating with a user authenticated as "${activeRole}". Tailor your responses strictly within the domain and security privileges of this role. Explain that access is restricted if they request data or controls belonging to another role.`;
+    const body = { input: text + dollarDirective + roleDirective };
     if (previousResponseId) body.previous_response_id = previousResponseId;
 
     const res = await fetch(AGENT_ENDPOINT, {
@@ -887,6 +1187,15 @@ const navLinks = document.querySelectorAll(".nav-links .nav-link");
 const allViews = document.querySelectorAll(".app-page-view");
 
 function switchView(viewId) {
+  const currentPersona = state.persona || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
+  const perms = ROLE_PERMISSIONS[currentPersona] || ROLE_PERMISSIONS["Driver In-Cab"];
+
+  // RBAC Guard: Block access if the role does not have permission
+  if (perms && perms.allowedViews && !perms.allowedViews.includes(viewId)) {
+    alert(`Access Restricted: Your active role [${currentPersona}] is not authorized to view this section.`);
+    return;
+  }
+
   allViews.forEach(v => v.style.display = "none");
   const targetView = document.getElementById(viewId);
   if (targetView) {
