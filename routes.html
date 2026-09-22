@@ -592,18 +592,32 @@
           <button class="map-zoom-btn" title="Zoom out" onclick="zoomOutMap()">&minus;</button>
         </div>
 
-        <div class="map-legend-pill">
-          <div class="legend-item" onclick="focusRoute('path1')">
-            <div class="legend-line green"></div>
-            <span>Path-1 (Green EV Corridor)</span>
+        <div style="display: flex; align-items: center; gap: 10px; pointer-events: auto;">
+          <div class="map-legend-pill">
+            <div class="legend-item" onclick="focusRoute('path1')">
+              <div class="legend-line green"></div>
+              <span>Path-1 (Green EV Corridor)</span>
+            </div>
+            <div class="legend-item" onclick="focusRoute('path2')">
+              <div class="legend-line blue"></div>
+              <span>Path-2 (Diesel Tollway)</span>
+            </div>
+            <div class="legend-item" onclick="focusRoute('path3')">
+              <div class="legend-line orange"></div>
+              <span>Path-3 (Expressway)</span>
+            </div>
           </div>
-          <div class="legend-item" onclick="focusRoute('path2')">
-            <div class="legend-line blue"></div>
-            <span>Path-2 (Diesel Tollway)</span>
-          </div>
-          <div class="legend-item" onclick="focusRoute('path3')">
-            <div class="legend-line orange"></div>
-            <span>Path-3 (Expressway)</span>
+
+          <div class="map-legend-pill" style="gap: 12px;">
+            <div class="legend-item map-type-btn active" id="btnTypeRoad" style="color: #4f46e5; font-weight: 800;" onclick="setGoogleMapType('m')">
+              <i class="ri-map-2-line"></i> <span>Google Map</span>
+            </div>
+            <div class="legend-item map-type-btn" id="btnTypeSatellite" onclick="setGoogleMapType('y')">
+              <i class="ri-earth-line"></i> <span>Satellite</span>
+            </div>
+            <div class="legend-item map-type-btn" id="btnTypeTerrain" onclick="setGoogleMapType('p')">
+              <i class="ri-landscape-line"></i> <span>Terrain</span>
+            </div>
           </div>
         </div>
       </div>
@@ -663,6 +677,32 @@
   <script>
     let map;
     let polyPath1, polyPath2, polyPath3;
+    let currentTileLayer;
+
+    function setGoogleMapType(type) {
+      if (!map) return;
+      if (currentTileLayer) map.removeLayer(currentTileLayer);
+      currentTileLayer = L.tileLayer(`https://{s}.google.com/vt/lyrs=${type}&x={x}&y={y}&z={z}`, {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; Google Maps'
+      }).addTo(map);
+
+      document.querySelectorAll('.map-type-btn').forEach(b => {
+        b.classList.remove('active');
+        b.style.color = '#1e293b';
+      });
+      if (type === 'm') {
+        const b = document.getElementById('btnTypeRoad');
+        if (b) { b.classList.add('active'); b.style.color = '#4f46e5'; }
+      } else if (type === 'y') {
+        const b = document.getElementById('btnTypeSatellite');
+        if (b) { b.classList.add('active'); b.style.color = '#4f46e5'; }
+      } else if (type === 'p') {
+        const b = document.getElementById('btnTypeTerrain');
+        if (b) { b.classList.add('active'); b.style.color = '#4f46e5'; }
+      }
+    }
 
     function initMap() {
       // Center on Western Dedicated Freight Corridor (Delhi to Mumbai)
@@ -671,10 +711,11 @@
         attributionControl: false
       }).setView([24.2, 74.8], 6);
 
-      // Clean, enterprise Carto Voyager tiles
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 18,
-        subdomains: 'abcd'
+      // Official Google Maps Roadmap layer (Zero watermark, No API key needed)
+      currentTileLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '&copy; Google Maps'
       }).addTo(map);
 
       // Path-1 (Green EV Corridor) - Through Solar & 350kW Fast Charging Stations

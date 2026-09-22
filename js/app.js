@@ -744,9 +744,11 @@ function initHomeRoutesMap() {
     attributionControl: false
   }).setView([24.2, 74.8], 6);
 
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    maxZoom: 18,
-    subdomains: 'abcd'
+  // Official Google Maps Roadmap layer (Zero watermark, No API key needed)
+  L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+    maxZoom: 20,
+    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+    attribution: '&copy; Google Maps'
   }).addTo(homeLeafletMap);
 
   const path1Coords = [
