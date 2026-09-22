@@ -3039,30 +3039,30 @@
       <nav class="hidden md:flex items-center bg-zinc-100/90 p-1.5 rounded-full border border-zinc-200/80 shadow-inner">
         <ul class="nav-links flex items-center gap-1 list-none m-0 p-0">
           <li>
-            <a href="#home" class="nav-link active inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-zinc-900 bg-white shadow-sm transition-all" id="navHome" data-view="viewHome" data-tab="home">
-              <span class="nav-label">Home</span>
+            <a href="#home" class="nav-link active inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold text-zinc-900 bg-white shadow-sm transition-all" id="navHome" data-view="viewHome" data-tab="home" title="Mission Control">
+              <span class="nav-label">Mission Control</span>
             </a>
           </li>
           <li>
-            <a href="#fleet" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navFleet" data-view="viewFleet" data-tab="fleet">
-              <span class="nav-label">Fleet</span>
+            <a href="#fleet" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navFleet" data-view="viewFleet" data-tab="fleet" title="Fleet IQ">
+              <span class="nav-label">Fleet IQ</span>
               <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
             </a>
           </li>
           <li>
-            <a href="#routes" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navRoutes" data-view="viewRoutes" data-tab="routes">
-              <span class="nav-label">Routes</span>
+            <a href="#routes" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navRoutes" data-view="viewRoutes" data-tab="routes" title="Corridor Routes">
+              <span class="nav-label">Corridor Routes</span>
               <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
             </a>
           </li>
           <li>
-            <a href="#analytics" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navAnalytics" data-view="viewAnalytics" data-tab="analytics">
+            <a href="#analytics" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navAnalytics" data-view="viewAnalytics" data-tab="analytics" title="Analytics">
               <span class="nav-label">Analytics</span>
               <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
             </a>
           </li>
           <li>
-            <a href="#reports" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navReports" data-view="viewReports" data-tab="reports">
+            <a href="#reports" class="nav-link locked inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium text-zinc-600 hover:text-zinc-900 transition-all" id="navReports" data-view="viewReports" data-tab="reports" title="Reports">
               <span class="nav-label">Reports</span>
               <i class="ri-lock-2-line nav-lock-icon text-[11px] text-zinc-400"></i>
             </a>
@@ -3709,113 +3709,7 @@
 
 
 
-      <div id="copilotWorkspace" class="copilot-workspace-visible max-w-7xl mx-auto px-6 py-8 w-full">
-<button type="button" class="guest-signin-btn" id="guestBannerSignInBtn">
-          <i class="ri-login-box-r-line"></i> Sign In to Unlock &rarr;
-        </button>
-      </div>
-
-      <!-- PROCESS WORKFLOW STRIP (EXACT IMAGE 2 MATCH) -->
-      <section class="process-strip" id="processStrip">
-        <div class="process-left">
-          <span class="process-tag">REAL-TIME INTELLIGENCE</span>
-          <h3 class="process-headline">Complete control. End to end.</h3>
-        </div>
-        <div class="process-steps">
-          <div class="process-step">
-            <i class="ri-map-pin-line text-indigo-600"></i> Set Route
-          </div>
-          <i class="ri-arrow-right-s-line process-arrow"></i>
-          <div class="process-step">
-            <i class="ri-truck-line text-cyan-600"></i> Compare Fleets
-          </div>
-          <i class="ri-arrow-right-s-line process-arrow"></i>
-          <div class="process-step">
-            <i class="ri-settings-4-line text-amber-600"></i> Optimize
-          </div>
-          <i class="ri-arrow-right-s-line process-arrow"></i>
-          <div class="process-step">
-            <i class="ri-line-chart-line text-emerald-600"></i> Monitor
-          </div>
-        </div>
-        <div class="process-badge">
-          <i class="ri-flashlight-line"></i> Smarter decisions. Greater efficiency.
-        </div>
-      </section>
-
-      <!-- OPERATIONAL ROLE LIVE HUD & QUICK ACTIONS -->
-      <div id="personaLiveHUD" class="persona-live-hud"></div>
-      <div id="personaQuickChips" class="persona-quick-chips"></div>
-
-      <!-- ROLE-ISOLATED OPERATIONAL DECK (Visible ONLY to the authenticated role) -->
-      <div id="roleOperationalDeck" class="role-operational-deck"></div>
-
-      <!-- AI COPILOT INTERACTIVE CONSOLE (EXACT IMAGE 2 MATCH) -->
-      <section id="copilotSection">
-        <div class="copilot-header">
-          <div class="copilot-brand">
-            <div class="copilot-icon">🚛</div>
-            <div class="copilot-title-group">
-              <h3>RIDO AI Copilot Console</h3>
-              <span>Responses Protocol &middot; gpt-6-astra &middot; Currency: US Dollars ($ USD)</span>
-            </div>
-          </div>
-
-          <div class="copilot-actions">
-            <div class="hud-chip">
-              <i class="ri-timer-line"></i> PING: <strong id="hudPing">380ms</strong>
-            </div>
-            <div class="hud-chip">
-              <i class="ri-money-dollar-circle-line"></i> SPENT: <strong id="hudSpent">$0.0024</strong>
-            </div>
-            <button class="nav-action-btn" id="clearBtn" title="Reset Chat Conversation">
-              <i class="ri-refresh-line"></i> Reset Chat
-            </button>
-            <button class="nav-action-btn" onclick="window.location.reload()" title="Start New AI Session">
-              <i class="ri-add-line"></i> New Session
-            </button>
-          </div>
-        </div>
-
-        <!-- Messages Stream -->
-        <div id="messages">
-          <div class="msg ai">
-            <div class="msg-avatar">🤖</div>
-            <div class="msg-bubble-wrap">
-              <div class="msg-bubble">
-                <p><strong>Welcome to RIDO Mission Control.</strong> I am your enterprise fleet intelligence assistant powered by <strong>Azure AI Foundry</strong> and <strong>gpt-6-astra</strong>.</p>
-                <p>Click any feature card above or ask me to optimize green EV freight corridors, monitor cold-chain reefer breaches, or audit driver Hours-of-Service. All financial metrics are quoted in <strong>$ USD</strong>.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Input Dock -->
-        <div class="input-dock" id="copilotInputDock">
-          <div class="input-row">
-            <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
-            
-            <!-- Mic Dictation -->
-            <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
-              <i class="ri-mic-line"></i>
-            </button>
-
-            <!-- Send Button -->
-            <button type="button" id="sendBtn" title="Send to Azure Foundry">
-              <i class="ri-send-plane-2-fill"></i>
-            </button>
-          </div>
-
-          <div class="input-meta-bar">
-            <span>Microsoft Azure AI Foundry &middot; <kbd>Enter</kbd> to Dispatch &middot; Shift+Enter for new line</span>
-            <span id="dispatcherNameBadge">Persona: <strong>Fleet Manager</strong></span>
-          </div>
-        </div>
-      </section>
-
-    </div>
-      </div>
-    </div> <!-- /#viewHome -->
+      </div> <!-- /#viewHome -->
 
     <div id="viewFleet" class="app-page-view" style="display: none;">
       <!-- Title Bar -->
@@ -4025,6 +3919,112 @@
             </tr>
           </tbody>
         </table>
+      </div>
+    
+
+      <!-- RIDO COPILOT WORKSPACE (RELOCATED TO OPERATIONAL FLEET VIEW) -->
+<div id="copilotWorkspace" class="copilot-workspace-visible max-w-7xl mx-auto px-6 py-8 w-full">
+
+
+      <!-- PROCESS WORKFLOW STRIP (EXACT IMAGE 2 MATCH) -->
+      <section class="process-strip" id="processStrip">
+        <div class="process-left">
+          <span class="process-tag">REAL-TIME INTELLIGENCE</span>
+          <h3 class="process-headline">Complete control. End to end.</h3>
+        </div>
+        <div class="process-steps">
+          <div class="process-step">
+            <i class="ri-map-pin-line text-indigo-600"></i> Set Route
+          </div>
+          <i class="ri-arrow-right-s-line process-arrow"></i>
+          <div class="process-step">
+            <i class="ri-truck-line text-cyan-600"></i> Compare Fleets
+          </div>
+          <i class="ri-arrow-right-s-line process-arrow"></i>
+          <div class="process-step">
+            <i class="ri-settings-4-line text-amber-600"></i> Optimize
+          </div>
+          <i class="ri-arrow-right-s-line process-arrow"></i>
+          <div class="process-step">
+            <i class="ri-line-chart-line text-emerald-600"></i> Monitor
+          </div>
+        </div>
+        <div class="process-badge">
+          <i class="ri-flashlight-line"></i> Smarter decisions. Greater efficiency.
+        </div>
+      </section>
+
+      <!-- OPERATIONAL ROLE LIVE HUD & QUICK ACTIONS -->
+      <div id="personaLiveHUD" class="persona-live-hud"></div>
+      <div id="personaQuickChips" class="persona-quick-chips"></div>
+
+      <!-- ROLE-ISOLATED OPERATIONAL DECK (Visible ONLY to the authenticated role) -->
+      <div id="roleOperationalDeck" class="role-operational-deck"></div>
+
+      <!-- AI COPILOT INTERACTIVE CONSOLE (EXACT IMAGE 2 MATCH) -->
+      <section id="copilotSection">
+        <div class="copilot-header">
+          <div class="copilot-brand">
+            <div class="copilot-icon">🚛</div>
+            <div class="copilot-title-group">
+              <h3>RIDO AI Copilot Console</h3>
+              <span>Responses Protocol &middot; gpt-6-astra &middot; Currency: US Dollars ($ USD)</span>
+            </div>
+          </div>
+
+          <div class="copilot-actions">
+            <div class="hud-chip">
+              <i class="ri-timer-line"></i> PING: <strong id="hudPing">380ms</strong>
+            </div>
+            <div class="hud-chip">
+              <i class="ri-money-dollar-circle-line"></i> SPENT: <strong id="hudSpent">$0.0024</strong>
+            </div>
+            <button class="nav-action-btn" id="clearBtn" title="Reset Chat Conversation">
+              <i class="ri-refresh-line"></i> Reset Chat
+            </button>
+            <button class="nav-action-btn" onclick="window.location.reload()" title="Start New AI Session">
+              <i class="ri-add-line"></i> New Session
+            </button>
+          </div>
+        </div>
+
+        <!-- Messages Stream -->
+        <div id="messages">
+          <div class="msg ai">
+            <div class="msg-avatar">🤖</div>
+            <div class="msg-bubble-wrap">
+              <div class="msg-bubble">
+                <p><strong>Welcome to RIDO Mission Control.</strong> I am your enterprise fleet intelligence assistant powered by <strong>Azure AI Foundry</strong> and <strong>gpt-6-astra</strong>.</p>
+                <p>Click any feature card above or ask me to optimize green EV freight corridors, monitor cold-chain reefer breaches, or audit driver Hours-of-Service. All financial metrics are quoted in <strong>$ USD</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Input Dock -->
+        <div class="input-dock" id="copilotInputDock">
+          <div class="input-row">
+            <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
+            
+            <!-- Mic Dictation -->
+            <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
+              <i class="ri-mic-line"></i>
+            </button>
+
+            <!-- Send Button -->
+            <button type="button" id="sendBtn" title="Send to Azure Foundry">
+              <i class="ri-send-plane-2-fill"></i>
+            </button>
+          </div>
+
+          <div class="input-meta-bar">
+            <span>Microsoft Azure AI Foundry &middot; <kbd>Enter</kbd> to Dispatch &middot; Shift+Enter for new line</span>
+            <span id="dispatcherNameBadge">Persona: <strong>Fleet Manager</strong></span>
+          </div>
+        </div>
+      </section>
+
+    </div>
       </div>
     </div>
 

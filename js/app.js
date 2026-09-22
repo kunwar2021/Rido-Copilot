@@ -150,9 +150,39 @@ function generateDemoSessionToken(prefix = "RIDO-") {
 
 const PROTECTED_TABS = ['fleet', 'routes', 'analytics', 'reports'];
 
-function normalizeTabKey(tabOrViewId) {
-  if (!tabOrViewId) return 'home';
-  return tabOrViewId.toLowerCase().replace('view', '').replace('#', '').trim();
+const VIEW_MAP = {
+  home: 'viewHome',
+  fleet: 'viewFleet',
+  routes: 'viewRoutes',
+  analytics: 'viewAnalytics',
+  reports: 'viewReports'
+};
+
+function normalizeTabKey(input) {
+  if (!input) return 'home';
+  const s = String(input)
+    .toLowerCase()
+    .replace(/^view/i, '')
+    .replace(/^#/i, '')
+    .replace(/[-_]/g, ' ')
+    .trim();
+
+  if (s === 'home' || s === 'mission control' || s === 'missioncontrol' || s === 'in cab cockpit' || s === 'safety & audit hub' || s === 'gate operations' || s === 'financial overview') {
+    return 'home';
+  }
+  if (s === 'fleet' || s === 'fleet iq' || s === 'fleetiq' || s === 'fleet tracking') {
+    return 'fleet';
+  }
+  if (s === 'routes' || s === 'corridor routes' || s === 'corridor' || s === 'corridor dispatch' || s === 'my active route') {
+    return 'routes';
+  }
+  if (s === 'analytics' || s === 'esg analytics') {
+    return 'analytics';
+  }
+  if (s === 'reports' || s === 'regulatory dockets' || s === 'sustainability dockets') {
+    return 'reports';
+  }
+  return s;
 }
 
 function isAuthenticated() {
@@ -369,64 +399,47 @@ const PERSONA_PROFILES = {
    ROLE-BASED ACCESS CONTROL (RBAC) POLICY
    Strict isolation: one role's features cannot be seen or accessed by another
    ══════════════════════════════════════════════ */
+const ALL_APP_NAVS = ["navHome", "navFleet", "navRoutes", "navAnalytics", "navReports"];
+const ALL_APP_VIEWS = ["viewHome", "viewFleet", "viewRoutes", "viewAnalytics", "viewReports"];
+
 const ROLE_PERMISSIONS = {
   "Driver In-Cab": {
     badge: "[DRIVER IN-CAB]",
-    allowedNavs: ["navHome", "navRoutes"],
-    navLabels: {
-      "navHome": "In-Cab Cockpit",
-      "navRoutes": "My Active Route"
-    },
-    allowedViews: ["viewHome", "viewRoutes"],
-    allowedPages: ["index.html", "routes.html"],
+    defaultTab: "routes",
+    allowedNavs: ALL_APP_NAVS,
+    allowedViews: ALL_APP_VIEWS,
+    allowedPages: ["index.html", "routes.html", "fleet.html"],
     showProcessStrip: false
   },
   "Compliance Officer": {
     badge: "[COMPLIANCE OFFICER]",
-    allowedNavs: ["navHome", "navReports"],
-    navLabels: {
-      "navHome": "Safety & Audit Hub",
-      "navReports": "Regulatory Dockets"
-    },
-    allowedViews: ["viewHome", "viewReports"],
-    allowedPages: ["index.html", "reports.html"],
+    defaultTab: "reports",
+    allowedNavs: ALL_APP_NAVS,
+    allowedViews: ALL_APP_VIEWS,
+    allowedPages: ["index.html", "reports.html", "analytics.html"],
     showProcessStrip: false
   },
   "Dispatcher Gate": {
     badge: "[DISPATCHER GATE]",
-    allowedNavs: ["navHome", "navFleet", "navRoutes"],
-    navLabels: {
-      "navHome": "Gate Operations",
-      "navFleet": "Fleet Tracking",
-      "navRoutes": "Corridor Dispatch"
-    },
-    allowedViews: ["viewHome", "viewFleet", "viewRoutes"],
+    defaultTab: "fleet",
+    allowedNavs: ALL_APP_NAVS,
+    allowedViews: ALL_APP_VIEWS,
     allowedPages: ["index.html", "fleet.html", "routes.html"],
     showProcessStrip: true
   },
   "ESG Analyst": {
     badge: "[ESG ANALYST]",
-    allowedNavs: ["navHome", "navAnalytics", "navReports"],
-    navLabels: {
-      "navHome": "Financial Overview",
-      "navAnalytics": "ESG Analytics",
-      "navReports": "Sustainability Dockets"
-    },
-    allowedViews: ["viewHome", "viewAnalytics", "viewReports"],
+    defaultTab: "analytics",
+    allowedNavs: ALL_APP_NAVS,
+    allowedViews: ALL_APP_VIEWS,
     allowedPages: ["index.html", "analytics.html", "reports.html"],
     showProcessStrip: false
   },
   "Fleet Manager": {
     badge: "[FLEET MANAGER]",
-    allowedNavs: ["navHome", "navFleet", "navRoutes", "navAnalytics", "navReports"],
-    navLabels: {
-      "navHome": "Mission Control",
-      "navFleet": "Fleet IQ",
-      "navRoutes": "Corridor Routes",
-      "navAnalytics": "Analytics",
-      "navReports": "Reports"
-    },
-    allowedViews: ["viewHome", "viewFleet", "viewRoutes", "viewAnalytics", "viewReports"],
+    defaultTab: "fleet",
+    allowedNavs: ALL_APP_NAVS,
+    allowedViews: ALL_APP_VIEWS,
     allowedPages: ["index.html", "fleet.html", "routes.html", "analytics.html", "reports.html"],
     showProcessStrip: true
   }
@@ -662,19 +675,15 @@ function renderPersonaExperience(personaName) {
   if (headerPersonaBadge) headerPersonaBadge.innerText = profile.badge;
   if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${personaName}</strong>`;
 
-  // 2. Strict Navigation Bar Filtering (Role Isolation)
+  // 2. Navigation Bar: Render all 5 tabs visible and unlocked for authenticated users
   const navItems = document.querySelectorAll(".nav-links li");
   navItems.forEach(li => {
+    li.style.display = "";
     const a = li.querySelector("a.nav-link");
     if (!a) return;
-    if (perms.allowedNavs.includes(a.id)) {
-      li.style.display = "";
-      if (perms.navLabels && perms.navLabels[a.id]) {
-        a.textContent = perms.navLabels[a.id];
-      }
-    } else {
-      li.style.display = "none";
-    }
+    a.classList.remove("locked");
+    const lockIcon = a.querySelector(".nav-lock-icon");
+    if (lockIcon) lockIcon.style.display = "none";
   });
 
   // 3. Process Strip Visibility (Fleet Manager / Dispatcher only)
@@ -855,15 +864,25 @@ function login(userData = {}, token = null) {
   renderPersonaExperience(persona);
   sfx.playGrant();
 
-  // If user was attempting to reach a locked section, navigate there
+  // Dismiss the Sign-In modal
+  closeSignInModal();
+
+  // If user was attempting to reach a locked section, navigate there; else auto-switch to Fleet
   if (window.pendingRedirectView) {
     const dest = window.pendingRedirectView;
     window.pendingRedirectView = null;
     switchView(dest);
     const hashName = dest.replace("view", "").toLowerCase();
     history.pushState(null, "", `#${hashName}`);
+  } else {
+    // Post-Sign-In Automatic Navigation: do not leave user idle on viewHome
+    switchTab("fleet");
   }
 }
+
+const executeLogin = login;
+window.login = login;
+window.executeLogin = executeLogin;
 
 function logout() {
   localStorage.removeItem("rido_session");
@@ -1411,21 +1430,26 @@ const allViews = document.querySelectorAll(".app-page-view");
 
 function switchTab(tabId) {
   const cleanTab = normalizeTabKey(tabId);
-  const targetView = `view${cleanTab.charAt(0).toUpperCase() + cleanTab.slice(1)}`;
+  const targetView = VIEW_MAP[cleanTab] || `view${cleanTab.charAt(0).toUpperCase() + cleanTab.slice(1)}`;
   return switchView(targetView);
 }
 
 // Router API compatibility aliases
 const showPage = switchTab;
 const navigate = switchTab;
+window.switchTab = switchTab;
+window.switchView = switchView;
+window.showPage = switchTab;
+window.navigate = switchTab;
 
 function switchView(viewId) {
   const tabKey = normalizeTabKey(viewId);
+  const targetViewId = VIEW_MAP[tabKey] || (viewId && viewId.startsWith("view") ? viewId : `view${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}`);
 
   // 1. STRICT ROUTE GUARD: Check authentication at the VERY FIRST LINE
   if (!isAuthenticated()) {
-    if (PROTECTED_TABS.includes(tabKey) || (viewId && viewId !== "viewHome")) {
-      openSignInModal(viewId);
+    if (PROTECTED_TABS.includes(tabKey) || (targetViewId && targetViewId !== "viewHome")) {
+      openSignInModal(targetViewId);
       return false;
     }
   }
@@ -1435,66 +1459,75 @@ function switchView(viewId) {
     const currentPersona = state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
     const perms = ROLE_PERMISSIONS[currentPersona] || ROLE_PERMISSIONS["Driver In-Cab"];
 
-    if (perms && perms.allowedViews && !perms.allowedViews.includes(viewId)) {
+    if (perms && perms.allowedViews && !perms.allowedViews.includes(targetViewId)) {
       alert(`Access Restricted: Your active role [${currentPersona}] is not authorized to view this section.`);
       return false;
     }
   }
 
-  // 3. DOM Modifications (only permitted for authorized views)
-  allViews.forEach(v => {
+  // 3. Strict container swapping: Hide all views, display target view
+  document.querySelectorAll(".app-page-view, .app-view").forEach(v => {
     v.style.display = "none";
+    v.classList.add("hidden");
   });
 
-  const targetView = document.getElementById(viewId);
+  const targetView = document.getElementById(targetViewId);
   if (targetView) {
+    targetView.classList.remove("hidden");
     targetView.style.display = "flex";
   }
 
-  navLinks.forEach(link => {
-    link.classList.toggle("active", link.dataset.view === viewId);
+  // 4. Update Navigation link styling & active state
+  document.querySelectorAll(".site-header nav a, .site-header .nav-link, .nav-links .nav-link").forEach(link => {
+    const linkKey = normalizeTabKey(link.dataset.tab || link.dataset.view || link.getAttribute("href") || link.textContent);
+    const isActive = (linkKey === tabKey);
+    link.classList.toggle("active", isActive);
+    if (isActive) {
+      link.classList.add("bg-white", "text-zinc-900", "font-semibold", "shadow-sm");
+      link.classList.remove("text-zinc-600");
+    } else {
+      link.classList.remove("bg-white", "text-zinc-900", "font-semibold", "shadow-sm");
+      link.classList.add("text-zinc-600");
+    }
   });
 
-  if (viewId === "viewRoutes") {
-    setTimeout(initHomeRoutesMap, 80);
+  if (targetViewId === "viewRoutes") {
+    setTimeout(initHomeRoutesMap, 100);
   }
 
   window.scrollTo({ top: 0, behavior: "smooth" });
+  history.pushState(null, "", `#${tabKey}`);
   return true;
 }
 
-// Event Interception on all Navigation Elements (Capture Phase)
-document.querySelectorAll(".site-header nav a, .site-header .nav-links a, .site-header .nav-link, .site-header nav button").forEach(element => {
-  element.addEventListener("click", (e) => {
+// Event Interception on all Navigation Elements (Capture Phase & Dynamic Delegation)
+document.addEventListener("click", (e) => {
+  const navLink = e.target.closest(".nav-link, [data-tab], .site-logo, #brandLogoLink");
+  if (!navLink) return;
+
+  if (navLink.classList.contains("site-logo") || navLink.id === "brandLogoLink") {
+    e.preventDefault();
+    e.stopPropagation();
+    switchTab("home");
+    return;
+  }
+
+  if (navLink.closest(".site-header") || navLink.dataset.tab) {
     e.preventDefault();
     e.stopPropagation();
 
-    const target = element.dataset.view || element.getAttribute("href") || "";
-    const tabKey = normalizeTabKey(element.dataset.tab || target);
+    const rawTab = navLink.dataset.tab || navLink.dataset.view || navLink.getAttribute("href") || navLink.textContent;
+    const tabKey = normalizeTabKey(rawTab);
+    const targetViewId = VIEW_MAP[tabKey] || `view${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}`;
 
-    if (PROTECTED_TABS.includes(tabKey)) {
-      if (!isAuthenticated()) {
-        openSignInModal(`view${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}`);
-        return;
-      }
-      switchTab(tabKey);
-      history.pushState(null, "", `#${tabKey}`);
-    } else {
-      switchTab("home");
-      history.pushState(null, "", "#home");
+    if (PROTECTED_TABS.includes(tabKey) && !isAuthenticated()) {
+      openSignInModal(targetViewId);
+      return;
     }
-  }, true);
-});
 
-// Intercept logo clicks to return to Home
-document.querySelectorAll(".site-logo").forEach(logo => {
-  logo.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    switchView("viewHome");
-    history.pushState(null, "", "#home");
-  });
-});
+    switchTab(tabKey);
+  }
+}, true);
 
 // Handle initial URL hash or query params on page load
 function handleHashRoute() {
@@ -1516,7 +1549,7 @@ function handleHashRoute() {
     return;
   }
 
-  const targetView = `view${cleanTab.charAt(0).toUpperCase() + cleanTab.slice(1)}`;
+  const targetView = VIEW_MAP[cleanTab] || `view${cleanTab.charAt(0).toUpperCase() + cleanTab.slice(1)}`;
   if (document.getElementById(targetView)) {
     switchView(targetView);
   } else {
