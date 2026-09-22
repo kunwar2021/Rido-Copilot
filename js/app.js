@@ -17,14 +17,17 @@ const userInput       = document.getElementById("userInput");
 const sendBtn         = document.getElementById("sendBtn");
 const clearBtn        = document.getElementById("clearBtn");
 const thoughtLog      = document.getElementById("thoughtLog");
-const sidebar         = document.getElementById("sidebar");
+const reasoningDrawer = document.getElementById("reasoningDrawer");
 const toggleBtn       = document.getElementById("toggleThoughtsBtn");
+const closeDrawerBtn  = document.getElementById("closeDrawerBtn");
+const heroGetStartedBtn = document.getElementById("heroGetStartedBtn");
 const voiceMicBtn     = document.getElementById("voiceMicBtn");
 const ttsToggleBtn    = document.getElementById("ttsToggleBtn");
 const ttsStatusText   = document.getElementById("ttsStatusText");
 const hudPing         = document.getElementById("hudPing");
 const hudSpent        = document.getElementById("hudSpent");
 const dispatcherBadge = document.getElementById("dispatcherNameBadge");
+
 
 // App State
 let hasStarted = false;
@@ -331,39 +334,53 @@ ttsToggleBtn.addEventListener("click", () => {
 });
 
 /* ══════════════════════════════════════════════
-   5. PRESENTATION SCENARIOS & QUICK PROMPTS
+   5. FEATURE CARDS & ACTION PROMPTS
    ══════════════════════════════════════════════ */
-document.getElementById("scenariosBar").addEventListener("click", (e) => {
-  const pill = e.target.closest(".scenario-pill");
-  if (!pill) return;
-  const prompt = pill.dataset.prompt;
-  if (prompt) {
-    userInput.value = prompt;
-    handleSend();
-  }
+document.querySelectorAll(".feature-card").forEach(card => {
+  card.addEventListener("click", () => {
+    const prompt = card.dataset.prompt;
+    if (prompt) {
+      userInput.value = prompt;
+      const copilotSec = document.getElementById("copilotSection");
+      if (copilotSec) copilotSec.scrollIntoView({ behavior: "smooth", block: "start" });
+      handleSend();
+    }
+  });
 });
 
-document.getElementById("welcome").addEventListener("click", (e) => {
-  const btn = e.target.closest(".suggested-btn");
-  if (!btn?.dataset.prompt) return;
-  userInput.value = btn.dataset.prompt;
-  handleSend();
-});
+if (heroGetStartedBtn) {
+  heroGetStartedBtn.addEventListener("click", () => {
+    const copilotSec = document.getElementById("copilotSection");
+    if (copilotSec) copilotSec.scrollIntoView({ behavior: "smooth", block: "start" });
+    userInput.focus();
+  });
+}
 
-/* ══════════════════════════════════════════════
-   6. MAIN SEND & AZURE AGENT PIPELINE
-   ══════════════════════════════════════════════ */
-toggleBtn.addEventListener("click", () => sidebar.classList.toggle("collapsed"));
+/* ── Reasoning Drawer Toggle ── */
+if (toggleBtn && reasoningDrawer) {
+  toggleBtn.addEventListener("click", () => reasoningDrawer.classList.toggle("collapsed"));
+}
+if (closeDrawerBtn && reasoningDrawer) {
+  closeDrawerBtn.addEventListener("click", () => reasoningDrawer.classList.add("collapsed"));
+}
 
+/* ── Reset / Clear Chat ── */
 clearBtn.addEventListener("click", () => {
-  messages.innerHTML = "";
+  messages.innerHTML = `
+    <div class="msg ai">
+      <div class="msg-avatar">🤖</div>
+      <div class="msg-bubble-wrap">
+        <div class="msg-bubble">
+          <p><strong>Chat session reset.</strong> Click any feature card above or ask me any logistics, cold-chain, or route dispatch query in <strong>$ USD</strong>.</p>
+        </div>
+      </div>
+    </div>`;
   thoughtLog.innerHTML = `<div class="empty-thoughts">Autonomous agent thoughts, inference latency, and token consumption metrics will stream here in real time.</div>`;
   hasStarted = false;
   previousResponseId = null;
-  welcome.style.display = "flex";
-  messages.style.display = "none";
   if (window.speechSynthesis) window.speechSynthesis.cancel();
 });
+
 
 userInput.addEventListener("input", () => {
   userInput.style.height = "auto";
@@ -386,9 +403,9 @@ async function handleSend() {
 
   if (!hasStarted) {
     hasStarted = true;
-    welcome.style.display = "none";
-    messages.style.display = "flex";
+    if (welcome) welcome.style.display = "none";
   }
+
 
   thoughtLog.innerHTML = "";
   appendMessage("user", text);

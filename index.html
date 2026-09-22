@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RIDO Copilot // Azure AI Foundry</title>
+  <title>RIDO — Smarter Logistics. Better Tomorrow.</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚛</text></svg>" />
 
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
 
   <!-- Markdown renderer -->
@@ -17,21 +17,27 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:          #050811;
-      --bg-darker:   #020408;
-      --surface:     #0a101f;
-      --panel:       #0f172a;
-      --panel-glass: rgba(15, 23, 42, 0.75);
-      --border:      #1e2d45;
-      --border-glow: rgba(59, 130, 246, 0.4);
-      --accent:      #3b82f6;
-      --cyan:        #06b6d4;
-      --emerald:     #10b981;
-      --rose:        #f43f5e;
-      --amber:       #f59e0b;
-      --purple:      #a855f7;
-      --text:        #f8fafc;
-      --muted:       #64748b;
+      --bg:             #f1f5f9;
+      --bg-alt:         #f8fafc;
+      --card-bg:        #ffffff;
+      --border:         #e2e8f0;
+      --border-subtle:  #edf2f7;
+      --text:           #0f172a;
+      --text-muted:     #64748b;
+      --primary:        #0f172a;
+      --accent:         #4f46e5;
+      --accent-light:   #eff2fe;
+      --cyan:           #0284c7;
+      --cyan-light:     #f0f9ff;
+      --emerald:        #16a34a;
+      --emerald-light:  #f0fdf4;
+      --purple:         #9333ea;
+      --purple-light:   #faf5ff;
+      --rose:           #e11d48;
+      --shadow-sm:      0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md:      0 4px 14px rgba(0,0,0,0.06);
+      --shadow-lg:      0 10px 30px rgba(0,0,0,0.08);
+      --shadow-xl:      0 20px 40px -15px rgba(0,0,0,0.12);
     }
 
     html, body {
@@ -39,26 +45,12 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
-      overflow: hidden;
-      user-select: none;
-    }
-
-    /* ── CYBER BACKGROUND ── */
-    .cyber-grid {
-      position: fixed;
-      inset: 0;
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.15) 0%, transparent 60%),
-        radial-gradient(circle at 100% 100%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-        linear-gradient(rgba(30, 45, 69, 0.15) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(30, 45, 69, 0.15) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-      pointer-events: none;
-      z-index: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     /* ══════════════════════════════════════════════
-       LOGIN GATE (PORTAL SCREEN)
+       1. LOGIN GATE (CLEAN WHITE ENTERPRISE CARD)
        ══════════════════════════════════════════════ */
     #loginScreen {
       position: fixed;
@@ -67,102 +59,86 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: radial-gradient(circle at center, #0a1124 0%, #03060c 100%);
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #f1f5f9 100%);
+      transition: opacity 0.4s ease, transform 0.4s ease;
     }
 
     #loginScreen.hidden {
       opacity: 0;
-      transform: scale(1.05);
+      transform: scale(1.03);
       pointer-events: none;
     }
 
     .login-card {
       width: 100%;
-      max-width: 480px;
+      max-width: 460px;
       margin: 20px;
-      background: rgba(10, 16, 31, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      box-shadow: 0 0 50px rgba(6, 182, 212, 0.15), 0 25px 60px -15px rgba(0, 0, 0, 0.8);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.15), 0 0 20px rgba(79, 70, 229, 0.08);
       border-radius: 24px;
       padding: 36px 32px;
       position: relative;
-      overflow: hidden;
     }
 
     .login-card::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0; height: 3px;
-      background: linear-gradient(90deg, var(--accent), var(--cyan), var(--emerald));
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, #4f46e5, #0284c7, #16a34a);
+      border-radius: 24px 24px 0 0;
     }
 
     .login-header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
 
-    .login-brand-icon {
-      width: 52px;
-      height: 52px;
-      margin: 0 auto 12px;
-      background: linear-gradient(135deg, #2563eb, #06b6d4);
-      border-radius: 16px;
-      display: flex;
+    .login-brand-title {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: #0f172a;
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      box-shadow: 0 0 25px rgba(37, 99, 235, 0.5);
-    }
-
-    .login-title {
-      font-size: 1.65rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 3px;
+      gap: 8px;
     }
 
     .login-subtitle {
       font-size: 0.95rem;
       font-weight: 700;
-      color: #38bdf8;
-      letter-spacing: -0.01em;
-      margin-bottom: 4px;
+      color: #4f46e5;
+      margin-top: 2px;
     }
 
     .login-tagline {
-      font-size: 0.76rem;
-      color: var(--muted);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
     }
 
-    /* Demo environment badge */
     .demo-env-badge {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.25);
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
       border-radius: 10px;
-      padding: 7px 12px;
-      margin-bottom: 16px;
-      font-size: 0.72rem;
-      color: #93c5fd;
+      padding: 8px 12px;
+      margin-bottom: 18px;
+      font-size: 0.75rem;
+      color: #1e40af;
     }
 
-    .demo-env-badge span strong {
-      color: #ffffff;
+    .demo-env-badge strong {
       font-family: 'JetBrains Mono', monospace;
+      color: #1d4ed8;
     }
 
     .demo-env-tag {
-      background: rgba(59, 130, 246, 0.2);
-      color: #60a5fa;
-      padding: 2px 7px;
+      background: #dbeafe;
+      color: #1e40af;
+      padding: 2px 8px;
       border-radius: 6px;
       font-weight: 700;
       font-size: 0.65rem;
@@ -170,37 +146,28 @@
       letter-spacing: 0.04em;
     }
 
-    /* Error Banner */
     .login-error-banner {
       display: none;
       align-items: center;
       gap: 8px;
-      background: rgba(244, 63, 94, 0.12);
-      border: 1px solid rgba(244, 63, 94, 0.4);
-      color: #fda4af;
-      padding: 9px 12px;
+      background: #ffe4e6;
+      border: 1px solid #fecdd3;
+      color: #be123c;
+      padding: 10px 14px;
       border-radius: 10px;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       margin-bottom: 16px;
-      animation: shake 0.3s ease;
     }
 
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-
-    /* Form Fields */
     .form-group {
       margin-bottom: 14px;
     }
 
     .form-label {
       display: block;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       font-weight: 600;
-      color: #cbd5e1;
+      color: #334155;
       margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -215,28 +182,28 @@
     .input-icon {
       position: absolute;
       left: 14px;
-      color: #64748b;
-      font-size: 1.05rem;
+      color: #94a3b8;
+      font-size: 1.1rem;
       pointer-events: none;
-      transition: color 0.2s;
     }
 
     .form-input {
       width: 100%;
-      background: rgba(15, 23, 42, 0.85);
-      border: 1px solid var(--border);
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
       border-radius: 12px;
       padding: 11px 42px 11px 40px;
-      color: var(--text);
-      font-size: 0.88rem;
+      color: #0f172a;
+      font-size: 0.9rem;
       font-family: inherit;
       outline: none;
       transition: all 0.2s;
     }
 
     .form-input:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+      background: #ffffff;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
 
     .btn-toggle-pw {
@@ -244,29 +211,23 @@
       right: 12px;
       background: none;
       border: none;
-      color: #64748b;
+      color: #94a3b8;
       cursor: pointer;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       padding: 4px;
-      transition: color 0.2s;
     }
 
-    .btn-toggle-pw:hover {
-      color: #cbd5e1;
-    }
-
-    /* Persona Selection */
     .persona-section {
       margin: 16px 0 20px;
     }
 
     .persona-label {
       display: block;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      color: #94a3b8;
+      color: #64748b;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       margin-bottom: 8px;
     }
 
@@ -277,8 +238,8 @@
     }
 
     .persona-toggle-btn {
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid var(--border);
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
       border-radius: 12px;
       padding: 10px 12px;
       cursor: pointer;
@@ -286,35 +247,33 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 600;
-      color: #94a3b8;
-      transition: all 0.2s;
+      color: #64748b;
+      transition: all 0.15s;
       font-family: inherit;
     }
 
     .persona-toggle-btn:hover {
-      border-color: var(--cyan);
-      color: #ffffff;
-      background: rgba(6, 182, 212, 0.06);
+      border-color: #4f46e5;
+      color: #0f172a;
     }
 
     .persona-toggle-btn.active {
-      border-color: var(--cyan);
-      background: rgba(6, 182, 212, 0.15);
-      color: #38bdf8;
-      box-shadow: 0 0 16px rgba(6, 182, 212, 0.2);
+      border-color: #4f46e5;
+      background: #eff2fe;
+      color: #4f46e5;
+      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.12);
     }
 
-    /* Action Buttons */
     .btn-submit-login {
       width: 100%;
-      background: linear-gradient(135deg, #2563eb, #0891b2);
+      background: #0f172a;
       border: none;
       border-radius: 12px;
       padding: 13px;
       color: white;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -322,29 +281,22 @@
       justify-content: center;
       gap: 8px;
       transition: all 0.2s;
-      box-shadow: 0 4px 18px rgba(37, 99, 235, 0.35);
-      font-family: inherit;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
     }
 
     .btn-submit-login:hover {
+      background: #1e293b;
       transform: translateY(-1px);
-      box-shadow: 0 6px 25px rgba(6, 182, 212, 0.5);
-    }
-
-    .btn-submit-login:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
     }
 
     .btn-evaluator-pass {
       width: 100%;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px dashed rgba(16, 185, 129, 0.4);
+      background: #ecfdf5;
+      border: 1px dashed #6ee7b7;
       border-radius: 12px;
       padding: 10px;
-      color: #34d399;
-      font-size: 0.8rem;
+      color: #059669;
+      font-size: 0.82rem;
       font-weight: 700;
       cursor: pointer;
       display: flex;
@@ -352,427 +304,631 @@
       justify-content: center;
       gap: 8px;
       margin-top: 10px;
-      transition: all 0.2s;
-      font-family: inherit;
+      transition: all 0.15s;
     }
 
     .btn-evaluator-pass:hover {
-      background: rgba(16, 185, 129, 0.18);
-      border-color: var(--emerald);
-      transform: translateY(-1px);
+      background: #d1fae5;
+      border-color: #10b981;
     }
 
     .evaluator-note {
       text-align: center;
-      color: #64748b;
-      font-size: 0.68rem;
+      color: #94a3b8;
+      font-size: 0.7rem;
       margin-top: 6px;
     }
 
-      margin-top: 10px;
-      transition: all 0.2s;
-    }
-
-    .btn-evaluator-demo:hover {
-      background: rgba(16, 185, 129, 0.2);
-      border-color: var(--emerald);
-      transform: translateY(-1px);
-    }
-
     /* ══════════════════════════════════════════════
-       MAIN WORKSPACE APP
+       2. TOP CLEAN WHITE NAVBAR
        ══════════════════════════════════════════════ */
-    #app {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ── TOP MISSION HUD ── */
-    header {
+    .site-header {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 64px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 20px;
-      height: 60px;
-      background: rgba(10, 16, 31, 0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      z-index: 10;
+      padding: 0 32px;
     }
 
-    .brand-section {
+    .nav-left {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 40px;
     }
 
-    .brand-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, #2563eb, #06b6d4);
-      border-radius: 10px;
+    .site-logo {
+      font-size: 1.45rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: #0f172a;
+      text-decoration: none;
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      box-shadow: 0 0 16px rgba(37, 99, 235, 0.4);
+      gap: 4px;
     }
 
-    .brand-title {
-      font-weight: 800;
-      font-size: 1.05rem;
-      letter-spacing: -0.02em;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
     }
 
-    .brand-sub {
-      font-size: 0.68rem;
-      color: var(--cyan);
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
+    .nav-link {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: #64748b;
+      text-decoration: none;
+      padding: 8px 0;
+      position: relative;
+      transition: color 0.15s;
+      cursor: pointer;
     }
 
-    /* ── HUD METRICS BAR ── */
-    .hud-metrics {
+    .nav-link:hover {
+      color: #0f172a;
+    }
+
+    .nav-link.active {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -13px;
+      left: 0; right: 0;
+      height: 2px;
+      background: #0f172a;
+      border-radius: 2px;
+    }
+
+    .nav-right {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
     .hud-chip {
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid var(--border);
-      padding: 5px 10px;
-      border-radius: 8px;
-      font-size: 0.7rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.72rem;
       font-family: 'JetBrains Mono', monospace;
       display: flex;
       align-items: center;
       gap: 6px;
-      color: #94a3b8;
+      color: #64748b;
     }
 
     .hud-chip strong {
-      color: var(--text);
+      color: #0f172a;
     }
 
     .hud-chip.auth-chip {
-      border-color: rgba(16, 185, 129, 0.4);
-      color: #34d399;
-      background: rgba(16, 185, 129, 0.08);
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #16a34a;
+      font-weight: 600;
     }
 
     .hud-chip.auth-chip .dot {
       width: 7px; height: 7px;
-      background: var(--emerald);
+      background: #16a34a;
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--emerald);
-      animation: pulse 1.8s infinite;
+      box-shadow: 0 0 6px #16a34a;
     }
 
-    .hud-chip.persona-chip {
-      border-color: rgba(6, 182, 212, 0.4);
-      color: #38bdf8;
-      background: rgba(6, 182, 212, 0.08);
-      font-weight: 700;
-    }
-
-    .header-actions {
+    .user-profile-badge {
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .hud-btn.btn-signout {
-      border-color: rgba(244, 63, 94, 0.3);
-      color: #fda4af;
-      background: rgba(244, 63, 94, 0.06);
-    }
-
-    .hud-btn.btn-signout:hover {
-      border-color: var(--rose);
-      color: #ffffff;
-      background: rgba(244, 63, 94, 0.2);
-    }
-
-
-    .hud-btn {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--muted);
-      padding: 6px 12px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.15s;
-      font-family: inherit;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      font-size: 0.82rem;
       font-weight: 600;
+      color: #0f172a;
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
-    .hud-btn:hover {
-      border-color: var(--cyan);
-      color: var(--text);
-      background: rgba(6, 182, 212, 0.08);
+    .user-profile-badge:hover {
+      border-color: #cbd5e1;
+      background: #f8fafc;
     }
 
-    .hud-btn.active {
-      border-color: var(--emerald);
-      color: var(--emerald);
-      background: rgba(16, 185, 129, 0.12);
-    }
-
-    /* ── SCENARIOS BAR (DEMO ACCELERATOR) ── */
-    #scenariosBar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 24px;
-      background: rgba(8, 13, 26, 0.95);
-      border-bottom: 1px solid rgba(30, 45, 69, 0.7);
-      overflow-x: auto;
-      flex-shrink: 0;
-    }
-
-    .scenario-label {
-      font-size: 0.68rem;
-      text-transform: uppercase;
-      font-weight: 800;
-      color: var(--cyan);
-      letter-spacing: 0.08em;
-      white-space: nowrap;
-      margin-right: 4px;
+    .nav-action-btn {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      color: #475569;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
       display: flex;
       align-items: center;
       gap: 5px;
-    }
-
-    .scenario-pill {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid var(--border);
-      padding: 5px 12px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      color: #cbd5e1;
-      white-space: nowrap;
-      cursor: pointer;
       transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .scenario-pill:hover {
-      border-color: var(--cyan);
-      background: rgba(6, 182, 212, 0.12);
-      color: #ffffff;
-      transform: translateY(-1px);
-    }
-
-    /* ── WORKSPACE BODY ── */
-    main {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
-
-    /* ── AGENT REASONING SIDEBAR ── */
-    #sidebar {
-      width: 290px;
-      flex-shrink: 0;
-      background: rgba(10, 16, 31, 0.75);
-      backdrop-filter: blur(16px);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden;
-    }
-
-    #sidebar.collapsed {
-      width: 0;
-      border-right: none;
-    }
-
-    .sidebar-header {
-      padding: 14px 18px;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--cyan);
-      font-weight: 700;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-    }
-
-    #thoughtLog {
-      flex: 1;
-      overflow-y: auto;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    #thoughtLog::-webkit-scrollbar { width: 4px; }
-    #thoughtLog::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-    .thought-step {
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--cyan);
-      border-radius: 8px;
-      padding: 10px 12px;
-      font-size: 0.72rem;
-      animation: slideIn 0.3s ease;
-    }
-
-    @keyframes slideIn { from{opacity:0; transform:translateX(-8px)} to{opacity:1; transform:none} }
-
-    .thought-phase {
-      font-size: 0.64rem;
-      text-transform: uppercase;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--cyan);
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-
-    .thought-title {
-      color: var(--text);
-      font-weight: 600;
-      margin-bottom: 3px;
-    }
-
-    .thought-detail {
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 0.7rem;
-    }
-
-    .empty-thoughts {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.75rem;
-      padding: 30px 14px;
-      line-height: 1.6;
-    }
-
-    /* ── CHAT VIEWPORT ── */
-    #chatArea {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: relative;
-    }
-
-    #messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px 36px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    #messages::-webkit-scrollbar { width: 4px; }
-    #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-    /* ── WELCOME HERO ── */
-    #welcome {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      gap: 24px;
-      padding: 40px 20px;
-    }
-
-    .welcome-hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 14px;
-      border-radius: 999px;
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      color: #60a5fa;
-      font-size: 0.74rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-
-    .welcome-title {
-      font-size: 2.2rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      background: linear-gradient(135deg, #ffffff 30%, #38bdf8 70%, #818cf8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      max-width: 650px;
-    }
-
-    .welcome-sub {
-      color: #94a3b8;
-      font-size: 0.92rem;
-      max-width: 520px;
-      line-height: 1.6;
-    }
-
-    .suggested-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      width: 100%;
-      max-width: 640px;
-    }
-
-    .suggested-btn {
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 16px;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text);
       font-family: inherit;
     }
 
-    .suggested-btn:hover {
-      border-color: var(--cyan);
-      background: rgba(6, 182, 212, 0.08);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.15);
+    .nav-action-btn:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #0f172a;
     }
 
-    .suggested-btn .s-icon { font-size: 1.25rem; margin-bottom: 6px; }
-    .suggested-btn .s-title { font-size: 0.82rem; font-weight: 700; display: block; }
-    .suggested-btn .s-sub { font-size: 0.72rem; color: var(--muted); margin-top: 3px; display: block; }
+    .nav-action-btn.signout-btn {
+      color: #e11d48;
+      border-color: #fecdd3;
+      background: #fff1f2;
+    }
 
-    /* ── MESSAGE BUBBLES ── */
+    .nav-action-btn.signout-btn:hover {
+      background: #ffe4e6;
+      border-color: #fda4af;
+    }
+
+    /* ══════════════════════════════════════════════
+       3. MAIN LAYOUT CONTAINER
+       ══════════════════════════════════════════════ */
+    .main-container {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px 28px 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ══════════════════════════════════════════════
+       4. HERO BANNER SECTION (TRUCK + LIVE TRACKING)
+       ══════════════════════════════════════════════ */
+    .hero-banner {
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      min-height: 380px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 44px 48px;
+      background-image: 
+        linear-gradient(to right, rgba(248, 250, 252, 0.96) 0%, rgba(248, 250, 252, 0.88) 45%, rgba(248, 250, 252, 0.25) 75%, rgba(248, 250, 252, 0.05) 100%),
+        url('https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=1600&q=80');
+      background-size: cover;
+      background-position: center right;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+    }
+
+    .hero-content {
+      max-width: 580px;
+      z-index: 2;
+    }
+
+    .hero-powered-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(238, 242, 255, 0.95);
+      border: 1px solid rgba(199, 210, 254, 0.9);
+      color: #4f46e5;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(79, 70, 229, 0.08);
+    }
+
+    .hero-title {
+      font-size: 3.1rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      color: #0f172a;
+      margin-bottom: 14px;
+    }
+
+    .hero-title .highlight {
+      color: #4f46e5;
+    }
+
+    .hero-desc {
+      font-size: 1rem;
+      color: #475569;
+      line-height: 1.6;
+      margin-bottom: 26px;
+    }
+
+    .btn-get-started {
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 28px;
+      font-size: 0.94rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.2);
+    }
+
+    .btn-get-started:hover {
+      background: #1e293b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.28);
+    }
+
+    /* Floating Live Tracking Card */
+    .live-tracking-card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12), 0 0 1px rgba(15, 23, 42, 0.1);
+      border-radius: 20px;
+      padding: 22px 24px;
+      width: 320px;
+      z-index: 2;
+    }
+
+    .tracking-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 18px;
+    }
+
+    .tracking-header i {
+      color: #0284c7;
+      font-size: 1rem;
+    }
+
+    .tracking-body {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .route-milestones {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .route-milestone {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    .milestone-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .milestone-dot.green { background: #16a34a; box-shadow: 0 0 6px rgba(22, 163, 74, 0.4); }
+    .milestone-dot.blue  { background: #0284c7; }
+    .milestone-dot.cyan  { background: #38bdf8; }
+    .milestone-dot.gray  { background: #cbd5e1; }
+
+    .route-metrics-box {
+      border-left: 1px solid #e2e8f0;
+      padding-left: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .metric-item-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      color: #94a3b8;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .metric-item-value {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    /* ══════════════════════════════════════════════
+       5. FOUR FEATURE CARDS (EXACT MATCH TO DESIGN)
+       ══════════════════════════════════════════════ */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 24px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 230px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+      border-color: #cbd5e1;
+    }
+
+    /* Card 1: Cold Chain (Cyan Blue) */
+    .feature-card.card-coldchain {
+      background: linear-gradient(180deg, #ffffff 60%, #f0f9ff 100%);
+      border-color: #bae6fd;
+    }
+    .feature-card.card-coldchain:hover { border-color: #38bdf8; }
+
+    /* Card 2: Green Route (Emerald Green) */
+    .feature-card.card-greenroute {
+      background: linear-gradient(180deg, #ffffff 60%, #f0fdf4 100%);
+      border-color: #bbf7d0;
+    }
+    .feature-card.card-greenroute:hover { border-color: #4ade80; }
+
+    /* Card 3: Safety & Compliance (Lavender Purple) */
+    .feature-card.card-safety {
+      background: linear-gradient(180deg, #ffffff 60%, #faf5ff 100%);
+      border-color: #e9d5ff;
+    }
+    .feature-card.card-safety:hover { border-color: #c084fc; }
+
+    /* Card 4: ESG & ROI (Slate / Teal) */
+    .feature-card.card-esg {
+      background: linear-gradient(180deg, #ffffff 60%, #f8fafc 100%);
+      border-color: #e2e8f0;
+    }
+    .feature-card.card-esg:hover { border-color: #94a3b8; }
+
+    .card-icon-box {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #ffffff;
+      margin-bottom: 18px;
+    }
+
+    .card-coldchain .card-icon-box { background: linear-gradient(135deg, #38bdf8, #0284c7); }
+    .card-greenroute .card-icon-box { background: linear-gradient(135deg, #4ade80, #16a34a); }
+    .card-safety .card-icon-box { background: linear-gradient(135deg, #c084fc, #9333ea); }
+    .card-esg .card-icon-box { background: linear-gradient(135deg, #64748b, #334155); }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.84rem;
+      color: #64748b;
+      line-height: 1.5;
+      margin-bottom: 22px;
+    }
+
+    .card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: gap 0.15s;
+    }
+
+    .card-coldchain .card-link { color: #0284c7; }
+    .card-greenroute .card-link { color: #16a34a; }
+    .card-safety .card-link { color: #9333ea; }
+    .card-esg .card-link { color: #475569; }
+
+    .feature-card:hover .card-link {
+      gap: 9px;
+    }
+
+    .card-link i {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    /* ══════════════════════════════════════════════
+       6. PROCESS WORKFLOW STRIP
+       ══════════════════════════════════════════════ */
+    .process-strip {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .process-left {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .process-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: #4f46e5;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .process-headline {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .process-steps {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .process-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .process-arrow {
+      color: #94a3b8;
+      font-size: 0.85rem;
+    }
+
+    .process-badge {
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #1d4ed8;
+    }
+
+    /* ══════════════════════════════════════════════
+       7. AI COPILOT INTERACTIVE CONSOLE
+       ══════════════════════════════════════════════ */
+    #copilotSection {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 520px;
+    }
+
+    .copilot-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+    }
+
+    .copilot-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .copilot-icon {
+      width: 34px; height: 34px;
+      background: #0f172a;
+      border-radius: 10px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .copilot-title-group h3 {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .copilot-title-group span {
+      font-size: 0.72rem;
+      color: #64748b;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .copilot-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Messages Stream */
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      min-height: 280px;
+      max-height: 600px;
+      background: #ffffff;
+    }
+
+    #messages::-webkit-scrollbar { width: 5px; }
+    #messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
     .msg {
       display: flex;
       gap: 14px;
-      animation: msgPop 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: msgPop 0.25s ease;
     }
 
     @keyframes msgPop {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: none; }
     }
 
@@ -790,19 +946,18 @@
     }
 
     .msg.user .msg-avatar {
-      background: linear-gradient(135deg, #2563eb, #06b6d4);
+      background: #0f172a;
       color: white;
-      box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
     }
 
     .msg.ai .msg-avatar {
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid var(--border-glow);
-      box-shadow: 0 0 16px rgba(6, 182, 212, 0.25);
+      background: #eff2fe;
+      border: 1px solid #c7d2fe;
+      color: #4f46e5;
     }
 
     .msg-bubble-wrap {
-      max-width: 78%;
+      max-width: 82%;
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -811,80 +966,75 @@
     .msg.user .msg-bubble-wrap { align-items: flex-end; }
 
     .msg-bubble {
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(16px);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px 18px;
-      font-size: 0.88rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 16px 20px;
+      font-size: 0.9rem;
       line-height: 1.68;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      user-select: text;
+      color: #1e293b;
+      box-shadow: var(--shadow-sm);
     }
 
     .msg.user .msg-bubble {
-      background: linear-gradient(135deg, rgba(37, 99, 235, 0.25), rgba(6, 182, 212, 0.2));
-      border-color: rgba(59, 130, 246, 0.4);
+      background: #0f172a;
       color: #ffffff;
+      border-color: #0f172a;
     }
 
-    /* Markdown inside Bubble */
+    /* Markdown inside Light Bubble */
     .msg-bubble h1, .msg-bubble h2, .msg-bubble h3 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin: 12px 0 6px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 14px 0 6px;
     }
     .msg-bubble h1:first-child, .msg-bubble h2:first-child, .msg-bubble h3:first-child { margin-top: 0; }
     .msg-bubble p { margin: 6px 0; }
     .msg-bubble ul, .msg-bubble ol { padding-left: 20px; margin: 6px 0; }
     .msg-bubble li { margin: 3px 0; }
     .msg-bubble code {
-      background: rgba(6, 182, 212, 0.12);
-      border: 1px solid rgba(6, 182, 212, 0.3);
+      background: #e2e8f0;
       border-radius: 4px;
       padding: 2px 6px;
-      font-size: 0.84em;
+      font-size: 0.85em;
       font-family: 'JetBrains Mono', monospace;
-      color: #38bdf8;
+      color: #0f172a;
     }
     .msg-bubble pre {
-      background: #020617;
-      border: 1px solid var(--border);
+      background: #0f172a;
       border-radius: 10px;
       padding: 12px 16px;
       overflow-x: auto;
       margin: 10px 0;
     }
-    .msg-bubble pre code { background: none; border: none; padding: 0; color: #f1f5f9; }
+    .msg-bubble pre code { background: none; color: #f8fafc; }
     
     .msg-bubble table {
       border-collapse: collapse;
       width: 100%;
-      margin: 10px 0;
-      font-size: 0.8rem;
-      background: rgba(2, 6, 23, 0.5);
-      border-radius: 8px;
+      margin: 12px 0;
+      font-size: 0.82rem;
+      background: #ffffff;
+      border-radius: 10px;
       overflow: hidden;
-      border: 1px solid var(--border);
+      border: 1px solid #cbd5e1;
     }
     .msg-bubble th, .msg-bubble td {
-      border: 1px solid var(--border);
-      padding: 7px 12px;
+      border: 1px solid #e2e8f0;
+      padding: 8px 14px;
       text-align: left;
     }
     .msg-bubble th {
-      background: rgba(30, 45, 69, 0.4);
+      background: #f1f5f9;
       font-weight: 700;
-      color: #38bdf8;
+      color: #0f172a;
       text-transform: uppercase;
       font-size: 0.72rem;
       letter-spacing: 0.04em;
     }
-    .msg-bubble strong { color: #ffffff; font-weight: 700; }
-    .msg-bubble hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+    .msg-bubble strong { color: #0f172a; font-weight: 700; }
 
-    /* Bubble Action Bar (TTS Speak, Copy) */
     .bubble-actions {
       display: flex;
       align-items: center;
@@ -892,30 +1042,31 @@
     }
 
     .bubble-action-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 6px;
-      color: var(--muted);
-      padding: 3px 8px;
-      font-size: 0.7rem;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      color: #64748b;
+      padding: 4px 10px;
+      font-size: 0.72rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 4px;
       transition: all 0.15s;
+      font-weight: 600;
     }
 
     .bubble-action-btn:hover {
-      color: var(--cyan);
-      border-color: var(--border);
-      background: rgba(15, 23, 42, 0.6);
+      color: #0f172a;
+      background: #f8fafc;
+      border-color: #cbd5e1;
     }
 
-    /* Typing Animation */
+    /* Typing Indicator */
     .typing-indicator { display: flex; gap: 5px; padding: 6px 4px; align-items: center; }
     .typing-dot {
       width: 7px; height: 7px;
-      background: var(--cyan);
+      background: #4f46e5;
       border-radius: 50%;
       animation: bounce 1.2s infinite;
     }
@@ -923,29 +1074,28 @@
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-6px)} }
 
-    /* ── BOTTOM DOCK INPUT BAR ── */
-    #inputBar {
-      padding: 14px 36px 20px;
-      background: rgba(10, 16, 31, 0.9);
-      backdrop-filter: blur(16px);
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
+    /* Bottom Input Bar */
+    .input-dock {
+      padding: 16px 28px 20px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
     }
 
     .input-row {
       display: flex;
       gap: 10px;
       align-items: flex-end;
-      background: rgba(15, 23, 42, 0.8);
-      border: 1px solid var(--border);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
       border-radius: 16px;
       padding: 8px 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       transition: all 0.2s;
     }
 
     .input-row:focus-within {
-      border-color: var(--cyan);
-      box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
     }
 
     #userInput {
@@ -953,23 +1103,23 @@
       background: transparent;
       border: none;
       outline: none;
-      color: var(--text);
+      color: #0f172a;
       font-family: inherit;
-      font-size: 0.92rem;
+      font-size: 0.94rem;
       resize: none;
       max-height: 120px;
       min-height: 28px;
       line-height: 1.5;
     }
 
-    #userInput::placeholder { color: var(--muted); }
+    #userInput::placeholder { color: #94a3b8; }
 
     .input-tool-btn {
       width: 36px; height: 36px;
-      background: transparent;
-      border: 1px solid var(--border);
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
       border-radius: 10px;
-      color: var(--muted);
+      color: #64748b;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -980,14 +1130,15 @@
     }
 
     .input-tool-btn:hover {
-      border-color: var(--cyan);
-      color: var(--cyan);
+      border-color: #4f46e5;
+      color: #4f46e5;
+      background: #eff2fe;
     }
 
     .input-tool-btn.listening {
-      background: rgba(244, 63, 94, 0.2);
-      border-color: var(--rose);
-      color: var(--rose);
+      background: #ffe4e6;
+      border-color: #e11d48;
+      color: #e11d48;
       animation: pulseRed 1.2s infinite;
     }
 
@@ -995,7 +1146,7 @@
 
     #sendBtn {
       width: 38px; height: 38px;
-      background: linear-gradient(135deg, #2563eb, #0891b2);
+      background: #0f172a;
       border: none;
       border-radius: 10px;
       color: white;
@@ -1006,58 +1157,152 @@
       font-size: 17px;
       flex-shrink: 0;
       transition: all 0.2s;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
     }
 
     #sendBtn:hover {
+      background: #1e293b;
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.45);
     }
 
     #sendBtn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-    .input-footer {
+    .input-meta-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-top: 8px;
+      margin-top: 10px;
       padding: 0 4px;
-      font-size: 0.7rem;
-      color: var(--muted);
+      font-size: 0.74rem;
+      color: #64748b;
+    }
+
+    /* ══════════════════════════════════════════════
+       8. REASONING TRACE MODAL / SIDE DRAWER
+       ══════════════════════════════════════════════ */
+    #reasoningDrawer {
+      position: fixed;
+      top: 64px; right: 0; bottom: 0;
+      width: 380px;
+      background: #ffffff;
+      border-left: 1px solid #e2e8f0;
+      box-shadow: -10px 0 30px rgba(15, 23, 42, 0.08);
+      z-index: 90;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #reasoningDrawer.collapsed {
+      transform: translateX(100%);
+    }
+
+    .drawer-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #0f172a;
+      background: #f8fafc;
+    }
+
+    .drawer-close-btn {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    #thoughtLog {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #ffffff;
+    }
+
+    .thought-step {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-left: 3px solid #4f46e5;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 0.76rem;
+    }
+
+    .thought-phase {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      font-family: 'JetBrains Mono', monospace;
+      color: #4f46e5;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .thought-title {
+      color: #0f172a;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .thought-detail {
+      color: #64748b;
+      line-height: 1.45;
+    }
+
+    .empty-thoughts {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-banner { flex-direction: column; gap: 24px; }
+      .live-tracking-card { width: 100%; }
+    }
+    @media (max-width: 640px) {
+      .features-grid { grid-template-columns: 1fr; }
+      .site-header { padding: 0 16px; }
+      .nav-links { display: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- CYBER BACKGROUND GRID -->
-  <div class="cyber-grid"></div>
-
   <!-- ══════════════════════════════════════════════
-       1. AUTHENTICATION & SECURITY GATE (LOGIN ID BASED)
+       1. AUTHENTICATION & SECURITY GATE
        ══════════════════════════════════════════════ -->
   <div id="loginScreen">
     <div class="login-card">
       <div class="login-header">
-        <div class="login-brand-icon">🚛</div>
-        <div class="login-title">RIDO-Copilot</div>
+        <div class="login-brand-title">🚛 RIDO</div>
         <div class="login-subtitle">AI Logistics Mission Control</div>
-        <p class="login-tagline">Secure access for logistics operations</p>
+        <p class="login-tagline">Secure enterprise access for logistics operations</p>
       </div>
 
-      <!-- Demo Environment Credentials Hint -->
+      <!-- Demo Environment Hint -->
       <div class="demo-env-badge">
         <span>Login: <strong>demo@rido.ai</strong> | PW: <strong>RIDO2026</strong></span>
-        <span class="demo-env-tag">Demo Environment</span>
+        <span class="demo-env-tag">Demo Mode</span>
       </div>
 
-      <!-- Generic Error Banner -->
+      <!-- Error Banner -->
       <div id="loginError" class="login-error-banner">
         <i class="ri-error-warning-fill"></i>
         <span>Invalid Login ID or password</span>
       </div>
 
       <form id="loginForm" autocomplete="off">
-        <!-- Field 1: Login ID -->
         <div class="form-group">
           <label class="form-label" for="loginId">Login ID</label>
           <div class="input-wrapper">
@@ -1066,7 +1311,6 @@
           </div>
         </div>
 
-        <!-- Field 2: Password -->
         <div class="form-group">
           <label class="form-label" for="loginPassword">Password</label>
           <div class="input-wrapper">
@@ -1080,7 +1324,7 @@
 
         <!-- Persona Selection -->
         <div class="persona-section">
-          <span class="persona-label">Select Operational Persona</span>
+          <span class="persona-label">Operational Persona</span>
           <div class="persona-toggle-grid">
             <button type="button" class="persona-toggle-btn active" data-persona="Dispatcher Gate">
               <i class="ri-dashboard-line"></i> Dispatcher Gate
@@ -1091,12 +1335,10 @@
           </div>
         </div>
 
-        <!-- Sign In Button -->
         <button type="submit" id="loginSubmitBtn" class="btn-submit-login">
-          <i class="ri-login-box-line"></i> Sign In to RIDO-Copilot
+          <i class="ri-login-box-line"></i> Sign In to RIDO
         </button>
 
-        <!-- Evaluator Demo Pass -->
         <button type="button" id="evaluatorDemoBtn" class="btn-evaluator-pass">
           <i class="ri-shield-keyhole-line"></i> Biometric PIN / Evaluator Demo Pass
         </button>
@@ -1106,174 +1348,285 @@
   </div>
 
   <!-- ══════════════════════════════════════════════
-       2. WORKSPACE INTERFACE
+       2. TOP CLEAN NAVBAR (EXACT MATCH TO DESIGN)
        ══════════════════════════════════════════════ -->
-  <div id="app">
-
-    <!-- TOP MISSION HUD -->
-    <header>
-      <div class="brand-section">
-        <div class="brand-icon">🚛</div>
-        <div>
-          <div class="brand-title">RIDO-Copilot</div>
-          <div class="brand-sub">AI Logistics Mission Control</div>
-        </div>
-      </div>
-
-      <!-- LIVE AUTH STATUS & TELEMETRY HUD -->
-      <div class="hud-metrics">
-        <!-- Authenticated Status -->
-        <div class="hud-chip auth-chip">
-          <div class="dot"></div>
-          <span>Authenticated</span>
-        </div>
-
-        <!-- Simulated Session Token -->
-        <div class="hud-chip" id="sessionTokenChip">
-          <span>Session: <strong id="headerSessionToken">RIDO-882194</strong></span>
-        </div>
-
-        <!-- Cloud Region -->
-        <div class="hud-chip">
-          <i class="ri-cloud-line text-cyan-400"></i>
-          <span>Azure Cloud &mdash; <strong>Korea Central</strong></span>
-        </div>
-
-        <!-- Active Persona Badge -->
-        <div class="hud-chip persona-chip" id="headerPersonaChip">
-          <i class="ri-user-settings-line"></i>
-          <span id="headerPersonaBadge">[DISPATCHER GATE]</span>
-        </div>
-
-        <!-- Live Latency -->
-        <div class="hud-chip">
-          <i class="ri-timer-line"></i>
-          <span>PING: <strong id="hudPing">380ms</strong></span>
-        </div>
-
-        <!-- Spent Meter -->
-        <div class="hud-chip">
-          <i class="ri-money-dollar-circle-line"></i>
-          <span>SPENT: <strong id="hudSpent">$0.0024</strong></span>
-        </div>
-      </div>
-
-      <!-- HEADER ACTIONS -->
-      <div class="header-actions">
-        <button class="hud-btn" id="ttsToggleBtn" title="Toggle AI Voice Speech Readout">
-          <i class="ri-volume-up-line"></i> Audio: <span id="ttsStatusText">ON</span>
-        </button>
-        <button class="hud-btn" id="toggleThoughtsBtn">
-          <i class="ri-brain-line"></i> Reasoning
-        </button>
-        <button class="hud-btn" id="clearBtn">
-          <i class="ri-refresh-line"></i> Reset
-        </button>
-        <!-- Profile / Session Logout Control -->
-        <button class="hud-btn btn-signout" id="logoutBtn" title="Sign Out of Mission Control">
-          <i class="ri-logout-box-r-line"></i> Sign Out
-        </button>
-      </div>
-    </header>
-
-    <!-- 1-CLICK PRESENTATION SCENARIOS BAR -->
-    <div id="scenariosBar">
-      <span class="scenario-label"><i class="ri-sparkling-fill"></i> Live Scenarios:</span>
-      <button class="scenario-pill" data-prompt="Alert! Check vehicle V-104 for cold chain temperature breach and calculate emergency diversion steps with cargo loss risk in US Dollars ($ USD).">
-        🚨 Scenario 1: Cold-Chain Thermal Excursion ($)
-      </button>
-      <button class="scenario-pill" data-prompt="Optimize logistics corridor from Ludhiana to Jaipur for Commercial EV Truck with 8500 kg payload. Provide full fuel, toll, and cost comparison in US Dollars ($ USD).">
-        ⚡ Scenario 2: Ludhiana → Jaipur EV Dispatch ($)
-      </button>
-      <button class="scenario-pill" data-prompt="Run Hours-of-Service driver compliance audit across active shifts and enforce mandatory 45-min rest halts with driver cost impact in US Dollars ($ USD).">
-        🛡️ Scenario 3: Driver HoS & Safety Audit ($)
-      </button>
-      <button class="scenario-pill" data-prompt="Provide ESG multi-fuel emissions comparison for EV vs Diesel vs CNG for 450 km freight leg with all fuel and toll expenses in US Dollars ($ USD).">
-        📊 Scenario 4: Multi-Fuel Cost & CO2 ($)
-      </button>
+  <header class="site-header">
+    <div class="nav-left">
+      <a href="#" class="site-logo">RIDO</a>
+      <ul class="nav-links">
+        <li><a class="nav-link active" id="navHome">Home</a></li>
+        <li><a class="nav-link" id="navFleet">Fleet</a></li>
+        <li><a class="nav-link" id="navRoutes">Routes</a></li>
+        <li><a class="nav-link" id="navAnalytics">Analytics</a></li>
+        <li><a class="nav-link" id="navReports">Reports</a></li>
+      </ul>
     </div>
 
-    <!-- MAIN BODY -->
-    <main>
-      <!-- REASONING SIDEBAR -->
-      <div id="sidebar">
-        <div class="sidebar-header">
-          <span><i class="ri-mind-map text-cyan-400"></i> Azure Agent Trace</span>
-          <span class="text-xs text-slate-500 font-mono">v1 protocol</span>
+    <div class="nav-right">
+      <!-- Live Status Chips -->
+      <div class="hud-chip auth-chip">
+        <div class="dot"></div>
+        <span>Azure Korea Central</span>
+      </div>
+      <div class="hud-chip">
+        <span>MODEL: <strong>gpt-6-astra</strong></span>
+      </div>
+      <div class="hud-chip">
+        <span>SESSION: <strong id="headerSessionToken">RIDO-882194</strong></span>
+      </div>
+
+      <!-- Reasoning Toggle -->
+      <button class="nav-action-btn" id="toggleThoughtsBtn" title="View Azure Agent Reasoning Trace">
+        <i class="ri-mind-map text-indigo-600"></i> Reasoning
+      </button>
+
+      <!-- Audio TTS Toggle -->
+      <button class="nav-action-btn" id="ttsToggleBtn" title="Toggle AI Voice Readout">
+        <i class="ri-volume-up-line"></i> Voice: <span id="ttsStatusText">ON</span>
+      </button>
+
+      <!-- Profile Dropdown Badge -->
+      <div class="user-profile-badge" id="profileBadge" title="Current Persona">
+        <i class="ri-user-line"></i>
+        <span id="headerPersonaBadge">Fleet Manager</span>
+        <i class="ri-arrow-down-s-line"></i>
+      </div>
+
+      <!-- Sign Out -->
+      <button class="nav-action-btn signout-btn" id="logoutBtn" title="Sign Out of Mission Control">
+        <i class="ri-logout-box-r-line"></i> Sign Out
+      </button>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       3. MAIN WORKSPACE CONTENT
+       ══════════════════════════════════════════════ -->
+  <div class="main-container">
+
+    <!-- HERO BANNER SECTION (EXACT DESIGN MATCH) -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <div class="hero-powered-badge">
+          <i class="ri-sparkling-fill"></i> Powered by Azure AI Foundry
         </div>
-        <div id="thoughtLog">
-          <div class="empty-thoughts">
-            Autonomous agent thoughts, inference latency, and token consumption metrics will stream here in real time.
+        <h1 class="hero-title">
+          RIDO<br>
+          Smarter Logistics. Better <span class="highlight">Tomorrow.</span>
+        </h1>
+        <p class="hero-desc">
+          AI-powered fleet intelligence for faster, safer and more efficient logistics operations.
+        </p>
+        <button class="btn-get-started" id="heroGetStartedBtn">
+          Get Started <i class="ri-arrow-right-line"></i>
+        </button>
+      </div>
+
+      <!-- Floating Live Tracking Card -->
+      <div class="live-tracking-card">
+        <div class="tracking-header">
+          <i class="ri-map-pin-line"></i> Live Tracking
+        </div>
+        <div class="tracking-body">
+          <div class="route-milestones">
+            <div class="route-milestone">
+              <div class="milestone-dot green"></div>
+              <span>Delhi NCR</span>
+            </div>
+            <div class="route-milestone">
+              <div class="milestone-dot blue"></div>
+              <span>Jaipur</span>
+            </div>
+            <div class="route-milestone">
+              <div class="milestone-dot cyan"></div>
+              <span>Ahmedabad</span>
+            </div>
+            <div class="route-milestone">
+              <div class="milestone-dot gray"></div>
+              <span>Mumbai</span>
+            </div>
+          </div>
+          <div class="route-metrics-box">
+            <div>
+              <div class="metric-item-label">ETA</div>
+              <div class="metric-item-value">2d 14h</div>
+            </div>
+            <div>
+              <div class="metric-item-label">Distance</div>
+              <div class="metric-item-value">1,412 km</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 ACTION FEATURE CARDS (EXACT DESIGN MATCH) -->
+    <section class="features-grid">
+      <!-- Card 1: Cold-Chain Incident -->
+      <div class="feature-card card-coldchain" data-prompt="Alert! Check vehicle V-104 for cold chain temperature breach and calculate emergency diversion steps with cargo loss risk in US Dollars ($ USD).">
+        <div>
+          <div class="card-icon-box">
+            <i class="ri-temp-cold-line"></i>
+          </div>
+          <h2 class="card-title">Cold-Chain Incident</h2>
+          <p class="card-desc">Monitor temperature-sensitive cargo in real time.</p>
+        </div>
+        <div>
+          <span class="card-link">View Details <i class="ri-arrow-right-s-line"></i></span>
+        </div>
+      </div>
+
+      <!-- Card 2: Green Route Optimization -->
+      <div class="feature-card card-greenroute" data-prompt="Optimize logistics corridor from Ludhiana to Jaipur for Commercial EV Truck with 8500 kg payload. Provide full fuel, toll, and cost comparison in US Dollars ($ USD).">
+        <div>
+          <div class="card-icon-box">
+            <i class="ri-leaf-line"></i>
+          </div>
+          <h2 class="card-title">Green Route Optimization</h2>
+          <p class="card-desc">Lower fuel costs. Smaller carbon footprint.</p>
+        </div>
+        <div>
+          <span class="card-link">View Details <i class="ri-arrow-right-s-line"></i></span>
+        </div>
+      </div>
+
+      <!-- Card 3: Safety & Shift Compliance -->
+      <div class="feature-card card-safety" data-prompt="Run Hours-of-Service driver compliance audit across active shifts and enforce mandatory 45-min rest halts with driver cost impact in US Dollars ($ USD).">
+        <div>
+          <div class="card-icon-box">
+            <i class="ri-shield-check-line"></i>
+          </div>
+          <h2 class="card-title">Safety & Shift Compliance</h2>
+          <p class="card-desc">Safer drivers. Higher uptime.</p>
+        </div>
+        <div>
+          <span class="card-link">View Details <i class="ri-arrow-right-s-line"></i></span>
+        </div>
+      </div>
+
+      <!-- Card 4: ESG & Financial ROI -->
+      <div class="feature-card card-esg" data-prompt="Provide ESG multi-fuel emissions comparison for EV vs Diesel vs CNG for 450 km freight leg with all fuel and toll expenses in US Dollars ($ USD).">
+        <div>
+          <div class="card-icon-box">
+            <i class="ri-bar-chart-box-line"></i>
+          </div>
+          <h2 class="card-title">ESG & Financial ROI</h2>
+          <p class="card-desc">Sustainable operations. Higher returns.</p>
+        </div>
+        <div>
+          <span class="card-link">View Details <i class="ri-arrow-right-s-line"></i></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS WORKFLOW STRIP (EXACT DESIGN MATCH) -->
+    <section class="process-strip">
+      <div class="process-left">
+        <span class="process-tag">REAL-TIME INTELLIGENCE</span>
+        <h3 class="process-headline">Complete control. End to end.</h3>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <i class="ri-map-pin-line text-indigo-600"></i> Set Route
+        </div>
+        <i class="ri-arrow-right-s-line process-arrow"></i>
+        <div class="process-step">
+          <i class="ri-truck-line text-cyan-600"></i> Compare Fleets
+        </div>
+        <i class="ri-arrow-right-s-line process-arrow"></i>
+        <div class="process-step">
+          <i class="ri-settings-4-line text-amber-600"></i> Optimize
+        </div>
+        <i class="ri-arrow-right-s-line process-arrow"></i>
+        <div class="process-step">
+          <i class="ri-line-chart-line text-emerald-600"></i> Monitor
+        </div>
+      </div>
+      <div class="process-badge">
+        <i class="ri-flashlight-line"></i> Smarter decisions. Greater efficiency.
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         7. AI COPILOT INTERACTIVE CONSOLE
+         ══════════════════════════════════════════════ -->
+    <section id="copilotSection">
+      <div class="copilot-header">
+        <div class="copilot-brand">
+          <div class="copilot-icon">🚛</div>
+          <div class="copilot-title-group">
+            <h3>RIDO AI Copilot Console</h3>
+            <span>Responses Protocol &middot; gpt-6-astra &middot; Currency: US Dollars ($ USD)</span>
+          </div>
+        </div>
+
+        <div class="copilot-actions">
+          <div class="hud-chip">
+            <i class="ri-timer-line"></i> PING: <strong id="hudPing">380ms</strong>
+          </div>
+          <div class="hud-chip">
+            <i class="ri-money-dollar-circle-line"></i> SPENT: <strong id="hudSpent">$0.0024</strong>
+          </div>
+          <button class="nav-action-btn" id="clearBtn">
+            <i class="ri-refresh-line"></i> Reset Chat
+          </button>
+        </div>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="messages">
+        <div class="msg ai">
+          <div class="msg-avatar">🤖</div>
+          <div class="msg-bubble-wrap">
+            <div class="msg-bubble">
+              <p><strong>Welcome to RIDO Mission Control.</strong> I am your enterprise fleet intelligence assistant powered by <strong>Azure AI Foundry</strong> and <strong>gpt-6-astra</strong>.</p>
+              <p>Click any feature card above or ask me to optimize green EV freight corridors, monitor cold-chain reefer breaches, or audit driver Hours-of-Service. All financial metrics are quoted in <strong>$ USD</strong>.</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- CHAT VIEWPORT -->
-      <div id="chatArea">
-        <!-- WELCOME HERO -->
-        <div id="welcome">
-          <div class="welcome-hero-badge">
-            <i class="ri-shield-flash-line"></i> Autonomous Fleet Intelligence Platform
-          </div>
+      <!-- Input Dock -->
+      <div class="input-dock">
+        <div class="input-row">
+          <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
+          
+          <!-- Mic Dictation -->
+          <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
+            <i class="ri-mic-line"></i>
+          </button>
 
-          <h1 class="welcome-title">Enterprise Logistics Orchestrated by Azure AI Foundry</h1>
-          <p class="welcome-sub">
-            Real-time multi-fuel dispatch, automated cold-chain excursion mitigation, and Hours-of-Service driver safety enforcement.
-          </p>
-
-          <div class="suggested-grid">
-            <button class="suggested-btn" data-prompt="Check telemetry on V-104 reefer cargo and report thermal breach duration and spoilage liability in US Dollars ($ USD)">
-              <div class="s-icon">🚨</div>
-              <span class="s-title">Cold-Chain Incident</span>
-              <span class="s-sub">Monitor V-104 vaccines in $ USD</span>
-            </button>
-            <button class="suggested-btn" data-prompt="Plan green freight dispatch from Ludhiana to Jaipur with EV charging windows and total cost in US Dollars ($ USD)">
-              <div class="s-icon">🗺️</div>
-              <span class="s-title">Green Route Optimization</span>
-              <span class="s-sub">Ludhiana → Jaipur EV leg ($ USD)</span>
-            </button>
-            <button class="suggested-btn" data-prompt="Audit active driver driving hours against the 4.5h continuous limit and overtime cost in US Dollars ($ USD)">
-              <div class="s-icon">🛡️</div>
-              <span class="s-title">Safety & Shift Compliance</span>
-              <span class="s-sub">Enforce mandatory rest bay stops ($)</span>
-            </button>
-            <button class="suggested-btn" data-prompt="Compare financial fuel cost and CO2 emissions for EV vs Diesel vs CNG strictly in US Dollars ($ USD)">
-              <div class="s-icon">🌱</div>
-              <span class="s-title">ESG & Financial ROI ($)</span>
-              <span class="s-sub">Calculate net savings in US Dollars ($)</span>
-            </button>
-          </div>
+          <!-- Send Button -->
+          <button type="button" id="sendBtn" title="Send to Azure Foundry">
+            <i class="ri-send-plane-2-fill"></i>
+          </button>
         </div>
 
-
-        <!-- CONVERSATION FEED -->
-        <div id="messages" style="display:none;"></div>
-
-        <!-- BOTTOM DOCK INPUT BAR -->
-        <div id="inputBar">
-          <div class="input-row">
-            <textarea id="userInput" rows="1" placeholder="Instruct RIDO Copilot or click the Mic to speak..."></textarea>
-            
-            <!-- Voice Dictation Button -->
-            <button type="button" class="input-tool-btn" id="voiceMicBtn" title="Speak to Copilot (Speech-to-Text)">
-              <i class="ri-mic-line"></i>
-            </button>
-
-            <!-- Send Button -->
-            <button type="button" id="sendBtn" title="Execute Dispatch Command">
-              <i class="ri-send-plane-2-fill"></i>
-            </button>
-          </div>
-
-          <div class="input-footer">
-            <span>Microsoft Azure AI Foundry &middot; Responses Protocol &middot; <kbd>Enter</kbd> to Dispatch</span>
-            <span id="dispatcherNameBadge">Commander: <strong>Kunwar Bansal</strong></span>
-          </div>
+        <div class="input-meta-bar">
+          <span>Microsoft Azure AI Foundry &middot; <kbd>Enter</kbd> to Dispatch &middot; Shift+Enter for new line</span>
+          <span id="dispatcherNameBadge">Role: <strong>Fleet Manager</strong></span>
         </div>
       </div>
-    </main>
+    </section>
+
   </div>
 
+  <!-- ══════════════════════════════════════════════
+       8. REASONING TRACE DRAWER (SLIDE-OVER)
+       ══════════════════════════════════════════════ -->
+  <aside id="reasoningDrawer" class="collapsed">
+    <div class="drawer-header">
+      <span><i class="ri-mind-map text-indigo-600"></i> Azure Inference Trace</span>
+      <button class="drawer-close-btn" id="closeDrawerBtn"><i class="ri-close-line"></i></button>
+    </div>
+    <div id="thoughtLog">
+      <div class="empty-thoughts">
+        Autonomous agent thoughts, inference latency, and token consumption metrics will stream here in real time.
+      </div>
+    </div>
+  </aside>
+
+  <!-- Script Module -->
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
