@@ -3935,15 +3935,17 @@
           <div id="personaQuickChips" class="persona-quick-chips"></div>
 
           <!-- Messages Stream -->
-          <div id="copilotMessageFeed" class="copilot-chat-feed">
-            <div id="messages">
-              <div class="flex items-start space-x-3 max-w-3xl">
-                <div class="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 border border-orange-200 text-base">
-                  🤖
-                </div>
-                <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-xs sm:text-sm text-slate-700 leading-relaxed">
-                  <p class="font-bold text-slate-900 mb-1" id="copilotWelcomeHeading">In-Cab Intelligence Connected</p>
-                  <p id="copilotWelcomeBody">Welcome, Driver Alex. Connected to Unit TRK-A (Scania 45R). High-voltage battery is at 75% SOC and reefer chiller is locked at +3.6°C. Ready for in-cab routing, charging oasis reservations, or HOS rest checks.</p>
+          <div id="copilotChatFeed" class="copilot-chat-feed copilot-chat-container space-y-4">
+            <div id="copilotMessageFeed">
+              <div id="messages">
+                <div class="flex items-start space-x-3.5 max-w-3xl animate-fadeIn">
+                  <div class="w-9 h-9 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center shrink-0 text-base shadow-sm">
+                    🚛
+                  </div>
+                  <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-xs sm:text-sm text-slate-700 leading-relaxed">
+                    <p class="font-bold text-slate-900 text-xs tracking-wide uppercase text-orange-600 mb-1" id="copilotWelcomeHeading">In-Cab Telematics Connected</p>
+                    <p id="copilotWelcomeBody">Welcome Driver Alex. Unit TRK-A (Scania 45R) high-voltage battery is at 75% SOC with reefer chiller locked at +3.6°C. Ready for in-cab routing, charging oasis reservations, or HOS rest checks.</p>
+                  </div>
                 </div>
               </div>
             </div>

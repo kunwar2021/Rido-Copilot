@@ -607,19 +607,57 @@ COPILOT_PERSONAS['ESG Analyst'] = COPILOT_PERSONAS['ESG ANALYST'];
 COPILOT_PERSONAS['Fleet Manager'] = COPILOT_PERSONAS['FLEET MANAGER'];
 window.COPILOT_PERSONAS = COPILOT_PERSONAS;
 
-function hydrateCopilotForSession(roleOverride = null) {
-  const sessionData = localStorage.getItem('rido_session');
-  const chatContainer = document.getElementById('copilotMessageFeed') || document.getElementById('messages') || document.querySelector('.copilot-chat-feed');
+const PERSONA_CHAT_CONFIG = {
+  'DISPATCHER GATE': {
+    heading: 'Gate & Corridor Dispatch Connected',
+    message: 'Gateway dispatch console active. 242 of 250 assets deployed online across active corridors. Ready to optimize corridor routes, clear gate dwell queues, or manage emergency reroutes.',
+    icon: '🏢'
+  },
+  'DRIVER IN-CAB': {
+    heading: 'In-Cab Telematics Connected',
+    message: 'Welcome Driver Alex. Unit TRK-A (Scania 45R) high-voltage battery is at 75% SOC with reefer chiller locked at +3.6°C. Ready for in-cab routing, charging oasis reservations, or HOS rest checks.',
+    icon: '🚛'
+  },
+  'COMPLIANCE OFFICER': {
+    heading: 'Regulatory & Compliance Intelligence Active',
+    message: 'Regulatory audit hub online. 99.99% cold-chain SLA adherence logged across active reefers. Ready to audit HOS driver shift rest logs or inspect Scope 1 & 2 carbon abatement dockets.',
+    icon: '📋'
+  },
+  'FLEET MANAGER': {
+    heading: 'Mission Control Enterprise Copilot',
+    message: 'Welcome to RÍDO Mission Control. Ready to model fleet TCO, monitor cross-corridor health for 250 haulers, or run EV transition diagnostics.',
+    icon: '⚡'
+  },
+  'ESG ANALYST': {
+    heading: 'Sustainability Intelligence Active',
+    message: 'Scope 1 and Scope 2 carbon accounting ledger synchronized. 116 commercial BEVs deployed. Ready to model emissions avoidance and generate sustainability dockets.',
+    icon: '🌱'
+  }
+};
+PERSONA_CHAT_CONFIG['Dispatcher Gate'] = PERSONA_CHAT_CONFIG['DISPATCHER GATE'];
+PERSONA_CHAT_CONFIG['Driver In-Cab'] = PERSONA_CHAT_CONFIG['DRIVER IN-CAB'];
+PERSONA_CHAT_CONFIG['Compliance Officer'] = PERSONA_CHAT_CONFIG['COMPLIANCE OFFICER'];
+PERSONA_CHAT_CONFIG['Fleet Manager'] = PERSONA_CHAT_CONFIG['FLEET MANAGER'];
+PERSONA_CHAT_CONFIG['ESG Analyst'] = PERSONA_CHAT_CONFIG['ESG ANALYST'];
+window.PERSONA_CHAT_CONFIG = PERSONA_CHAT_CONFIG;
 
-  if (!chatContainer) return;
+function renderCopilotChatForCurrentRole(roleOverride = null) {
+  const chatFeed = document.querySelector('#copilotChatFeed') || 
+                   document.querySelector('.copilot-chat-container') || 
+                   document.querySelector('#viewCopilot .space-y-4') ||
+                   document.getElementById('copilotMessageFeed') ||
+                   document.getElementById('messages') ||
+                   document.querySelector('.copilot-chat-feed');
+  if (!chatFeed) return;
 
-  if (!isAuthenticated()) {
-    // Render Guest Locked State
-    chatContainer.innerHTML = `
-      <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm max-w-2xl">
-        <p class="font-bold text-slate-900 text-sm mb-1.5">Welcome to RIDO Mission Control. You are currently browsing in <span class="text-orange-600 font-extrabold">Guest Preview Mode</span>.</p>
+  const session = localStorage.getItem('rido_session');
+  if ((!session && !isAuthenticated()) || roleOverride === false || roleOverride === "Guest") {
+    // Unauthenticated Guest Card
+    chatFeed.innerHTML = `
+      <div class="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm max-w-2xl">
+        <p class="font-bold text-slate-900 text-sm mb-1.5">Welcome to RÍDO Mission Control. You are currently browsing in <span class="text-orange-600 font-black">Guest Preview Mode</span>.</p>
         <p class="text-xs text-slate-500 leading-relaxed mb-4">Protected sectors (Fleet IQ, Corridor Routing, ESG Analytics, Audit Dockets) and live Copilot AI assistance are locked behind enterprise authentication.</p>
-        <button onclick="openSignInModal('viewCopilot')" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-2 transition cursor-pointer">
+        <button onclick="openSignInModal('viewCopilot')" class="px-4 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-2 transition cursor-pointer">
           <span>Sign In to Unlock Platform</span>
           <span>&rarr;</span>
         </button>
@@ -628,54 +666,41 @@ function hydrateCopilotForSession(roleOverride = null) {
     return;
   }
 
-  // Authenticated: Parse role and inject persona greeting
-  let role = 'DRIVER IN-CAB';
-  if (roleOverride) {
-    role = roleOverride;
-  } else if (sessionData) {
+  // Authenticated State: determine active role
+  let roleKey = 'DRIVER IN-CAB';
+  if (roleOverride && typeof roleOverride === 'string') {
+    roleKey = roleOverride.replace(/^\[|\]$/g, '').trim().toUpperCase();
+  } else if (session) {
     try {
-      const user = JSON.parse(sessionData);
-      role = (user.role || user.persona || state.persona || 'DRIVER IN-CAB');
+      const user = JSON.parse(session);
+      roleKey = (user.role || user.persona || state.persona || 'DRIVER IN-CAB').replace(/^\[|\]$/g, '').trim().toUpperCase();
     } catch (e) {
-      role = state.persona || localStorage.getItem('rido_persona') || 'DRIVER IN-CAB';
+      roleKey = (state.persona || localStorage.getItem('rido_persona') || 'DRIVER IN-CAB').replace(/^\[|\]$/g, '').trim().toUpperCase();
     }
   } else {
-    role = state.persona || localStorage.getItem('rido_persona') || 'DRIVER IN-CAB';
+    roleKey = (state.persona || localStorage.getItem('rido_persona') || 'DRIVER IN-CAB').replace(/^\[|\]$/g, '').trim().toUpperCase();
   }
-  role = role.replace(/^\[|\]$/g, '').trim().toUpperCase();
 
-  const greetings = {
-    'DRIVER IN-CAB': 'Welcome, Driver Alex. Connected to Unit TRK-A (Scania 45R). High-voltage battery is at 75% SOC and reefer chiller is locked at +3.6°C. Ready for in-cab routing, charging oasis reservations, or HOS rest checks.',
-    'DISPATCHER GATE': 'Gateway dispatch console active. 242 of 250 assets deployed online. Ready to optimize corridor routes, clear gate dwell queues, or reroute around highway bottlenecks.',
-    'COMPLIANCE OFFICER': 'Regulatory audit hub online. 99.99% cold-chain SLA adherence logged across active reefers. Ready to audit HOS driver shift rest logs or inspect Scope 1 & 2 carbon abatement dockets.',
-    'ESG ANALYST': 'Corporate ESG & financial intelligence hub online. Scope 1 & 2 carbon abatement models active. Ready to forecast emissions trajectories or audit fleet fuel parity in US Dollars ($ USD).',
-    'FLEET MANAGER': 'Welcome to RIDO Mission Control. Ready to model fleet TCO, audit operational expenses across 250 haulers, or run EV transition diagnostics.'
-  };
+  const config = PERSONA_CHAT_CONFIG[roleKey] || PERSONA_CHAT_CONFIG['DRIVER IN-CAB'];
 
-  const headings = {
-    'DRIVER IN-CAB': 'In-Cab Intelligence Connected',
-    'DISPATCHER GATE': 'Gateway Dispatch Intelligence Online',
-    'COMPLIANCE OFFICER': 'Regulatory Audit Hub Online',
-    'ESG ANALYST': 'Corporate ESG Intelligence Connected',
-    'FLEET MANAGER': 'Fleet Intelligence Connected'
-  };
-
-  const selectedHeading = headings[role] || 'In-Cab Intelligence Connected';
-  const selectedGreeting = greetings[role] || greetings['DRIVER IN-CAB'];
-
-  chatContainer.innerHTML = `
-    <div class="flex items-start space-x-3 max-w-3xl">
-      <div class="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 border border-orange-200 text-base">
-        🤖
+  chatFeed.innerHTML = `
+    <div class="flex items-start space-x-3.5 max-w-3xl animate-fadeIn">
+      <div class="w-9 h-9 rounded-xl bg-orange-50 border border-orange-200 flex items-center justify-center shrink-0 text-base shadow-sm">
+        ${config.icon}
       </div>
       <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-xs sm:text-sm text-slate-700 leading-relaxed">
-        <p class="font-bold text-slate-900 mb-1" id="copilotWelcomeHeading">${selectedHeading}</p>
-        <p id="copilotWelcomeBody">${selectedGreeting}</p>
+        <p class="font-bold text-slate-900 text-xs tracking-wide uppercase text-orange-600 mb-1" id="copilotWelcomeHeading">${config.heading}</p>
+        <p id="copilotWelcomeBody">${config.message}</p>
       </div>
     </div>
   `;
 }
-window.hydrateCopilotForSession = hydrateCopilotForSession;
+
+const updateCopilotChatFeed = renderCopilotChatForCurrentRole;
+const hydrateCopilotForSession = renderCopilotChatForCurrentRole;
+window.renderCopilotChatForCurrentRole = renderCopilotChatForCurrentRole;
+window.updateCopilotChatFeed = renderCopilotChatForCurrentRole;
+window.hydrateCopilotForSession = renderCopilotChatForCurrentRole;
 
 function renderCopilotForPersona(personaName) {
   const norm = (personaName || "Fleet Manager").replace(/^\[|\]$/g, '').trim();
@@ -1294,6 +1319,7 @@ function checkAuth() {
     updateUIAuthState(true);
     renderPersonaExperience(state.persona);
     renderNavForRole(state.persona);
+    renderCopilotChatForCurrentRole(state.persona);
   } else {
     // Default: Unauthenticated Guest Mode (Only Home accessible)
     state.sessionToken = null;
@@ -1302,6 +1328,7 @@ function checkAuth() {
     updateUIAuthState(false);
     renderGuestExperience();
     renderNavForRole(null);
+    renderCopilotChatForCurrentRole(false);
     if (wantsLogin) {
       setTimeout(() => openLoginModal(), 200);
     }
@@ -1908,8 +1935,16 @@ function appendMessage(role, text) {
 
   div.appendChild(avatar);
   div.appendChild(wrap);
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
+
+  const targetFeed = document.querySelector("#copilotChatFeed") || 
+                     document.querySelector(".copilot-chat-container") || 
+                     document.getElementById("copilotMessageFeed") || 
+                     document.getElementById("messages") || 
+                     messages;
+  if (targetFeed) {
+    targetFeed.appendChild(div);
+    targetFeed.scrollTop = targetFeed.scrollHeight;
+  }
 }
 
 function appendTyping(id) {
@@ -1926,8 +1961,16 @@ function appendTyping(id) {
         </div>
       </div>
     </div>`;
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
+
+  const targetFeed = document.querySelector("#copilotChatFeed") || 
+                     document.querySelector(".copilot-chat-container") || 
+                     document.getElementById("copilotMessageFeed") || 
+                     document.getElementById("messages") || 
+                     messages;
+  if (targetFeed) {
+    targetFeed.appendChild(div);
+    targetFeed.scrollTop = targetFeed.scrollHeight;
+  }
 }
 
 function removeTyping(id) { document.getElementById(id)?.remove(); }
