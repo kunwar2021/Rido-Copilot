@@ -6,6 +6,17 @@
   <title>RIDO — Audit Trail & Generation Hub</title>
   <link rel="icon" type="image/png" href="images/rido-logo.png" />
 
+  <!-- Immediate Authentication Guard -->
+  <script>
+    (function () {
+      const token = localStorage.getItem('rido_session') || localStorage.getItem('rido_auth_token') || sessionStorage.getItem('rido_session_token');
+      const isValid = token && typeof token === 'string' && token.trim() !== '' && token !== 'null' && token !== 'undefined' && token !== 'false' && token !== 'NaN';
+      if (!isValid) {
+        window.location.replace('index.html?tab=reports&login=1');
+      }
+    })();
+  </script>
+
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />

@@ -148,8 +148,39 @@ function generateDemoSessionToken(prefix = "RIDO-") {
   return `${prefix}${rand}`;
 }
 
+const PROTECTED_TABS = ['fleet', 'routes', 'analytics', 'reports'];
+
+function normalizeTabKey(tabOrViewId) {
+  if (!tabOrViewId) return 'home';
+  return tabOrViewId.toLowerCase().replace('view', '').replace('#', '').trim();
+}
+
 function isAuthenticated() {
-  return !!(localStorage.getItem("rido_auth_token") || sessionStorage.getItem("rido_session_token"));
+  const token = localStorage.getItem("rido_session") ||
+                localStorage.getItem("rido_auth_token") ||
+                sessionStorage.getItem("rido_session_token");
+
+  if (!token || typeof token !== "string") {
+    return false;
+  }
+
+  const clean = token.trim();
+  // Strictly invalidate falsey, empty, or stringified null/undefined
+  if (!clean || clean === "null" || clean === "undefined" || clean === "false" || clean === "NaN") {
+    localStorage.removeItem("rido_session");
+    localStorage.removeItem("rido_auth_token");
+    localStorage.removeItem("rido_user_data");
+    localStorage.removeItem("rido_persona");
+    sessionStorage.removeItem("rido_session_token");
+    sessionStorage.removeItem("rido_persona");
+    return false;
+  }
+
+  return true;
+}
+
+function openSignInModal(targetView = null) {
+  return openLoginModal(targetView);
 }
 
 function openLoginModal(targetView = null) {
@@ -787,6 +818,7 @@ function login(userData = {}, token = null) {
   const persona = userData.persona || "Driver In-Cab";
   const email = userData.email || `${persona.toLowerCase().replace(/\s+/g, "")}@rido.ai`;
 
+  localStorage.setItem("rido_session", authToken);
   localStorage.setItem("rido_auth_token", authToken);
   localStorage.setItem("rido_user_data", JSON.stringify({ email, persona }));
   localStorage.setItem("rido_persona", persona);
@@ -813,6 +845,7 @@ function login(userData = {}, token = null) {
 }
 
 function logout() {
+  localStorage.removeItem("rido_session");
   localStorage.removeItem("rido_auth_token");
   localStorage.removeItem("rido_user_data");
   localStorage.removeItem("rido_persona");
@@ -1350,22 +1383,48 @@ checkAuth();
 setupSpeechRecognition();
 
 /* ══════════════════════════════════════════════
-   6. SPA VIEW ROUTER (Home, Fleet, Routes, Analytics, Reports)
+   6. STRICT ROUTER & TAB-SWITCHING GUARD
    ══════════════════════════════════════════════ */
 const navLinks = document.querySelectorAll(".nav-links .nav-link");
 const allViews = document.querySelectorAll(".app-page-view");
 
-function switchView(viewId) {
-  const currentPersona = state.persona || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
-  const perms = ROLE_PERMISSIONS[currentPersona] || ROLE_PERMISSIONS["Driver In-Cab"];
+function switchTab(tabId) {
+  const cleanTab = normalizeTabKey(tabId);
+  const targetView = `view${cleanTab.charAt(0).toUpperCase() + cleanTab.slice(1)}`;
+  return switchView(targetView);
+}
 
-  // RBAC Guard: Block access if the role does not have permission
-  if (perms && perms.allowedViews && !perms.allowedViews.includes(viewId)) {
-    alert(`Access Restricted: Your active role [${currentPersona}] is not authorized to view this section.`);
-    return;
+// Router API compatibility aliases
+const showPage = switchTab;
+const navigate = switchTab;
+
+function switchView(viewId) {
+  const tabKey = normalizeTabKey(viewId);
+
+  // 1. STRICT ROUTE GUARD: Check authentication at the VERY FIRST LINE
+  if (!isAuthenticated()) {
+    if (PROTECTED_TABS.includes(tabKey) || (viewId && viewId !== "viewHome")) {
+      openSignInModal(viewId);
+      return false;
+    }
   }
 
-  allViews.forEach(v => v.style.display = "none");
+  // 2. Role-Based Access Control (RBAC) for authenticated users
+  if (isAuthenticated()) {
+    const currentPersona = state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
+    const perms = ROLE_PERMISSIONS[currentPersona] || ROLE_PERMISSIONS["Driver In-Cab"];
+
+    if (perms && perms.allowedViews && !perms.allowedViews.includes(viewId)) {
+      alert(`Access Restricted: Your active role [${currentPersona}] is not authorized to view this section.`);
+      return false;
+    }
+  }
+
+  // 3. DOM Modifications (only permitted for authorized views)
+  allViews.forEach(v => {
+    v.style.display = "none";
+  });
+
   const targetView = document.getElementById(viewId);
   if (targetView) {
     targetView.style.display = "flex";
@@ -1380,60 +1439,68 @@ function switchView(viewId) {
   }
 
   window.scrollTo({ top: 0, behavior: "smooth" });
+  return true;
 }
 
-navLinks.forEach(link => {
-  link.addEventListener("click", (e) => {
-    const target = link.dataset.view;
-    if (!target) return;
+// Event Interception on all Navigation Elements (Capture Phase)
+document.querySelectorAll(".site-header nav a, .site-header .nav-links a, .site-header .nav-link, .site-header nav button").forEach(element => {
+  element.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-    // Guest Route Protection: Intercept non-Home clicks
-    if (!isAuthenticated() && target !== "viewHome") {
-      e.preventDefault();
-      e.stopPropagation();
-      openLoginModal(target);
-      return;
-    }
+    const target = element.dataset.view || element.getAttribute("href") || "";
+    const tabKey = normalizeTabKey(element.dataset.tab || target);
 
-    if (document.getElementById(target)) {
-      e.preventDefault();
-      switchView(target);
-      const hashName = target.replace("view", "").toLowerCase();
-      history.pushState(null, "", `#${hashName}`);
+    if (PROTECTED_TABS.includes(tabKey)) {
+      if (!isAuthenticated()) {
+        openSignInModal(`view${tabKey.charAt(0).toUpperCase() + tabKey.slice(1)}`);
+        return;
+      }
+      switchTab(tabKey);
+      history.pushState(null, "", `#${tabKey}`);
+    } else {
+      switchTab("home");
+      history.pushState(null, "", "#home");
     }
-  });
+  }, true);
 });
 
-// Logo clicks return to Home
+// Intercept logo clicks to return to Home
 document.querySelectorAll(".site-logo").forEach(logo => {
   logo.addEventListener("click", (e) => {
     e.preventDefault();
+    e.stopPropagation();
     switchView("viewHome");
     history.pushState(null, "", "#home");
   });
 });
 
-// Handle initial URL hash on page load
+// Handle initial URL hash or query params on page load
 function handleHashRoute() {
-  const hash = window.location.hash.toLowerCase().replace("#", "");
-  const protectedHashes = ["fleet", "routes", "analytics", "reports"];
+  const urlParams = new URLSearchParams(window.location.search);
+  const queryTab = urlParams.get("tab");
+  const rawHash = window.location.hash.toLowerCase().replace("#", "").trim();
+  const requestedTab = queryTab || rawHash || "home";
+  const cleanTab = normalizeTabKey(requestedTab);
 
   if (!isAuthenticated()) {
-    if (protectedHashes.includes(hash)) {
+    if (PROTECTED_TABS.includes(cleanTab)) {
+      history.replaceState(null, "", window.location.pathname + "#home");
       switchView("viewHome");
-      const targetView = "view" + hash.charAt(0).toUpperCase() + hash.slice(1);
-      setTimeout(() => openLoginModal(targetView), 150);
+      const targetView = `view${cleanTab.charAt(0).toUpperCase() + cleanTab.slice(1)}`;
+      setTimeout(() => openSignInModal(targetView), 100);
       return;
     }
     switchView("viewHome");
     return;
   }
 
-  if (hash === "fleet") switchView("viewFleet");
-  else if (hash === "routes") switchView("viewRoutes");
-  else if (hash === "analytics") switchView("viewAnalytics");
-  else if (hash === "reports") switchView("viewReports");
-  else switchView("viewHome");
+  const targetView = `view${cleanTab.charAt(0).toUpperCase() + cleanTab.slice(1)}`;
+  if (document.getElementById(targetView)) {
+    switchView(targetView);
+  } else {
+    switchView("viewHome");
+  }
 }
 
 window.addEventListener("popstate", handleHashRoute);
