@@ -3911,13 +3911,15 @@
           <div id="personaQuickChips" class="persona-quick-chips"></div>
 
           <!-- Messages Stream -->
-          <div id="messages">
-            <div class="msg ai">
-              <div class="msg-avatar">🤖</div>
-              <div class="msg-bubble-wrap">
-                <div class="msg-bubble">
-                  <p><strong id="copilotWelcomeHeading">In-Cab Copilot Dispatch</strong></p>
-                  <p id="copilotWelcomeBody" style="margin-top: 6px;">Welcome Driver Alex (TRK-A Scania 45R). I can help you monitor high-voltage battery range, locate highway fast-chargers, check reefer temperatures, or calculate your next mandatory rest halt.</p>
+          <div id="copilotMessageFeed" class="copilot-chat-feed">
+            <div id="messages">
+              <div class="flex items-start space-x-3 max-w-3xl">
+                <div class="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 border border-orange-200 text-base">
+                  🤖
+                </div>
+                <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-xs sm:text-sm text-slate-700 leading-relaxed">
+                  <p class="font-bold text-slate-900 mb-1" id="copilotWelcomeHeading">In-Cab Intelligence Connected</p>
+                  <p id="copilotWelcomeBody">Welcome, Driver Alex. Connected to Unit TRK-A (Scania 45R). High-voltage battery is at 75% SOC and reefer chiller is locked at +3.6°C. Ready for in-cab routing, charging oasis reservations, or HOS rest checks.</p>
                 </div>
               </div>
             </div>

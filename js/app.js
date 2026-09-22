@@ -30,7 +30,7 @@ const copilotWorkspace  = document.getElementById("copilotWorkspace");
 const loginForm         = document.getElementById("loginForm");
 const evaluatorDemoBtn  = document.getElementById("evaluatorDemoBtn");
 const welcome           = document.getElementById("welcome");
-const messages          = document.getElementById("messages");
+const messages          = document.getElementById("copilotMessageFeed") || document.getElementById("messages");
 const userInput         = document.getElementById("userInput");
 const sendBtn           = document.getElementById("sendBtn");
 const clearBtn          = document.getElementById("clearBtn");
@@ -607,6 +607,76 @@ COPILOT_PERSONAS['ESG Analyst'] = COPILOT_PERSONAS['ESG ANALYST'];
 COPILOT_PERSONAS['Fleet Manager'] = COPILOT_PERSONAS['FLEET MANAGER'];
 window.COPILOT_PERSONAS = COPILOT_PERSONAS;
 
+function hydrateCopilotForSession(roleOverride = null) {
+  const sessionData = localStorage.getItem('rido_session');
+  const chatContainer = document.getElementById('copilotMessageFeed') || document.getElementById('messages') || document.querySelector('.copilot-chat-feed');
+
+  if (!chatContainer) return;
+
+  if (!isAuthenticated()) {
+    // Render Guest Locked State
+    chatContainer.innerHTML = `
+      <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm max-w-2xl">
+        <p class="font-bold text-slate-900 text-sm mb-1.5">Welcome to RIDO Mission Control. You are currently browsing in <span class="text-orange-600 font-extrabold">Guest Preview Mode</span>.</p>
+        <p class="text-xs text-slate-500 leading-relaxed mb-4">Protected sectors (Fleet IQ, Corridor Routing, ESG Analytics, Audit Dockets) and live Copilot AI assistance are locked behind enterprise authentication.</p>
+        <button onclick="openSignInModal('viewCopilot')" class="px-4 py-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-2 transition cursor-pointer">
+          <span>Sign In to Unlock Platform</span>
+          <span>&rarr;</span>
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  // Authenticated: Parse role and inject persona greeting
+  let role = 'DRIVER IN-CAB';
+  if (roleOverride) {
+    role = roleOverride;
+  } else if (sessionData) {
+    try {
+      const user = JSON.parse(sessionData);
+      role = (user.role || user.persona || state.persona || 'DRIVER IN-CAB');
+    } catch (e) {
+      role = state.persona || localStorage.getItem('rido_persona') || 'DRIVER IN-CAB';
+    }
+  } else {
+    role = state.persona || localStorage.getItem('rido_persona') || 'DRIVER IN-CAB';
+  }
+  role = role.replace(/^\[|\]$/g, '').trim().toUpperCase();
+
+  const greetings = {
+    'DRIVER IN-CAB': 'Welcome, Driver Alex. Connected to Unit TRK-A (Scania 45R). High-voltage battery is at 75% SOC and reefer chiller is locked at +3.6°C. Ready for in-cab routing, charging oasis reservations, or HOS rest checks.',
+    'DISPATCHER GATE': 'Gateway dispatch console active. 242 of 250 assets deployed online. Ready to optimize corridor routes, clear gate dwell queues, or reroute around highway bottlenecks.',
+    'COMPLIANCE OFFICER': 'Regulatory audit hub online. 99.99% cold-chain SLA adherence logged across active reefers. Ready to audit HOS driver shift rest logs or inspect Scope 1 & 2 carbon abatement dockets.',
+    'ESG ANALYST': 'Corporate ESG & financial intelligence hub online. Scope 1 & 2 carbon abatement models active. Ready to forecast emissions trajectories or audit fleet fuel parity in US Dollars ($ USD).',
+    'FLEET MANAGER': 'Welcome to RIDO Mission Control. Ready to model fleet TCO, audit operational expenses across 250 haulers, or run EV transition diagnostics.'
+  };
+
+  const headings = {
+    'DRIVER IN-CAB': 'In-Cab Intelligence Connected',
+    'DISPATCHER GATE': 'Gateway Dispatch Intelligence Online',
+    'COMPLIANCE OFFICER': 'Regulatory Audit Hub Online',
+    'ESG ANALYST': 'Corporate ESG Intelligence Connected',
+    'FLEET MANAGER': 'Fleet Intelligence Connected'
+  };
+
+  const selectedHeading = headings[role] || 'In-Cab Intelligence Connected';
+  const selectedGreeting = greetings[role] || greetings['DRIVER IN-CAB'];
+
+  chatContainer.innerHTML = `
+    <div class="flex items-start space-x-3 max-w-3xl">
+      <div class="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0 border border-orange-200 text-base">
+        🤖
+      </div>
+      <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-xs sm:text-sm text-slate-700 leading-relaxed">
+        <p class="font-bold text-slate-900 mb-1" id="copilotWelcomeHeading">${selectedHeading}</p>
+        <p id="copilotWelcomeBody">${selectedGreeting}</p>
+      </div>
+    </div>
+  `;
+}
+window.hydrateCopilotForSession = hydrateCopilotForSession;
+
 function renderCopilotForPersona(personaName) {
   const norm = (personaName || "Fleet Manager").replace(/^\[|\]$/g, '').trim();
   const config = COPILOT_PERSONAS[norm] ||
@@ -633,12 +703,8 @@ function renderCopilotForPersona(personaName) {
     `).join("");
   }
 
-  // 3. Update Welcome AI Message Bubble
-  const welcomeHeading = document.getElementById("copilotWelcomeHeading");
-  if (welcomeHeading) welcomeHeading.textContent = config.title;
-
-  const welcomeBody = document.getElementById("copilotWelcomeBody");
-  if (welcomeBody) welcomeBody.textContent = config.greeting;
+  // 3. Hydrate Copilot Message History with Persona Greeting
+  hydrateCopilotForSession(norm);
 
   // 4. Update Foundry Agent Dynamic System Prompt
   if (window.foundryAgent) {
@@ -1094,19 +1160,8 @@ function renderGuestExperience() {
     `;
   }
 
-  // 6. Guest Welcome AI Greeting
-  const welcomeBubble = document.querySelector("#messages .msg.ai .msg-bubble");
-  if (welcomeBubble) {
-    welcomeBubble.innerHTML = `
-      <p><strong>Welcome to RIDO Mission Control.</strong> You are currently browsing in <strong>Guest Preview Mode</strong>.</p>
-      <p style="font-size: 0.84rem; color: #64748b; margin-top: 6px;">Protected sectors (<strong>Fleet IQ</strong>, <strong>Corridor Routing</strong>, <strong>ESG Analytics</strong>, <strong>Audit Dockets</strong>) and live Copilot AI assistance are locked behind enterprise authentication.</p>
-      <div style="margin-top: 12px;">
-        <button type="button" class="guest-signin-btn" onclick="openLoginModal()" style="font-size: 0.78rem; padding: 7px 16px;">
-          <i class="ri-login-box-r-line"></i> Sign In to Unlock Platform &rarr;
-        </button>
-      </div>
-    `;
-  }
+  // 6. Guest Welcome AI Greeting (Locked State)
+  hydrateCopilotForSession(null);
 }
 
 function login(userData = {}, token = null) {
@@ -1114,7 +1169,8 @@ function login(userData = {}, token = null) {
   const persona = userData.persona || "Driver In-Cab";
   const email = userData.email || `${persona.toLowerCase().replace(/\s+/g, "")}@rido.ai`;
 
-  localStorage.setItem("rido_session", authToken);
+  const sessionPayload = { role: persona, persona: persona, email: email, token: authToken };
+  localStorage.setItem("rido_session", JSON.stringify(sessionPayload));
   localStorage.setItem("rido_auth_token", authToken);
   localStorage.setItem("rido_user_data", JSON.stringify({ email, persona }));
   localStorage.setItem("rido_persona", persona);
@@ -1130,6 +1186,7 @@ function login(userData = {}, token = null) {
 
   updateUIAuthState(true);
   renderPersonaExperience(persona);
+  hydrateCopilotForSession(persona);
   sfx.playGrant();
 
   // Dismiss the Sign-In modal
@@ -1501,21 +1558,29 @@ if (closeDrawerBtn && reasoningDrawer) {
 }
 
 /* ── Reset / Clear Chat ── */
-clearBtn.addEventListener("click", () => {
-  messages.innerHTML = `
-    <div class="msg ai">
-      <div class="msg-avatar">🤖</div>
-      <div class="msg-bubble-wrap">
-        <div class="msg-bubble">
-          <p><strong>Chat session reset.</strong> Click any feature card above or ask me any logistics, cold-chain, or route dispatch query in <strong>$ USD</strong>.</p>
-        </div>
-      </div>
-    </div>`;
-  thoughtLog.innerHTML = `<div class="empty-thoughts">Autonomous agent thoughts, inference latency, and token consumption metrics will stream here in real time.</div>`;
-  hasStarted = false;
-  previousResponseId = null;
-  if (window.speechSynthesis) window.speechSynthesis.cancel();
-});
+if (clearBtn) {
+  clearBtn.addEventListener("click", () => {
+    if (typeof hydrateCopilotForSession === "function") {
+      hydrateCopilotForSession();
+    } else {
+      messages.innerHTML = `
+        <div class="msg ai">
+          <div class="msg-avatar">🤖</div>
+          <div class="msg-bubble-wrap">
+            <div class="msg-bubble">
+              <p><strong>Chat session reset.</strong> Click any feature card above or ask me any logistics, cold-chain, or route dispatch query in <strong>$ USD</strong>.</p>
+            </div>
+          </div>
+        </div>`;
+    }
+    if (thoughtLog) {
+      thoughtLog.innerHTML = `<div class="empty-thoughts">Autonomous agent thoughts, inference latency, and token consumption metrics will stream here in real time.</div>`;
+    }
+    hasStarted = false;
+    previousResponseId = null;
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+  });
+}
 
 
 userInput.addEventListener("input", () => {
@@ -1981,8 +2046,13 @@ function switchView(viewId) {
 
   // 4b. Handle Copilot view persona adaptation
   if (targetViewId === "viewCopilot") {
-    const activePersona = isAuthenticated() ? (state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab") : "Fleet Manager";
-    renderCopilotForPersona(activePersona);
+    if (isAuthenticated()) {
+      const activePersona = state.persona || localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
+      renderCopilotForPersona(activePersona);
+      hydrateCopilotForSession(activePersona);
+    } else {
+      hydrateCopilotForSession(null);
+    }
     openCopilotWorkspace(true);
   }
 
