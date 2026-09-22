@@ -325,13 +325,7 @@ function updateUIAuthState(isLoggedIn) {
     document.querySelectorAll(".nav-lock-icon").forEach(icon => icon.style.display = "none");
   } else {
     if (authSlot) {
-      authSlot.innerHTML = `
-        <button onclick="openSignInModal()" id="navSignInBtn" class="text-xs font-bold text-slate-700 hover:text-slate-900 px-3 py-1.5 transition-colors">Sign In</button>
-        <button onclick="openSignInModal()" id="navGetStartedBtn" class="btn-signin inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition active:scale-[0.98]">
-          <span>Get Started</span>
-          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-        </button>
-      `;
+      authSlot.innerHTML = "";
     }
     const personaWrap = document.getElementById("personaWrapper");
     if (personaWrap) personaWrap.style.display = "none";
