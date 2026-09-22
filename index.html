@@ -338,6 +338,119 @@
       border-radius: 2px;
     }
 
+    /* Locked Nav Link State for Guests */
+    .nav-link.locked {
+      opacity: 0.52;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .nav-link.locked:hover {
+      opacity: 0.85;
+      color: #2563eb;
+    }
+
+    .nav-lock-icon {
+      font-size: 0.74rem;
+      margin-left: 4px;
+      color: #94a3b8;
+      vertical-align: middle;
+      display: inline-block;
+      transition: color 0.15s;
+    }
+
+    .nav-link.locked:hover .nav-lock-icon {
+      color: #2563eb;
+    }
+
+    /* Guest Preview Banner */
+    .guest-lock-banner {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 14px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+    }
+
+    .guest-lock-banner-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .guest-lock-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .guest-lock-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.01em;
+    }
+
+    .guest-lock-desc {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-top: 2px;
+      line-height: 1.4;
+    }
+
+    .guest-signin-btn {
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 9px 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      font-family: inherit;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1);
+    }
+
+    .guest-signin-btn:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+    }
+
+    /* Disabled Copilot Input Styling */
+    .input-dock.locked {
+      opacity: 0.72;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .input-dock.locked textarea {
+      cursor: not-allowed;
+      background: transparent;
+      color: #94a3b8;
+    }
+
+    .input-dock.locked button {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
     .nav-right {
       display: flex;
       align-items: center;
@@ -2350,11 +2463,11 @@
         <img src="images/rido-logo.png" alt="RIDO" style="height: 34px; object-fit: contain; vertical-align: middle;" />
       </a>
       <ul class="nav-links">
-        <li><a href="index.html" class="nav-link active" id="navHome" data-view="viewHome">Home</a></li>
-        <li><a href="fleet.html" class="nav-link" id="navFleet" data-view="viewFleet">Fleet</a></li>
-        <li><a href="routes.html" class="nav-link" id="navRoutes" data-view="viewRoutes">Routes</a></li>
-        <li><a href="analytics.html" class="nav-link" id="navAnalytics" data-view="viewAnalytics">Analytics</a></li>
-        <li><a href="reports.html" class="nav-link" id="navReports" data-view="viewReports">Reports</a></li>
+        <li><a href="index.html" class="nav-link active" id="navHome" data-view="viewHome"><span class="nav-label">Home</span></a></li>
+        <li><a href="fleet.html" class="nav-link locked" id="navFleet" data-view="viewFleet"><span class="nav-label">Fleet</span> <i class="ri-lock-2-line nav-lock-icon"></i></a></li>
+        <li><a href="routes.html" class="nav-link locked" id="navRoutes" data-view="viewRoutes"><span class="nav-label">Routes</span> <i class="ri-lock-2-line nav-lock-icon"></i></a></li>
+        <li><a href="analytics.html" class="nav-link locked" id="navAnalytics" data-view="viewAnalytics"><span class="nav-label">Analytics</span> <i class="ri-lock-2-line nav-lock-icon"></i></a></li>
+        <li><a href="reports.html" class="nav-link locked" id="navReports" data-view="viewReports"><span class="nav-label">Reports</span> <i class="ri-lock-2-line nav-lock-icon"></i></a></li>
       </ul>
     </div>
 
@@ -2366,7 +2479,7 @@
       </div>
 
       <!-- Authenticated Security Context (Role Isolated) -->
-      <div class="nav-persona-wrapper" id="personaWrapper">
+      <div class="nav-persona-wrapper" id="personaWrapper" style="display: none;">
         <div class="nav-persona-btn static-badge" id="personaDropdownBtn" title="Authenticated Operational Role (Enforced by RBAC)" style="cursor: default; display: inline-flex; align-items: center; gap: 6px;">
           <i class="ri-shield-check-line" style="color: #16a34a;"></i>
           <span id="headerPersonaBadge">[DRIVER IN-CAB]</span>
@@ -2375,12 +2488,12 @@
       </div>
 
       <!-- Sign Out Button (Image 1) -->
-      <button class="btn-signout" id="logoutBtn" title="Sign Out of Mission Control">
+      <button class="btn-signout" id="logoutBtn" title="Sign Out of Mission Control" style="display: none;">
         <i class="ri-logout-box-r-line"></i> Sign Out
       </button>
 
       <!-- Sign In Button (Shown when signed out) -->
-      <button class="btn-signin" id="navSignInBtn" title="Sign In to RIDO" style="display: none;">
+      <button class="btn-signin" id="navSignInBtn" title="Sign In to RIDO">
         <i class="ri-login-box-r-line"></i> Sign In
       </button>
     </div>
@@ -2396,6 +2509,20 @@
          RIDO COPILOT: PROCESS STRIP & COPILOT CONSOLE
          ══════════════════════════════════════════════ -->
     <div id="copilotWorkspace" class="copilot-workspace-visible">
+
+      <!-- GUEST PREVIEW BANNER (Visible ONLY when unauthenticated) -->
+      <div id="guestLockBanner" class="guest-lock-banner">
+        <div class="guest-lock-banner-left">
+          <div class="guest-lock-badge"><i class="ri-lock-2-line"></i></div>
+          <div>
+            <div class="guest-lock-title">Guest Preview Mode &bull; Sign in to Unlock</div>
+            <div class="guest-lock-desc">Protected sectors (Fleet IQ, Corridor Routing, ESG Analytics, Audit Reports) and Copilot AI dispatch are locked.</div>
+          </div>
+        </div>
+        <button type="button" class="guest-signin-btn" id="guestBannerSignInBtn">
+          <i class="ri-login-box-r-line"></i> Sign In to Unlock &rarr;
+        </button>
+      </div>
 
       <!-- PROCESS WORKFLOW STRIP (EXACT IMAGE 2 MATCH) -->
       <section class="process-strip" id="processStrip">
@@ -2473,7 +2600,7 @@
         </div>
 
         <!-- Input Dock -->
-        <div class="input-dock">
+        <div class="input-dock" id="copilotInputDock">
           <div class="input-row">
             <textarea id="userInput" rows="1" placeholder="Ask RIDO Copilot or click the Mic to speak..."></textarea>
             

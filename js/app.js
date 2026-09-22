@@ -148,18 +148,67 @@ function generateDemoSessionToken(prefix = "RIDO-") {
   return `${prefix}${rand}`;
 }
 
+function isAuthenticated() {
+  return !!(localStorage.getItem("rido_auth_token") || sessionStorage.getItem("rido_session_token"));
+}
+
+function openLoginModal(targetView = null) {
+  if (targetView) {
+    window.pendingRedirectView = targetView;
+  }
+  if (loginScreen) {
+    loginScreen.classList.remove("hidden");
+    if (loginPassword) loginPassword.value = "RIDO2026";
+    if (loginIdInput) loginIdInput.focus();
+  }
+}
+
+function closeLoginModal() {
+  if (loginScreen) {
+    loginScreen.classList.add("hidden");
+  }
+}
+
 function updateUIAuthState(isLoggedIn) {
+  const guestBanner = document.getElementById("guestLockBanner");
+  const inputDock = document.getElementById("copilotInputDock");
+
   if (isLoggedIn) {
     if (headerPersonaBadge) headerPersonaBadge.innerText = `[${state.persona.toUpperCase()}]`;
     if (dispatcherBadge) dispatcherBadge.innerHTML = `Persona: <strong>${state.persona}</strong>`;
     if (navSignInBtn) navSignInBtn.style.display = "none";
     if (logoutBtn) logoutBtn.style.display = "flex";
     if (personaWrapper) personaWrapper.style.display = "block";
-    loginScreen.classList.add("hidden");
+    if (loginScreen) loginScreen.classList.add("hidden");
+    if (guestBanner) guestBanner.style.display = "none";
+
+    // Enable Copilot Console input & buttons
+    if (inputDock) inputDock.classList.remove("locked");
+    if (userInput) {
+      userInput.disabled = false;
+      userInput.placeholder = "Ask RIDO Copilot or click the Mic to speak...";
+    }
+    if (sendBtn) sendBtn.disabled = false;
+    if (voiceMicBtn) voiceMicBtn.disabled = false;
+
+    // Remove lock state from all navigation links
+    document.querySelectorAll(".nav-link.locked").forEach(l => l.classList.remove("locked"));
+    document.querySelectorAll(".nav-lock-icon").forEach(icon => icon.style.display = "none");
   } else {
     if (navSignInBtn) navSignInBtn.style.display = "flex";
     if (logoutBtn) logoutBtn.style.display = "none";
     if (personaWrapper) personaWrapper.style.display = "none";
+    if (guestBanner) guestBanner.style.display = "flex";
+
+    // Lock Copilot Console input & buttons
+    if (inputDock) inputDock.classList.add("locked");
+    if (userInput) {
+      userInput.disabled = true;
+      userInput.value = "";
+      userInput.placeholder = "Please sign in to interact with RIDO Copilot...";
+    }
+    if (sendBtn) sendBtn.disabled = true;
+    if (voiceMicBtn) voiceMicBtn.disabled = true;
   }
 }
 
@@ -667,31 +716,149 @@ document.querySelectorAll(".role-pill-btn").forEach(pill => {
   });
 });
 
+function renderGuestExperience() {
+  // 1. Show Guest Preview Banner
+  const guestBanner = document.getElementById("guestLockBanner");
+  if (guestBanner) guestBanner.style.display = "flex";
+
+  // 2. Clear Authenticated Decks & HUDs
+  const liveHUD = document.getElementById("personaLiveHUD");
+  if (liveHUD) liveHUD.innerHTML = "";
+  const roleDeck = document.getElementById("roleOperationalDeck");
+  if (roleDeck) roleDeck.innerHTML = "";
+
+  // 3. Mark Protected Tabs as Locked (Fleet, Routes, Analytics, Reports)
+  const navItems = document.querySelectorAll(".nav-links li");
+  navItems.forEach(li => {
+    const a = li.querySelector("a.nav-link");
+    if (!a) return;
+    li.style.display = ""; // Render all 5 tabs visible
+    if (a.id === "navHome") {
+      a.classList.remove("locked");
+      const lockIcon = a.querySelector(".nav-lock-icon");
+      if (lockIcon) lockIcon.style.display = "none";
+    } else {
+      a.classList.add("locked");
+      const lockIcon = a.querySelector(".nav-lock-icon");
+      if (lockIcon) lockIcon.style.display = "inline-block";
+    }
+  });
+
+  // 4. Copilot Restrictions for Guests
+  const inputDock = document.getElementById("copilotInputDock");
+  if (inputDock) inputDock.classList.add("locked");
+
+  if (userInput) {
+    userInput.disabled = true;
+    userInput.value = "";
+    userInput.placeholder = "Please sign in to interact with RIDO Copilot...";
+  }
+  if (sendBtn) sendBtn.disabled = true;
+  if (voiceMicBtn) voiceMicBtn.disabled = true;
+
+  // 5. Render Locked Quick Action Chips (Prompts Sign In)
+  const chipsContainer = document.getElementById("personaQuickChips");
+  if (chipsContainer) {
+    chipsContainer.innerHTML = `
+      <button type="button" class="quick-chip-btn" onclick="openLoginModal('viewRoutes')"><i class="ri-lock-2-line" style="color: #94a3b8;"></i> 🔒 Set Route (Sign In)</button>
+      <button type="button" class="quick-chip-btn" onclick="openLoginModal('viewFleet')"><i class="ri-lock-2-line" style="color: #94a3b8;"></i> 🔒 Compare Fleets (Sign In)</button>
+      <button type="button" class="quick-chip-btn" onclick="openLoginModal('viewRoutes')"><i class="ri-lock-2-line" style="color: #94a3b8;"></i> 🔒 Optimize Corridor (Sign In)</button>
+      <button type="button" class="quick-chip-btn" onclick="openLoginModal('viewAnalytics')"><i class="ri-lock-2-line" style="color: #94a3b8;"></i> 🔒 AI Telematics Audit (Sign In)</button>
+    `;
+  }
+
+  // 6. Guest Welcome AI Greeting
+  const welcomeBubble = document.querySelector("#messages .msg.ai .msg-bubble");
+  if (welcomeBubble) {
+    welcomeBubble.innerHTML = `
+      <p><strong>Welcome to RIDO Mission Control.</strong> You are currently browsing in <strong>Guest Preview Mode</strong>.</p>
+      <p style="font-size: 0.84rem; color: #64748b; margin-top: 6px;">Protected sectors (<strong>Fleet IQ</strong>, <strong>Corridor Routing</strong>, <strong>ESG Analytics</strong>, <strong>Audit Dockets</strong>) and live Copilot AI assistance are locked behind enterprise authentication.</p>
+      <div style="margin-top: 12px;">
+        <button type="button" class="guest-signin-btn" onclick="openLoginModal()" style="font-size: 0.78rem; padding: 7px 16px;">
+          <i class="ri-login-box-r-line"></i> Sign In to Unlock Platform &rarr;
+        </button>
+      </div>
+    `;
+  }
+}
+
+function login(userData = {}, token = null) {
+  const authToken = token || generateDemoSessionToken("RIDO-");
+  const persona = userData.persona || "Driver In-Cab";
+  const email = userData.email || `${persona.toLowerCase().replace(/\s+/g, "")}@rido.ai`;
+
+  localStorage.setItem("rido_auth_token", authToken);
+  localStorage.setItem("rido_user_data", JSON.stringify({ email, persona }));
+  localStorage.setItem("rido_persona", persona);
+
+  sessionStorage.setItem("rido_session_token", authToken);
+  sessionStorage.setItem("rido_persona", persona);
+
+  state.sessionToken = authToken;
+  state.isAuthenticated = true;
+  state.persona = persona;
+
+  updateUIAuthState(true);
+  renderPersonaExperience(persona);
+  sfx.playGrant();
+
+  // If user was attempting to reach a locked section, navigate there
+  if (window.pendingRedirectView) {
+    const dest = window.pendingRedirectView;
+    window.pendingRedirectView = null;
+    switchView(dest);
+    const hashName = dest.replace("view", "").toLowerCase();
+    history.pushState(null, "", `#${hashName}`);
+  }
+}
+
+function logout() {
+  localStorage.removeItem("rido_auth_token");
+  localStorage.removeItem("rido_user_data");
+  localStorage.removeItem("rido_persona");
+  sessionStorage.removeItem("rido_session_token");
+  sessionStorage.removeItem("rido_persona");
+
+  state.sessionToken = null;
+  state.isAuthenticated = false;
+  state.persona = "Guest";
+
+  if (isListening && speechRecognizer) {
+    speechRecognizer.stop();
+    stopListening();
+  }
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+
+  updateUIAuthState(false);
+  renderGuestExperience();
+  switchView("viewHome");
+  history.pushState(null, "", "#home");
+}
+
 function checkAuth() {
-  const savedToken = sessionStorage.getItem("rido_session_token");
-  const savedPersona = sessionStorage.getItem("rido_persona");
-  if (savedToken) {
-    state.sessionToken = savedToken;
-    state.persona = savedPersona || "Driver In-Cab";
+  const urlParams = new URLSearchParams(window.location.search);
+  const wantsLogin = urlParams.get("login") === "1" || urlParams.get("auth") === "1";
+
+  if (isAuthenticated()) {
+    const savedPersona = localStorage.getItem("rido_persona") || sessionStorage.getItem("rido_persona") || "Driver In-Cab";
+    state.sessionToken = localStorage.getItem("rido_auth_token") || sessionStorage.getItem("rido_session_token");
+    state.persona = savedPersona;
     state.isAuthenticated = true;
     updateUIAuthState(true);
     renderPersonaExperience(state.persona);
   } else {
-    // Default to Driver In-Cab to give immediate active driver cockpit view
-    state.sessionToken = generateDemoSessionToken("RIDO-");
-    state.persona = "Driver In-Cab";
-    state.isAuthenticated = true;
-    sessionStorage.setItem("rido_session_token", state.sessionToken);
-    sessionStorage.setItem("rido_persona", state.persona);
-    updateUIAuthState(true);
-    renderPersonaExperience(state.persona);
+    // Default: Unauthenticated Guest Mode (Only Home accessible)
+    state.sessionToken = null;
+    state.persona = "Guest";
+    state.isAuthenticated = false;
+    updateUIAuthState(false);
+    renderGuestExperience();
+    if (wantsLogin) {
+      setTimeout(() => openLoginModal(), 200);
+    }
   }
-}
-
-function unlockApp(playChime = true) {
-  if (playChime) sfx.playGrant();
-  state.isAuthenticated = true;
-  updateUIAuthState(true);
 }
 
 loginForm.addEventListener("submit", (e) => {
@@ -709,65 +876,67 @@ loginForm.addEventListener("submit", (e) => {
   loginSubmitBtn.disabled = true;
   loginSubmitBtn.innerHTML = `<i class="ri-loader-4-line animate-spin"></i> Signing in&hellip;`;
 
-  // Detect persona from email or role button
+  // Detect persona from email or role pill
   const detectedPersona = detectPersonaFromEmail(enteredId);
 
   setTimeout(() => {
-    state.sessionToken = generateDemoSessionToken("RIDO-");
-    state.isAuthenticated = true;
-    state.persona = detectedPersona;
-
-    sessionStorage.setItem("rido_session_token", state.sessionToken);
-    sessionStorage.setItem("rido_persona", state.persona);
-
     loginSubmitBtn.disabled = false;
     loginSubmitBtn.innerHTML = `Sign In &rarr;`;
-
-    unlockApp(true);
-    renderPersonaExperience(state.persona);
-  }, 300);
+    login({ email: enteredId, persona: detectedPersona });
+  }, 250);
 });
 
-/* ── Modal Close & Guest Links (Login on Home Page) ── */
+/* ── Modal Close & Guest Action Listeners ── */
 if (closeLoginModalBtn) {
   closeLoginModalBtn.addEventListener("click", () => {
-    loginScreen.classList.add("hidden");
+    closeLoginModal();
   });
 }
 
 if (browseGuestLink) {
   browseGuestLink.addEventListener("click", (e) => {
     e.preventDefault();
-    loginScreen.classList.add("hidden");
+    closeLoginModal();
   });
 }
 
 if (navSignInBtn) {
   navSignInBtn.addEventListener("click", () => {
-    loginScreen.classList.remove("hidden");
-    if (loginPassword) loginPassword.focus();
+    openLoginModal();
+  });
+}
+
+const guestBannerSignInBtn = document.getElementById("guestBannerSignInBtn");
+if (guestBannerSignInBtn) {
+  guestBannerSignInBtn.addEventListener("click", () => {
+    openLoginModal();
+  });
+}
+
+// Click on locked Copilot input dock prompts sign in
+const copilotInputDock = document.getElementById("copilotInputDock");
+if (copilotInputDock) {
+  copilotInputDock.addEventListener("click", (e) => {
+    if (!isAuthenticated()) {
+      e.preventDefault();
+      openLoginModal();
+    }
+  });
+}
+
+// Click on process strip when guest prompts sign in
+const processStrip = document.getElementById("processStrip");
+if (processStrip) {
+  processStrip.addEventListener("click", () => {
+    if (!isAuthenticated()) {
+      openLoginModal();
+    }
   });
 }
 
 /* ── Sign Out Handler ── */
 logoutBtn.addEventListener("click", () => {
-  state.sessionToken = null;
-  state.isAuthenticated = false;
-  sessionStorage.removeItem("rido_session_token");
-  sessionStorage.removeItem("rido_persona");
-
-  if (isListening && speechRecognizer) {
-    speechRecognizer.stop();
-    stopListening();
-  }
-  if (window.speechSynthesis) {
-    window.speechSynthesis.cancel();
-  }
-
-  updateUIAuthState(false);
-  loginPassword.value = "";
-  loginError.style.display = "none";
-  loginScreen.classList.remove("hidden");
+  logout();
 });
 
 /* ── Persona Dropdown Toggle ── */
@@ -1216,7 +1385,17 @@ function switchView(viewId) {
 navLinks.forEach(link => {
   link.addEventListener("click", (e) => {
     const target = link.dataset.view;
-    if (target && document.getElementById(target)) {
+    if (!target) return;
+
+    // Guest Route Protection: Intercept non-Home clicks
+    if (!isAuthenticated() && target !== "viewHome") {
+      e.preventDefault();
+      e.stopPropagation();
+      openLoginModal(target);
+      return;
+    }
+
+    if (document.getElementById(target)) {
       e.preventDefault();
       switchView(target);
       const hashName = target.replace("view", "").toLowerCase();
@@ -1237,6 +1416,19 @@ document.querySelectorAll(".site-logo").forEach(logo => {
 // Handle initial URL hash on page load
 function handleHashRoute() {
   const hash = window.location.hash.toLowerCase().replace("#", "");
+  const protectedHashes = ["fleet", "routes", "analytics", "reports"];
+
+  if (!isAuthenticated()) {
+    if (protectedHashes.includes(hash)) {
+      switchView("viewHome");
+      const targetView = "view" + hash.charAt(0).toUpperCase() + hash.slice(1);
+      setTimeout(() => openLoginModal(targetView), 150);
+      return;
+    }
+    switchView("viewHome");
+    return;
+  }
+
   if (hash === "fleet") switchView("viewFleet");
   else if (hash === "routes") switchView("viewRoutes");
   else if (hash === "analytics") switchView("viewAnalytics");
