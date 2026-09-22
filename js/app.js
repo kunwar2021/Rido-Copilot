@@ -287,37 +287,20 @@ if (personaDropdownBtn && personaDropdownMenu) {
   });
 }
 
-/* ── Copilot Workspace (Image 2) Open / Close Controller ── */
+/* ── Copilot Workspace Open / Focus Controller ── */
 function openCopilotWorkspace(focusInput = true) {
   if (copilotWorkspace) {
     copilotWorkspace.classList.remove("copilot-workspace-hidden");
     copilotWorkspace.classList.add("copilot-workspace-visible");
-    if (heroOpenCopilotBtn) {
-      heroOpenCopilotBtn.innerHTML = `Copilot Active &darr;`;
+    if (focusInput && userInput) {
+      setTimeout(() => userInput.focus(), 100);
     }
-    setTimeout(() => {
-      copilotWorkspace.scrollIntoView({ behavior: "smooth", block: "start" });
-      if (focusInput && userInput) userInput.focus();
-    }, 120);
   }
 }
 
 function closeCopilotWorkspace() {
-  if (copilotWorkspace) {
-    copilotWorkspace.classList.remove("copilot-workspace-visible");
-    copilotWorkspace.classList.add("copilot-workspace-hidden");
-    if (heroOpenCopilotBtn) {
-      heroOpenCopilotBtn.innerHTML = `Open Copilot &rarr;`;
-    }
-    const hero = document.querySelector(".hero-banner");
-    if (hero) hero.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-}
-
-if (heroOpenCopilotBtn) {
-  heroOpenCopilotBtn.addEventListener("click", () => {
-    openCopilotWorkspace(true);
-  });
+  // In pure copilot mode, keep workspace ready
+  if (userInput) userInput.blur();
 }
 
 if (closeCopilotBtn) {

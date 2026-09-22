@@ -2113,131 +2113,10 @@
   <div class="main-container">
     <div id="viewHome" class="app-page-view">
 
-    <!-- HERO BANNER SECTION (EXACT IMAGE 1 MATCH) -->
-    <section class="hero-banner">
-      <div class="hero-content">
-        <div class="hero-powered-badge">
-          <i class="ri-sparkling-fill"></i> Powered by Azure AI Foundry
-        </div>
-        <h1 class="hero-title">
-          RIDO<br>
-          Smarter Logistics. Better Tomorrow.
-        </h1>
-        <p class="hero-desc">
-          AI-powered fleet intelligence for faster, safer and more efficient logistics operations.
-        </p>
-        <button class="btn-open-copilot" id="heroOpenCopilotBtn">
-          Open Copilot &rarr;
-        </button>
-      </div>
-
-      <!-- Floating Live Tracking Card (Image 1) -->
-      <div class="live-tracking-card">
-        <div class="tracking-header">
-          <div class="tracking-header-left">
-            <i class="ri-map-pin-line"></i> LIVE TRACKING
-          </div>
-          <div class="live-indicator-pill">
-            <span class="pulse-dot"></span> ((•)) Live
-          </div>
-        </div>
-        <div class="tracking-body">
-          <div class="route-milestones">
-            <div class="route-milestone">
-              <div class="milestone-dot green"></div>
-              <span>Delhi NCR</span>
-            </div>
-            <div class="route-milestone">
-              <div class="milestone-dot blue"></div>
-              <span>Jaipur</span>
-            </div>
-            <div class="route-milestone">
-              <div class="milestone-dot cyan"></div>
-              <span>Ahmedabad</span>
-            </div>
-            <div class="route-milestone">
-              <div class="milestone-dot gray"></div>
-              <span>Mumbai</span>
-            </div>
-          </div>
-          <div class="route-metrics-box">
-            <div>
-              <div class="metric-item-label">ETA</div>
-              <div class="metric-item-value">2d 12h</div>
-            </div>
-            <div>
-              <div class="metric-item-label">Distance</div>
-              <div class="metric-item-value">1,400 km</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 4 ACTION FEATURE CARDS (EXACT IMAGE 1 MATCH) -->
-    <section class="features-grid">
-      <!-- Card 1: Cold-Chain Incident -->
-      <div class="feature-card card-coldchain" data-prompt="Alert! Check vehicle V-104 for cold chain temperature breach and calculate emergency diversion steps with cargo loss risk in US Dollars ($ USD).">
-        <div>
-          <div class="card-icon-box">
-            <i class="ri-temp-cold-line"></i>
-          </div>
-          <h2 class="card-title">Cold-Chain Incident</h2>
-          <p class="card-desc">Monitor temperature-sensitive cargo in real time.</p>
-        </div>
-        <div>
-          <span class="card-link">View Details <i class="ri-arrow-right-s-line"></i></span>
-        </div>
-      </div>
-
-      <!-- Card 2: Green Route -->
-      <div class="feature-card card-greenroute" data-prompt="Optimize logistics corridor from Ludhiana to Jaipur for Commercial EV Truck with 8500 kg payload. Provide full fuel, toll, and cost comparison in US Dollars ($ USD).">
-        <div>
-          <div class="card-icon-box">
-            <i class="ri-leaf-line"></i>
-          </div>
-          <h2 class="card-title">Green Route</h2>
-          <p class="card-desc">Lower fuel costs. Smaller carbon footprint.</p>
-        </div>
-        <div>
-          <span class="card-link">View Details <i class="ri-arrow-right-s-line"></i></span>
-        </div>
-      </div>
-
-      <!-- Card 3: Safety & Shift -->
-      <div class="feature-card card-safety" data-prompt="Run Hours-of-Service driver compliance audit across active shifts and enforce mandatory 45-min rest halts with driver cost impact in US Dollars ($ USD).">
-        <div>
-          <div class="card-icon-box">
-            <i class="ri-shield-check-line"></i>
-          </div>
-          <h2 class="card-title">Safety & Shift</h2>
-          <p class="card-desc">Safer drivers. Higher uptime.</p>
-        </div>
-        <div>
-          <span class="card-link">View Details <i class="ri-arrow-right-s-line"></i></span>
-        </div>
-      </div>
-
-      <!-- Card 4: ESG & Financial ROI -->
-      <div class="feature-card card-esg" data-prompt="Provide ESG multi-fuel emissions comparison for EV vs Diesel vs CNG for 450 km freight leg with all fuel and toll expenses in US Dollars ($ USD).">
-        <div>
-          <div class="card-icon-box">
-            <i class="ri-bar-chart-box-line"></i>
-          </div>
-          <h2 class="card-title">ESG & Financial ROI</h2>
-          <p class="card-desc">Sustainable operations. Higher returns.</p>
-        </div>
-        <div>
-          <span class="card-link">View Details <i class="ri-arrow-right-s-line"></i></span>
-        </div>
-      </div>
-    </section>
-
     <!-- ══════════════════════════════════════════════
-         IMAGE 2: PROCESS STRIP & COPILOT CONSOLE
-         (Comes AFTER clicking "Open Copilot" or a Card)
+         RIDO COPILOT: PROCESS STRIP & COPILOT CONSOLE
          ══════════════════════════════════════════════ -->
-    <div id="copilotWorkspace" class="copilot-workspace-hidden">
+    <div id="copilotWorkspace" class="copilot-workspace-visible">
 
       <!-- PROCESS WORKFLOW STRIP (EXACT IMAGE 2 MATCH) -->
       <section class="process-strip">
@@ -2288,8 +2167,8 @@
             <button class="nav-action-btn" id="clearBtn" title="Reset Chat Conversation">
               <i class="ri-refresh-line"></i> Reset Chat
             </button>
-            <button class="nav-action-btn" id="closeCopilotBtn" title="Close Copilot Workspace">
-              <i class="ri-arrow-up-s-line"></i> Close
+            <button class="nav-action-btn" onclick="window.location.reload()" title="Start New AI Session">
+              <i class="ri-add-line"></i> New Session
             </button>
           </div>
         </div>
