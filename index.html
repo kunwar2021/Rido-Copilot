@@ -2513,27 +2513,7 @@
 
 
 
-    /* Underline styling that stays pinned nicely */
 
-    .hero-underline-bar {
-
-      position: absolute;
-
-      left: 0;
-
-      bottom: -4px;
-
-      height: 4px;
-
-      width: 100%;
-
-      background: #18181b;
-
-      transform-origin: left center;
-
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
-
-    }
 
 
 
@@ -3319,8 +3299,6 @@
 <span class="font-black" id="typewriter-line2"></span>
 
 <span class="typewriter-cursor h-[0.9em] hidden" id="cursor-line2"></span>
-
-<span class="hero-underline-bar" id="hero-underline" style="transform: scaleX(0); opacity: 0;"></span>
 
 </span>
 
@@ -5163,8 +5141,6 @@
 
     const cursor2 = document.getElementById('cursor-line2');
 
-    const underline = document.getElementById('hero-underline');
-
 
 
     if (!line1El || !line2El) return;
@@ -5218,28 +5194,6 @@
         if (cursor1) cursor1.classList.add('hidden');
 
         if (cursor2) cursor2.classList.remove('hidden');
-
-      }
-
-
-
-      // Update underline scale based on whether Line 2 has characters
-
-      if (underline) {
-
-        if (currentL2 === 0) {
-
-          underline.style.transform = 'scaleX(0)';
-
-          underline.style.opacity = '0';
-
-        } else {
-
-          underline.style.transform = 'scaleX(1)';
-
-          underline.style.opacity = '1';
-
-        }
 
       }
 
