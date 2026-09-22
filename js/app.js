@@ -1738,6 +1738,8 @@ function openAzureSettingsModal() {
 function closeAzureSettingsModal() {
   if (azureSettingsModal) azureSettingsModal.classList.add("hidden");
 }
+window.openAzureSettingsModal = openAzureSettingsModal;
+window.closeAzureSettingsModal = closeAzureSettingsModal;
 
 function updateModalBudgetUI(stats) {
   if (modalPoolRemaining) modalPoolRemaining.innerText = `$${stats.remainingBudgetUSD.toFixed(2)} Remaining`;
@@ -2546,3 +2548,325 @@ Certified by: RIDO Operational AI Controller
 window.triggerReportGen = function(reportName) {
   openCopilotWithPrompt(`Generate and certify formal ${reportName} docket with full line-item costs in US Dollars ($ USD) and driver telematics.`);
 };
+
+/* ══════════════════════════════════════════════
+   ENTERPRISE FOOTER INFORMATION & POLICY MODAL CONTROLLER
+   ══════════════════════════════════════════════ */
+const FOOTER_MODAL_DATA = {
+  sales: {
+    icon: "ri-customer-service-2-line",
+    iconBg: "bg-orange-50 text-orange-600 border-orange-200",
+    badge: "Enterprise Inquiries",
+    title: "Enterprise Solutions & Fleet Deployment",
+    subtitle: "Direct logistics engineering consultation for commercial carrier fleets with 50+ vehicles.",
+    bodyHtml: `
+      <div class="space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>Connect directly with RÍDO's Logistics Solutions Architecture team to deploy dedicated Azure AI Foundry agents across your freight corridors.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-3">
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="font-bold text-slate-900 text-xs mb-1">Direct Telematics Hotline</div>
+            <div class="font-mono text-xs text-orange-600 font-semibold">+1 (800) 555-RIDO</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Available 24/7/365 for Carrier Dispatch</div>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="font-bold text-slate-900 text-xs mb-1">Enterprise Solutions Desk</div>
+            <div class="font-mono text-xs text-blue-600 font-semibold">enterprise@rido.ai</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Dedicated Technical Account Manager</div>
+          </div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-900 text-slate-200 text-xs">
+          <p class="font-bold text-white mb-1">Supported Telematics & Powertrain Integrations:</p>
+          <p class="text-slate-400 leading-normal">Scania FMS 3.0, Volvo FH Electric J1939 CAN-bus, Thermo King TracKing, Carrier Transicold, Geotab Cloud API, Samsara API, and Siemens Sicharge 350kW DC Fast Chargers.</p>
+        </div>
+      </div>
+    `
+  },
+  privacy: {
+    icon: "ri-shield-user-line",
+    iconBg: "bg-blue-50 text-blue-600 border-blue-200",
+    badge: "Data Governance",
+    title: "Enterprise Privacy Policy & Data Sovereignty",
+    subtitle: "Zero third-party monetization. High-integrity telematics encryption.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+        <h5 class="font-bold text-slate-900 text-xs uppercase tracking-wide">1. Telematics & GPS Trace Protection</h5>
+        <p>RÍDO collects high-frequency GPS, battery state-of-charge (SOC), and reefer thermal sensor telemetry solely to execute real-time dispatch, route energy arbitration, and cold-chain compliance. Telematics data is never rented, brokered, or sold to third-party ad networks.</p>
+        <h5 class="font-bold text-slate-900 text-xs uppercase tracking-wide">2. Cryptographic Isolation</h5>
+        <p>All client telemetry streams are segregated within dedicated Azure AI Foundry tenant boundaries. In-transit streams are secured via TLS 1.3 with AES-256-GCM encryption at rest.</p>
+        <h5 class="font-bold text-slate-900 text-xs uppercase tracking-wide">3. Automated Data Retention & Sovereign Residency</h5>
+        <p>High-resolution CAN-bus telemetry is retained for 90 days for SLA dispute resolution before automatic cold-storage aggregation. Carrier customers retain 100% legal ownership and can trigger complete cryptographic purge upon demand.</p>
+      </div>
+    `
+  },
+  terms: {
+    icon: "ri-file-text-line",
+    iconBg: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    badge: "Master Services Agreement",
+    title: "Master Enterprise Service Level Agreement",
+    subtitle: "Contractual commitments for mission-critical commercial carrier dispatch.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+        <h5 class="font-bold text-slate-900 text-xs uppercase tracking-wide">1. 99.99% Availability Guarantee</h5>
+        <p>The RÍDO Mission Control platform, real-time routing engine, and Foundry Agent copilot commit to a 99.99% monthly uptime SLA. Unplanned gateway downtime triggers automatic service fee credits per Section 4.2.</p>
+        <h5 class="font-bold text-slate-900 text-xs uppercase tracking-wide">2. Cold-Chain Excursion Liability Protection</h5>
+        <p>Tamper-evident thermal dockets generated by RÍDO provide legally certified telematics records valid for FDA 21 CFR Part 11 and EU Good Distribution Practice (GDP) pharma cargo insurance claims.</p>
+        <h5 class="font-bold text-slate-900 text-xs uppercase tracking-wide">3. Multi-Currency & Financial Accuracy</h5>
+        <p>All operational expenses, energy tariff models, toll estimations, and carbon credit offsets are contractually guaranteed to compute in United States Dollars ($ USD) with certified Bloomberg Energy Index parity.</p>
+      </div>
+    `
+  },
+  security: {
+    icon: "ri-lock-password-line",
+    iconBg: "bg-purple-50 text-purple-600 border-purple-200",
+    badge: "Zero-Trust Architecture",
+    title: "Security, Cryptography & Compliance Standards",
+    subtitle: "Enterprise-grade defensive controls audited by independent cybersecurity firms.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono text-[11px] mb-2">
+          <div class="p-2 rounded-lg bg-slate-100 border border-slate-200 font-bold text-slate-800">SOC 2 Type II</div>
+          <div class="p-2 rounded-lg bg-slate-100 border border-slate-200 font-bold text-slate-800">ISO 27001</div>
+          <div class="p-2 rounded-lg bg-slate-100 border border-slate-200 font-bold text-slate-800">FIPS 140-2</div>
+          <div class="p-2 rounded-lg bg-slate-100 border border-slate-200 font-bold text-slate-800">HIPAA / GDP</div>
+        </div>
+        <p>RÍDO enforces a strict Zero-Trust security posture. Role-Based Access Control (RBAC) cryptographically prevents view contamination between Driver, Dispatcher, Compliance, and ESG personas.</p>
+        <p>Infrastructure is hosted in SOC-2 Type II certified Microsoft Azure datacenters with automated multi-zone failover, continuous vulnerability scanning, and pen-testing executed semi-annually.</p>
+      </div>
+    `
+  },
+  api: {
+    icon: "ri-terminal-box-line",
+    iconBg: "bg-zinc-100 text-zinc-900 border-zinc-300",
+    badge: "Developer Platform",
+    title: "RÍDO Telematics & Agent Orchestration API",
+    subtitle: "RESTful JSON and WebSocket endpoints for TMS/ERP enterprise integration.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed max-h-[60vh] overflow-y-auto pr-2">
+        <p>Seamlessly integrate real-time route optimization and IoT telematics into SAP Transportation Management, Oracle OTM, or custom carrier software.</p>
+        <div class="rounded-xl bg-slate-900 text-slate-200 p-3.5 font-mono text-xs overflow-x-auto space-y-1">
+          <div class="text-slate-400"># Query Real-Time Reefer & Battery Telemetry</div>
+          <div><span class="text-orange-400">curl</span> -X GET https://api.rido.ai/v1/telematics/TRK-A \\</div>
+          <div>  -H <span class="text-emerald-400">"Authorization: Bearer RIDO_JWT_TOKEN"</span> \\</div>
+          <div>  -H <span class="text-emerald-400">"Content-Type: application/json"</span></div>
+        </div>
+        <p class="text-xs text-slate-500">Includes real-time webhook callbacks for thermal deviations (> 2.0°C), HOS mandatory rest triggers, and automated DC fast charging oasis bay reservations.</p>
+      </div>
+    `
+  },
+  reefer: {
+    icon: "ri-temp-cold-line",
+    iconBg: "bg-blue-50 text-blue-600 border-blue-200",
+    badge: "Cold-Chain IoT",
+    title: "Cold-Chain Reefer IoT & Excursion Management",
+    subtitle: "Active telemetry lock at +3.6°C across refrigerated haulers.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>Continuous thermal logging via calibrated dual PT100 temperature probes mounted in cargo zone A (rear) and zone B (evaporator output).</p>
+        <ul class="list-disc pl-5 space-y-1.5 text-xs text-slate-600">
+          <li><strong>Target Baseline:</strong> Locked setpoint of +3.6°C for perishable pharmaceuticals and produce.</li>
+          <li><strong>Tier-1 Alert Trigger:</strong> Instant SMS/In-Cab alert if deviation exceeds &plusmn;1.5°C for &gt; 10 minutes.</li>
+          <li><strong>Tier-2 Emergency Reroute:</strong> Automatic rerouting to emergency cold-storage depot if deviation &gt; 2.5°C.</li>
+          <li><strong>Audit Compliance:</strong> Tamper-evident PDF audit dockets generated with cryptographic SHA-256 hash.</li>
+        </ul>
+      </div>
+    `
+  },
+  scania: {
+    icon: "ri-truck-line",
+    iconBg: "bg-orange-50 text-orange-600 border-orange-200",
+    badge: "Fleet Powertrain",
+    title: "Scania 45R Heavy Electric Hauler Profile",
+    subtitle: "Commercial Class-8 44-Tonne GVW zero-emission long-haul transport.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <div class="grid grid-cols-2 gap-2 text-xs font-mono mb-2">
+          <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200"><strong>Battery Pack:</strong> 624 kWh Li-ion</div>
+          <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200"><strong>Continuous Power:</strong> 450 kW (610 hp)</div>
+          <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200"><strong>Peak Torque:</strong> 3,500 Nm</div>
+          <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200"><strong>Max Charging:</strong> 375 kW CCS2</div>
+        </div>
+        <p class="text-xs text-slate-600">Equipped with regenerative braking recuperating up to 28% of kinetic energy on Western Freight Corridor downgrades, minimizing brake disc wear and maximizing range.</p>
+      </div>
+    `
+  },
+  tco: {
+    icon: "ri-money-dollar-circle-line",
+    iconBg: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    badge: "Financial Intelligence",
+    title: "Total Cost of Ownership (TCO) & Diesel Parity",
+    subtitle: "Real-time energy cost modeling calibrated in US Dollars ($ USD).",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>RÍDO provides real-time financial arbitration between diesel baseline fuel costs and off-peak electric corridor tariffs:</p>
+        <div class="p-3 rounded-xl bg-emerald-50/70 border border-emerald-200 text-xs text-emerald-950 font-mono space-y-1">
+          <div>&bull; Diesel Baseline (1,424 km): $395.00 USD (38 L/100km @ $0.73/L)</div>
+          <div>&bull; Electric Corridor (1,424 km): $310.00 USD (1.18 kWh/km @ $0.18/kWh)</div>
+          <div class="font-bold text-emerald-700 mt-1">&bull; Net Savings per Traversal: +$85.00 USD (21.5% OpEx Reduction)</div>
+        </div>
+      </div>
+    `
+  },
+  mcp: {
+    icon: "ri-cpu-line",
+    iconBg: "bg-indigo-50 text-indigo-600 border-indigo-200",
+    badge: "AI Architecture",
+    title: "Model Context Protocol (MCP) Tool Integration",
+    subtitle: "Standardized tool invocation protocol connecting Azure AI Foundry agents with IoT telemetry.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>RÍDO implements the Model Context Protocol (MCP) to allow autonomous AI agents to query live databases, execute safe route recomputations, and inspect reefer hardware without code modifications.</p>
+        <div class="p-3 rounded-xl bg-slate-900 text-slate-300 font-mono text-[11px] space-y-1">
+          <div class="text-slate-400">Registered Tools:</div>
+          <div class="text-emerald-400 pl-3">&bull; get_vehicle_telemetry(vehicle_id)</div>
+          <div class="text-emerald-400 pl-3">&bull; calculate_green_route(origin, destination, gvw_tonnes)</div>
+          <div class="text-emerald-400 pl-3">&bull; audit_reefer_thermal_excursion(unit_id, timeframe)</div>
+          <div class="text-emerald-400 pl-3">&bull; reserve_charging_oasis_bay(station_id, arrival_eta)</div>
+        </div>
+      </div>
+    `
+  },
+  hos: {
+    icon: "ri-time-line",
+    iconBg: "bg-amber-50 text-amber-700 border-amber-200",
+    badge: "Regulatory Mandate",
+    title: "Hours of Service (HOS) & Driver Shift Safety",
+    subtitle: "Automated compliance with FMCSA, EU Regulation 561/2006, and CMVR mandates.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>Continuous shift monitoring ensures zero driver fatigue violations with predictive rest stop scheduling:</p>
+        <ul class="list-disc pl-5 space-y-1 text-xs text-slate-600">
+          <li><strong>Drive Limit:</strong> Maximum 8 continuous driving hours before mandatory 45-minute pause.</li>
+          <li><strong>Daily Rest:</strong> Enforced 11-hour consecutive rest period prior to shift renewal.</li>
+          <li><strong>Predictive Halts:</strong> Route optimizer pairs mandatory rest intervals with 350kW DC fast charging stops to eliminate dead downtime.</li>
+        </ul>
+      </div>
+    `
+  },
+  carbon: {
+    icon: "ri-leaf-line",
+    iconBg: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    badge: "ESG Abatement",
+    title: "Scope 1, 2 & 3 Carbon Footprint Accounting",
+    subtitle: "GHG Protocol compliant greenhouse gas emissions accounting.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>Detailed emissions breakdown comparing internal combustion haulers with electric powertrains:</p>
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono space-y-1 text-slate-700">
+          <div>Scope 1 Direct Diesel Emissions: <span class="text-rose-600 font-bold">142.5 kg CO₂</span> (Diesel Baseline)</div>
+          <div>Scope 2 Grid Generation (Solar/Hydro mix): <span class="text-emerald-600 font-bold">112.5 kg CO₂</span></div>
+          <div class="font-bold text-emerald-700 border-t border-slate-200 pt-1 mt-1">Net Abatement per Trip: -30.0 kg CO₂ (21% Reduction)</div>
+        </div>
+      </div>
+    `
+  },
+  gdp: {
+    icon: "ri-file-shield-line",
+    iconBg: "bg-cyan-50 text-cyan-700 border-cyan-200",
+    badge: "Pharma Compliance",
+    title: "FDA 21 CFR Part 11 & EU GDP Compliance",
+    subtitle: "Electronic signatures, audit trails, and data integrity for healthcare cargo.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>Guaranteed regulatory adherence for high-value cold-chain vaccines, biologics, and clinical supplies:</p>
+        <ul class="list-disc pl-5 space-y-1 text-xs text-slate-600">
+          <li>Immutable chronological event logging of setpoint adjustments.</li>
+          <li>Cryptographic digital signatures on generated inspection dockets.</li>
+          <li>Dual-witness verification for temperature setpoint overrides.</li>
+        </ul>
+      </div>
+    `
+  },
+  wdfc: {
+    icon: "ri-road-map-line",
+    iconBg: "bg-blue-50 text-blue-600 border-blue-200",
+    badge: "Corridor Digital Twin",
+    title: "Western Dedicated Freight Corridor (WDFC) Profile",
+    subtitle: "Delhi to Mumbai (1,424 km) high-speed freight expressway specification.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>1,424 km dedicated corridor linking Dadri / Delhi NCR to Jawaharlal Nehru Port Trust (JNPT) Mumbai. Features 3 electrified charging oases at Kotputli, Ahmedabad, and Surat equipped with 350kW DC ultra-fast chargers.</p>
+      </div>
+    `
+  },
+  fms: {
+    icon: "ri-settings-line",
+    iconBg: "bg-zinc-100 text-zinc-800 border-zinc-200",
+    badge: "CAN-Bus Standard",
+    title: "J1939 CAN-Bus FMS Standard Interface",
+    subtitle: "Universal OEM telematics gateway for Scania, Volvo, MAN, and Mercedes-Benz haulers.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>Standardized SAE J1939 protocol ingestion delivering millisecond-precision metrics: wheel-based speed, engine/motor torque, battery pack cell balancing, brake application, and axle weight sensors.</p>
+      </div>
+    `
+  },
+  sla: {
+    icon: "ri-award-line",
+    iconBg: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    badge: "Uptime Commitment",
+    title: "99.99% Enterprise Uptime Service Level Agreement",
+    subtitle: "Carrier-grade availability backed by financial compensation penalties.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>RÍDO operates on multi-zone active-active Azure cloud infrastructure guaranteeing continuous 99.99% availability for real-time dispatch, waypoint telemetry, and cold-chain alert feeds.</p>
+      </div>
+    `
+  },
+  docs: {
+    icon: "ri-book-open-line",
+    iconBg: "bg-indigo-50 text-indigo-600 border-indigo-200",
+    badge: "Architecture Blueprint",
+    title: "RÍDO Enterprise Architecture Whitepaper",
+    subtitle: "High-performance logistics orchestration engine powered by Azure AI Foundry.",
+    bodyHtml: `
+      <div class="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        <p>The RÍDO platform combines edge IoT telematics on heavy electric vehicles with centralized Azure AI Foundry agents to achieve sub-second route energy arbitration, automated dwell reduction, and cold-chain compliance.</p>
+        <button type="button" onclick="triggerReportGen('Fleet Health Executive Brief'); closeFooterInfoModal();" class="mt-2 px-4 py-2 rounded-xl bg-slate-950 text-white font-bold text-xs flex items-center gap-2 hover:bg-slate-800 transition cursor-pointer">
+          <i class="ri-file-download-line"></i> Generate Technical Architecture PDF Docket
+        </button>
+      </div>
+    `
+  }
+};
+
+function openFooterInfoModal(type) {
+  const modal = document.getElementById("footerInfoModal");
+  if (!modal) return;
+  const data = FOOTER_MODAL_DATA[type] || FOOTER_MODAL_DATA["security"];
+  
+  const iconWrap = document.getElementById("footerModalIconWrap");
+  const icon = document.getElementById("footerModalIcon");
+  const badge = document.getElementById("footerModalBadge");
+  const title = document.getElementById("footerModalTitle");
+  const subtitle = document.getElementById("footerModalSubtitle");
+  const body = document.getElementById("footerModalBody");
+
+  if (iconWrap && data.iconBg) iconWrap.className = `w-11 h-11 rounded-xl flex items-center justify-center text-xl shrink-0 border ${data.iconBg}`;
+  if (icon && data.icon) icon.className = data.icon;
+  if (badge) badge.innerText = data.badge || "Enterprise Standard";
+  if (title) title.innerText = data.title;
+  if (subtitle) subtitle.innerText = data.subtitle;
+  if (body) body.innerHTML = data.bodyHtml;
+
+  modal.classList.remove("hidden");
+}
+
+function closeFooterInfoModal() {
+  const modal = document.getElementById("footerInfoModal");
+  if (modal) modal.classList.add("hidden");
+}
+
+window.openFooterInfoModal = openFooterInfoModal;
+window.closeFooterInfoModal = closeFooterInfoModal;
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeFooterInfoModal();
+  }
+});
+const footerModal = document.getElementById("footerInfoModal");
+if (footerModal) {
+  footerModal.addEventListener("click", (e) => {
+    if (e.target === footerModal) closeFooterInfoModal();
+  });
+}
