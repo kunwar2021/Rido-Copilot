@@ -2840,17 +2840,92 @@
       animation: headlineCursorBlink 0.9s infinite;
     }
 
-    /* "Fully Optimized." — slide-up in, hold, slide-down out, repeat */
-    @keyframes fullyOptimizedSlide {
-      0%   { opacity: 0; transform: translateY(18px); }
-      12%  { opacity: 1; transform: translateY(0); }
-      72%  { opacity: 1; transform: translateY(0); }
-      88%  { opacity: 0; transform: translateY(-14px); }
-      100% { opacity: 0; transform: translateY(18px); }
+    /* "Fully Optimized." - fade out, hold, fade in, repeat */
+    @keyframes fullyOptimizedFade {
+      0%   { opacity: 0; }
+      15%  { opacity: 1; }
+      65%  { opacity: 1; }
+      82%  { opacity: 0; }
+      100% { opacity: 0; }
     }
     .animate-fully-optimized {
       display: inline-block;
-      animation: fullyOptimizedSlide 3.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+      animation: fullyOptimizedFade 3.6s ease-in-out infinite;
+    }
+
+    /* Scroll-reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s cubic-bezier(0.22,1,0.36,1), transform 0.65s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.10s; }
+    .reveal-delay-2 { transition-delay: 0.20s; }
+    .reveal-delay-3 { transition-delay: 0.30s; }
+    .reveal-delay-4 { transition-delay: 0.40s; }
+    .reveal-delay-5 { transition-delay: 0.55s; }
+
+    /* Shimmer stat numbers */
+    @keyframes shimmerText {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    .shimmer-stat {
+      background: linear-gradient(90deg, #ea580c 25%, #fbbf24 50%, #ea580c 75%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmerText 2.4s linear infinite;
+    }
+
+    /* Float card */
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-8px); }
+    }
+    .animate-float-card { animation: floatCard 4s ease-in-out infinite; }
+
+    /* Border glow pulse */
+    @keyframes borderGlow {
+      0%, 100% { box-shadow: 0 0 0 2px rgba(234,88,12,0.15), 0 8px 24px rgba(0,0,0,0.06); }
+      50%       { box-shadow: 0 0 0 2px rgba(234,88,12,0.45), 0 12px 32px rgba(234,88,12,0.12); }
+    }
+    .animate-border-glow { animation: borderGlow 3s ease-in-out infinite; }
+
+    /* Hero entrance animations */
+    @keyframes heroSlideIn {
+      0%   { opacity: 0; transform: translateX(-30px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    .animate-hero-in { animation: heroSlideIn 0.85s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .animate-hero-in-delay  { opacity: 0; animation: heroSlideIn 0.85s 0.25s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .animate-hero-in-delay-2{ opacity: 0; animation: heroSlideIn 0.85s 0.45s cubic-bezier(0.22,1,0.36,1) forwards; }
+    .animate-hero-in-delay-3{ opacity: 0; animation: heroSlideIn 0.85s 0.60s cubic-bezier(0.22,1,0.36,1) forwards; }
+
+    @keyframes heroSlideRight {
+      0%   { opacity: 0; transform: translateX(30px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    .animate-hero-right { opacity: 0; animation: heroSlideRight 0.9s 0.3s cubic-bezier(0.22,1,0.36,1) forwards; }
+
+    /* Responsive overrides */
+    @media (max-width: 640px) {
+      .app-page-view:not(#viewHome) { padding: 16px 14px 48px; }
+      .process-strip { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .process-steps { flex-wrap: wrap; gap: 6px; }
+      .process-badge { display: none; }
+      .persona-quick-chips { gap: 6px; }
+      .quick-chip-btn { font-size: 0.7rem; padding: 5px 10px; }
+      .hud-action-btn { padding: 6px 10px; font-size: 0.72rem; }
+    }
+    @media (max-width: 768px) {
+      .app-page-view:not(#viewHome) { padding: 18px 16px 52px; }
+      .hud-chip { font-size: 0.7rem; padding: 4px 8px; }
+      .nav-right .system-online-pill { display: none; }
+      header { padding: 0 12px; height: 52px; }
+      .copilot-workspace-visible { gap: 12px; }
     }
 
     @keyframes radarGlow {
@@ -2946,7 +3021,21 @@
     }
 
   
-  </style>
+  
+    /* Unify reveal-on-scroll with reveal */
+    .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal-on-scroll.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-on-scroll.delay-100 { transition-delay: 0.10s; }
+    .reveal-on-scroll.delay-200 { transition-delay: 0.20s; }
+    .reveal-on-scroll.delay-300 { transition-delay: 0.30s; }
+</style>
 
   <!-- Material Symbols Outlined -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -3369,7 +3458,7 @@
             <div class="lg:col-span-8 flex flex-col items-start w-full">
               
               <!-- Monospace Technical Badge -->
-              <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 mb-6 transition hover:border-orange-300 cursor-default">
+              <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 mb-6 transition hover:border-orange-300 cursor-default animate-hero-in">
                 <span class="relative flex h-2 w-2">
                   <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
                   <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
@@ -3380,19 +3469,19 @@
               </div>
 
               <!-- Balanced Headline: Scaled down from 9xl to 4xl-6xl -->
-              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.08] mb-5 select-none">
+              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.08] mb-5 select-none animate-hero-in-delay">
                 Every Mile.<br />
                 <span class="text-orange-500 animate-fully-optimized">Fully Optimized.</span>
                 <span class="inline-block w-2 h-[0.8em] bg-orange-500 ml-1.5 align-baseline animate-headline-cursor"></span>
               </h1>
 
               <!-- Balanced Lead Paragraph: Clean font sizing and line spacing -->
-              <p class="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl mb-8 font-medium">
+              <p class="text-slate-600 text-base sm:text-lg leading-relaxed max-w-xl mb-8 font-medium animate-hero-in-delay-2">
                 Dynamic routing algorithms balance payload weights, driver HOS limits, and real-time charging access so every truck departs on schedule and under budget.
               </p>
 
               <!-- Primary Action Button -->
-              <div class="mb-10">
+              <div class="mb-10 animate-hero-in-delay-3">
                 <button type="button" onclick="handleHeroCTA()" class="group relative px-9 py-4 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-3 transition-all duration-200 shadow-md hover:shadow-xl active:scale-[0.97] overflow-hidden cursor-pointer">
                   <span class="relative z-10">Get Started</span>
                   <i class="ri-arrow-right-line text-xl relative z-10 transition-transform duration-200 group-hover:translate-x-1.5" data-lucide="arrow-right"></i>
@@ -3423,8 +3512,8 @@
             </div>
 
             <!-- Right Column: Subordinate, Scaled-Down Truck Radar Card (Span 4) -->
-            <div class="lg:col-span-4 flex justify-center lg:justify-end w-full">
-              <div class="group relative w-full max-w-xs bg-white rounded-3xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div class="lg:col-span-4 flex justify-center lg:justify-end w-full animate-hero-right">
+              <div class="group relative w-full max-w-xs bg-white rounded-3xl border border-slate-200/80 p-4 shadow-sm hover:shadow-md transition-shadow duration-300 animate-float-card animate-border-glow">
                 
                 <!-- Scaled-Down Graphic Container -->
                 <div class="relative w-full aspect-square bg-slate-50/70 rounded-2xl flex items-center justify-center p-3 border border-dashed border-slate-200 overflow-hidden">
@@ -5133,5 +5222,24 @@
 
   </script>
 
+
+  <script>
+    // .reveal scroll observer
+    (function() {
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.reveal').forEach(function(e){ e.classList.add('visible'); });
+        return;
+      }
+      var obs = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.10 });
+      document.querySelectorAll('.reveal').forEach(function(el) { obs.observe(el); });
+    })();
+  </script>
 </body>
 </html>
