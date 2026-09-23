@@ -2840,6 +2840,19 @@
       animation: headlineCursorBlink 0.9s infinite;
     }
 
+    /* "Fully Optimized." — slide-up in, hold, slide-down out, repeat */
+    @keyframes fullyOptimizedSlide {
+      0%   { opacity: 0; transform: translateY(18px); }
+      12%  { opacity: 1; transform: translateY(0); }
+      72%  { opacity: 1; transform: translateY(0); }
+      88%  { opacity: 0; transform: translateY(-14px); }
+      100% { opacity: 0; transform: translateY(18px); }
+    }
+    .animate-fully-optimized {
+      display: inline-block;
+      animation: fullyOptimizedSlide 3.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+
     @keyframes radarGlow {
       0%, 100% { transform: scale(0.95); opacity: 0.45; }
       50% { transform: scale(1.08); opacity: 0.75; }
@@ -3369,7 +3382,7 @@
               <!-- Balanced Headline: Scaled down from 9xl to 4xl-6xl -->
               <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-[1.08] mb-5 select-none">
                 Every Mile.<br />
-                <span class="text-orange-500">Fully Optimized.</span>
+                <span class="text-orange-500 animate-fully-optimized">Fully Optimized.</span>
                 <span class="inline-block w-2 h-[0.8em] bg-orange-500 ml-1.5 align-baseline animate-headline-cursor"></span>
               </h1>
 
