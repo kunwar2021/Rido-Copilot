@@ -5,14 +5,17 @@
   "main": "mcp-server/server.js",
   "type": "module",
   "scripts": {
-    "start": "node mcp-server/server.js",
-    "server": "node mcp-server/server.js --port 3000",
+    "start": "node server.js",
+    "gateway": "node server.js",
+    "server": "node server.js",
     "mcp": "node mcp-server/server.js",
-    "test": "node -c js/app.js && node -c mcp-server/server.js",
+    "test": "node -c js/app.js && node -c server.js && node -c mcp-server/server.js && node --test tests/*.test.js",
     "dev": "python -m http.server 8080"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.6.0"
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
   },
   "keywords": [
     "azure-ai-foundry",

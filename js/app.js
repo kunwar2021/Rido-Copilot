@@ -256,15 +256,17 @@ function openLoginModal(targetView = null) {
   if (screen) {
     screen.classList.remove("hidden");
     screen.style.display = "flex";
+    screen.style.opacity = "1";
+    screen.style.visibility = "visible";
+    screen.style.pointerEvents = "auto";
+    screen.style.zIndex = "99999";
     if (loginPassword) loginPassword.value = "RIDO2026";
     if (loginIdInput) loginIdInput.focus();
 
     // Backdrop click — dismiss if clicking the overlay itself, not the card
-    screen._backdropHandler = (e) => {
+    screen.onclick = (e) => {
       if (e.target === screen) closeLoginModal();
     };
-    screen.removeEventListener("click", screen._backdropHandler);
-    screen.addEventListener("click", screen._backdropHandler);
   }
 }
 
@@ -273,6 +275,9 @@ function closeLoginModal() {
   if (screen) {
     screen.classList.add("hidden");
     screen.style.display = "none";
+    screen.style.opacity = "0";
+    screen.style.visibility = "hidden";
+    screen.style.pointerEvents = "none";
   }
 }
 
@@ -289,21 +294,17 @@ window.switchView = switchView;
 window.logout = logout;
 
 function handleHeroCTA() {
-  const raw = localStorage.getItem('rido_session');
-  if (raw) {
-    try {
-      const session = JSON.parse(raw);
-      if (session && session.role) {
-        // Existing valid session — route directly to role view
-        routeToRoleView(session.role);
-        return;
-      }
-    } catch (e) {
-      localStorage.removeItem('rido_session');
+  if (isAuthenticated()) {
+    const currentPersona = state.persona || localStorage.getItem("rido_persona") || "Dispatcher Gate";
+    const config = ROLE_CONFIG[currentPersona] || ROLE_CONFIG["Dispatcher Gate"];
+    if (config && config.defaultTab && config.defaultTab !== "home") {
+      switchTab(config.defaultTab);
+    } else {
+      switchTab("copilot");
     }
+  } else {
+    openSignInModal();
   }
-  // No session — show persona selection modal
-  openSignInModal();
 }
 window.handleHeroCTA = handleHeroCTA;
 
@@ -1429,6 +1430,14 @@ if (guestBannerSignInBtn) {
   });
 }
 
+const heroGetStartedBtn = document.getElementById("heroGetStartedBtn");
+if (heroGetStartedBtn) {
+  heroGetStartedBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    handleHeroCTA();
+  });
+}
+
 // Click on locked Copilot input dock prompts sign in
 const copilotInputDock = document.getElementById("copilotInputDock");
 if (copilotInputDock) {
@@ -1654,10 +1663,14 @@ if (clearBtn) {
 }
 
 
-// Suppress Enter key — dispatch via Send button only
-if (userInput) {
-  userInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") { e.preventDefault(); } // block submit / reload
+// Allow Enter key to dispatch message (Shift+Enter for multiline)
+const activeChatInput = document.getElementById("copilotInput") || document.getElementById("userInput") || userInput;
+if (activeChatInput) {
+  activeChatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
   });
 }
 if (sendBtn) {
@@ -1671,15 +1684,75 @@ document.addEventListener("click", (e) => {
 });
 
 /* ══════════════════════════════════════════════
-   AZURE AI FOUNDRY AGENT ORCHESTRATION PIPELINE
-   Intent Detection -> Planning -> Tool Selection -> RAG Retrieval -> Synthesis
+   AZURE AI FOUNDRY AGENT DISPATCHER & GATEWAY PIPELINE
+   Responses Protocol -> Vector Store vs_8BAryaF6Ajzbayfo0qGmoKnc -> Synthesis
    ══════════════════════════════════════════════ */
+async function processCopilotReply(query) {
+  // Read authenticated role from localStorage or active state
+  let activeRole = "DISPATCHER GATE";
+  try {
+    const raw = localStorage.getItem("rido_session");
+    if (raw) {
+      const session = JSON.parse(raw);
+      if (session.role) activeRole = session.role.toUpperCase();
+      else if (session.persona) activeRole = session.persona.toUpperCase();
+    }
+  } catch (e) {}
+  if (!activeRole && state.persona) {
+    activeRole = state.persona.toUpperCase();
+  }
+
+  // Display active loading states while agent queries vector store vs_8BAryaF6Ajzbayfo0qGmoKnc
+  logThought("Agent Dispatch", `Operational Persona: [${activeRole}]`, "Formatting payload for Azure AI Foundry Agent (Responses Protocol)");
+  logThought("Vector Search", "Active Vector Store: vs_8BAryaF6Ajzbayfo0qGmoKnc", "Executing file_search on fleet training dataset & operational SOP dockets");
+
+  const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+  const gatewayUrl = window.RIDO_API_URL || (!isLocalhost ? "/api/rido-copilot" : (window.location.port === "3000" ? "/api/rido-copilot" : "http://localhost:3000/api/rido-copilot"));
+
+  try {
+    const res = await fetch(gatewayUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: query,
+        role: activeRole
+      })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      logThought("Synthesis", "Foundry Inference Complete", "Parsed structured markdown telemetry table and SOP alerts from gpt-5.6-luna");
+      if (data.reply) {
+        return data.reply;
+      }
+    } else {
+      const errText = await res.text();
+      console.warn(`Gateway returned status ${res.status}:`, errText);
+    }
+  } catch (netErr) {
+    console.warn("Backend gateway not reachable, running client-side FoundryAgent engine:", netErr.message);
+  }
+
+  // Client-side fallback if backend proxy is temporarily unreachable
+  logThought("Fallback Engine", "Local Telematics Simulator", "Synthesizing response via client-side FoundryAgent rule engine");
+  const localResult = await foundryAgent.processMessage(query, (step) => {
+    logThought(step.phase, step.title, step.detail);
+  });
+  return localResult.responseText;
+}
+window.processCopilotReply = processCopilotReply;
+
 async function handleSend() {
-  const text = userInput.value.trim();
+  const inputEl = document.getElementById("copilotInput") || document.getElementById("userInput") || userInput;
+  if (!inputEl) return;
+  const text = inputEl.value.trim();
   if (!text) return;
 
-  userInput.value = "";
-  if (sendBtn) sendBtn.disabled = true;
+  inputEl.value = "";
+  const sendBtnEl = document.getElementById("copilotSendBtn") || document.getElementById("sendBtn") || sendBtn;
+  if (sendBtnEl) sendBtnEl.disabled = true;
   sfx.playTransmit();
 
   if (!hasStarted) {
@@ -1695,29 +1768,24 @@ async function handleSend() {
   const t0 = performance.now();
 
   try {
-    // Process message through Microsoft Foundry Agent pipeline
-    const result = await foundryAgent.processMessage(text, (step, thoughtStream) => {
-      logThought(step.phase, step.title, step.detail);
-    });
+    // Process message through Microsoft Foundry Agent / Express Gateway pipeline
+    const replyText = await processCopilotReply(text);
 
     const elapsed = Math.round(performance.now() - t0);
-    hudPing.innerText = `${elapsed}ms`;
+    if (hudPing) hudPing.innerText = `${elapsed}ms`;
 
     // Real-time $200 Azure pool budget stats
-    const stats = azureSettings.getBudgetStats();
-    hudSpent.innerText = `$${stats.totalSpentUSD.toFixed(4)}`;
+    if (azureSettings && azureSettings.getBudgetStats) {
+      const stats = azureSettings.getBudgetStats();
+      if (hudSpent) hudSpent.innerText = `$${stats.totalSpentUSD.toFixed(4)}`;
+    }
 
     removeTyping(typingId);
     sfx.playReceive();
 
-    const formattedResponse = ensureUSD(result.responseText);
+    const formattedResponse = ensureUSD(replyText);
     appendMessage("ai", formattedResponse || "_(Empty payload received from agent)_");
     speakText(formattedResponse);
-
-    // Render interactive Apple HIG widgets if present
-    if (result.higWidgets) {
-      renderHigWidget(result.higWidgets);
-    }
 
   } catch (err) {
     removeTyping(typingId);
@@ -1726,9 +1794,10 @@ async function handleSend() {
     appendMessage("ai", `**Operational Assistant:** An error occurred during inference: ${err.message}. Running in offline fallback mode.`);
   }
 
-  if (sendBtn) sendBtn.disabled = false;
-  if (userInput) userInput.focus();
+  if (sendBtnEl) sendBtnEl.disabled = false;
+  if (inputEl) inputEl.focus();
 }
+window.handleSend = handleSend;
 
 function renderHigWidget(widget) {
   if (!widget) return;
@@ -1992,6 +2061,7 @@ function appendMessage(role, text) {
                      messages;
   if (targetFeed) {
     targetFeed.appendChild(div);
+    div.scrollIntoView({ behavior: "smooth", block: "nearest" });
     targetFeed.scrollTop = targetFeed.scrollHeight;
   }
 }
@@ -2018,6 +2088,7 @@ function appendTyping(id) {
                      messages;
   if (targetFeed) {
     targetFeed.appendChild(div);
+    div.scrollIntoView({ behavior: "smooth", block: "nearest" });
     targetFeed.scrollTop = targetFeed.scrollHeight;
   }
 }
@@ -2570,14 +2641,14 @@ window.openCopilotWithPrompt = function(promptText) {
   if (typeof openCopilotWorkspace === "function") {
     openCopilotWorkspace(true);
   }
-  const input = document.getElementById("userInput");
+  const input = document.getElementById("copilotInput") || document.getElementById("userInput");
   if (input) {
     input.value = promptText;
     setTimeout(() => {
       if (typeof handleSend === "function") {
         handleSend();
       }
-    }, 250);
+    }, 150);
   }
 };
 

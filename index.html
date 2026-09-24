@@ -68,7 +68,7 @@
     #loginScreen {
       position: fixed;
       inset: 0;
-      z-index: 999;
+      z-index: 99999;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -3287,7 +3287,7 @@
           <input type="text" id="azureEndpoint1" placeholder="Azure Foundry Agent Endpoint URL..." class="w-full text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
           <div class="grid grid-cols-2 gap-2">
             <input type="password" id="azureKey1" placeholder="Azure API Key 1..." class="text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
-            <input type="text" id="azureDeployment1" placeholder="Deployment (e.g. gpt-6-astra or gpt-4o-mini)" value="gpt-6-astra" class="text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
+            <input type="text" id="azureDeployment1" placeholder="Deployment (e.g. gpt-5.6-luna)" value="gpt-5.6-luna" class="text-xs font-mono px-3 py-2 border border-zinc-300 rounded-lg bg-zinc-50 focus:bg-white focus:border-blue-500 outline-none" />
           </div>
         </div>
       </div>
@@ -3481,7 +3481,7 @@
 
               <!-- Primary Action Button -->
               <div class="mb-10 animate-hero-in-delay-3">
-                <button type="button" onclick="handleHeroCTA()" class="group relative px-9 py-4 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-3 transition-all duration-200 shadow-md hover:shadow-xl active:scale-[0.97] overflow-hidden cursor-pointer">
+                <button type="button" id="heroGetStartedBtn" onclick="window.handleHeroCTA ? window.handleHeroCTA() : (document.getElementById('loginScreen') && (document.getElementById('loginScreen').classList.remove('hidden'), document.getElementById('loginScreen').style.display = 'flex', document.getElementById('loginScreen').style.opacity = '1', document.getElementById('loginScreen').style.visibility = 'visible', document.getElementById('loginScreen').style.pointerEvents = 'auto'))" class="group relative px-9 py-4 rounded-2xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-base flex items-center space-x-3 transition-all duration-200 shadow-md hover:shadow-xl active:scale-[0.97] overflow-hidden cursor-pointer">
                   <span class="relative z-10">Get Started</span>
                   <i class="ri-arrow-right-line text-xl relative z-10 transition-transform duration-200 group-hover:translate-x-1.5" data-lucide="arrow-right"></i>
                   <div class="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
@@ -3996,7 +3996,8 @@
                 <button
                   type="button"
                   id="copilotSendBtn"
-                  class="p-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white transition shadow-sm active:scale-95"
+                  onclick="handleSend()"
+                  class="p-2 rounded-xl bg-slate-950 hover:bg-slate-800 text-white transition shadow-sm active:scale-95 cursor-pointer"
                   title="Send Query"
                   aria-label="Send Message"
                 >
@@ -4006,7 +4007,7 @@
             </div>
 
             <div class="input-meta-bar">
-              <span>Microsoft Azure AI Foundry &middot; Click <strong>Send</strong> to Dispatch &middot; <kbd>Enter</kbd> does not submit</span>
+              <span>Microsoft Azure AI Foundry &middot; Press <kbd>Enter</kbd> or click <strong>Send</strong> to Dispatch</span>
               <span id="dispatcherNameBadge">Persona: <strong>Driver In-Cab</strong></span>
             </div>
           </div>

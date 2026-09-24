@@ -11,7 +11,18 @@ import { KNOWLEDGE_DOCUMENTS } from "../js/data/knowledgeDocs.js";
 
 const accountManager = new DualAccountManager();
 
-const MCP_TOOLS = [
+export const MCP_TOOLS = [
+  {
+    name: "get_vehicle_telemetry",
+    description: "Get real-time IoT vehicle telemetry including battery SoC %, fuel level %, speed, cargo temperature, tire pressure, and driver shift hours for a specific vehicle.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        vehicle_id: { type: "string", description: "Mandatory vehicle ID (e.g. 'V-101', 'V-102', 'V-103', 'V-104', 'V-105', 'V-106')" }
+      },
+      required: ["vehicle_id"]
+    }
+  },
   {
     name: "get_fleet_status",
     description: "Get real-time vehicle telemetry, battery/fuel status, current driver shift hours, and critical cold-chain alerts.",
@@ -72,8 +83,39 @@ const MCP_TOOLS = [
   }
 ];
 
-function handleToolExecution(name, args = {}) {
+export function handleToolExecution(name, args = {}) {
   switch (name) {
+    case "get_vehicle_telemetry": {
+      const vid = (args.vehicle_id || "").trim().toUpperCase();
+      const vehicle = INITIAL_FLEET_DATA.find(v => v.id.toUpperCase() === vid) ||
+                      INITIAL_FLEET_DATA.find(v => v.id.replace("-", "") === vid.replace("-", ""));
+      if (!vehicle) {
+        return { status: "NOT_FOUND", error: `Vehicle ${args.vehicle_id} not found.` };
+      }
+      return {
+        status: "LIVE_TELEMETRY_ONLINE",
+        timestamp: new Date().toISOString(),
+        vehicleId: vehicle.id,
+        name: vehicle.name,
+        type: vehicle.type,
+        fuelType: vehicle.fuelType,
+        batteryOrFuelLevel: vehicle.batteryOrFuel,
+        batteryOrFuelUnit: vehicle.fuelType === "Electric" ? "% SoC" : "% Fuel Tank",
+        speedKmH: vehicle.speed,
+        payloadKg: vehicle.payloadKg,
+        maxPayloadKg: vehicle.maxPayloadKg,
+        temperatureCelsius: vehicle.temperatureCelsius,
+        targetTempCelsius: vehicle.targetTempCelsius,
+        coldChainActive: vehicle.coldChainRequired,
+        tirePressurePsi: vehicle.tirePressurePsi,
+        healthScore: vehicle.healthScore,
+        location: vehicle.location,
+        destination: vehicle.destination,
+        driver: vehicle.driver,
+        alerts: vehicle.alerts
+      };
+    }
+
     case "get_fleet_status": {
       let results = [...INITIAL_FLEET_DATA];
       if (args.vehicle_id) {
@@ -179,10 +221,11 @@ function handleToolExecution(name, args = {}) {
 // -------------------------------------------------------------
 // MCP JSON-RPC Stdio Server for IDEs
 // -------------------------------------------------------------
-const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
+if (!process.env.NODE_TEST_CONTEXT && (process.argv[1]?.includes("server.js") || process.env.RIDO_MCP_STDIO)) {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: false });
 
-rl.on("line", (line) => {
-  if (!line.trim()) return;
+  rl.on("line", (line) => {
+    if (!line.trim()) return;
   try {
     const request = JSON.parse(line);
     const { id, method, params } = request;
@@ -230,7 +273,8 @@ rl.on("line", (line) => {
     };
     process.stdout.write(JSON.stringify(errorResponse) + "\n");
   }
-});
+  });
+}
 
 // -------------------------------------------------------------
 // Optional HTTP/SSE Server for Multi-Laptop Collaboration

@@ -19,7 +19,7 @@ export class AzureSettingsManager {
             parsed.account1.apiKey = atob("RDVHbktVOEwzSWRreTc1QmluejBjWnlENFc1VXJRWHNQVm5FTzhvS1JqcFEzQWZJb0tESEpRUUpJOUNDSUFDTm5zN1JYSjN3M0FBQUFBQ09HTEVGNA==");
           }
           parsed.account1.endpoint = "https://kunwar2954beai24-5740-resource.services.ai.azure.com/api/projects/kunwar2954beai24-5740/agents/RIDO-Copilot/endpoint/protocols/openai/responses";
-          parsed.account1.deployment = "gpt-6-astra";
+          parsed.account1.deployment = "gpt-5.6-luna";
           parsed.mode = "azure_dual";
           return parsed;
         }
@@ -35,7 +35,7 @@ export class AzureSettingsManager {
         label: "Account 1 (Kunwar - Primary)",
         endpoint: "https://kunwar2954beai24-5740-resource.services.ai.azure.com/api/projects/kunwar2954beai24-5740/agents/RIDO-Copilot/endpoint/protocols/openai/responses",
         apiKey: atob("RDVHbktVOEwzSWRreTc1QmluejBjWnlENFc1VXJRWHNQVm5FTzhvS1JqcFEzQWZJb0tESEpRUUpJOUNDSUFDTm5zN1JYSjN3M0FBQUFBQ09HTEVGNA=="),
-        deployment: "gpt-6-astra",
+        deployment: "gpt-5.6-luna",
         allocatedBudget: 100.0,
         tokensUsed: 25,
         spentUSD: 0.0001,
